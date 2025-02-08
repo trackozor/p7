@@ -1,0 +1,178 @@
+/* =============================================================================
+    Projet      : Fisheye
+    Fichier     : _reset.scss
+    Auteur      : Trackozor
+    Date        : 01/01/2025
+    Version     : 1.0.0
+    Description : Fichier de reset CSS pour normaliser les styles par défaut
+                  des navigateurs. Prépare une base cohérente pour les styles
+                  personnalisés du projet.
+============================================================================= */
+
+/* ================================ */
+/* Général                          */
+/* ================================ */
+/* Remet à zéro les marges, paddings, bordures et styles par défaut */
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%; /* Taille de police par défaut */
+  font: inherit; /* Hérite de la famille de police du parent */
+  vertical-align: baseline; /* Normalise l'alignement vertical */
+  color: black;
+}
+
+/* ================================ */
+/* HTML5 : Compatibilité des blocs  */
+/* ================================ */
+/* Assure une prise en charge correcte des éléments HTML5 */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block; /* Rend les éléments block-level */
+}
+
+/* ================================ */
+/* Corps du document                */
+/* ================================ */
+/* Configuration de base pour le <body> */
+body {
+  line-height: 1; /* Normalise l'interligne */
+  font-family: var(--font-primary, sans-serif); /* Police par défaut */
+  background-color: white; /* Fond par défaut */
+  color: var(--text-color-primary); /* Texte par défaut */
+}
+
+/* ================================ */
+/* Listes                           */
+/* ================================ */
+/* Supprime les styles par défaut des listes */
+ol,
+ul {
+  list-style: none; /* Retire les puces ou numérotations */
+}
+
+/* ================================ */
+/* Citations                        */
+/* ================================ */
+/* Supprime les guillemets automatiques des citations */
+blockquote,
+q {
+  quotes: none;
+}
+
+/* Empêche les pseudo-éléments de guillemets */
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: "";
+}
+
+/* ================================ */
+/* Tables                           */
+/* ================================ */
+/* Supprime les espacements entre les cellules des tableaux */
+table {
+  border-collapse: collapse; /* Fusionne les bordures */
+  border-spacing: 0; /* Supprime les espaces entre les cellules */
+}
+
+/* ================================ */
+/* Médias                           */
+/* ================================ */
+/* Adapte les images et vidéos au conteneur parent */
+img,
+video {
+  max-width: 100%; /* Limite la largeur à celle du conteneur */
+  height: 100%; /* Conserve les proportions des médias */
+}

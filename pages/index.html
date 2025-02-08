@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Recherchez et filtrez vos recettes préférées en quelques clics.">
+    <title>Les Petits Plats - Recherche de Recettes</title>
+    
+    <!-- Fichier CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!-- Font et icônes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/icons/favicon.png">
+</head>
+<body>
+    
+    <!--  HEADER -->
+    <header>
+        <div class="container">
+            <h1>Les Petits Plats</h1>
+            <p>Trouvez la recette parfaite en un clic !</p>
+            <div class="search-bar">
+                <input type="text" id="search" placeholder="Recherchez une recette, un ingrédient..." aria-label="Rechercher une recette">
+                <button id="search-btn" aria-label="Lancer la recherche">🔍</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- FILTRES AVANCÉS -->
+    <section id="filters">
+        <div class="container">
+            <label for="ingredient-filter">Ingrédients :</label>
+            <input type="text" id="ingredient-filter" placeholder="Ex: Chocolat, Tomate">
+            
+            <label for="ustensil-filter">Ustensiles :</label>
+            <input type="text" id="ustensil-filter" placeholder="Ex: Fouet, Mixeur">
+            
+            <label for="appliance-filter">Appareils :</label>
+            <input type="text" id="appliance-filter" placeholder="Ex: Four, Blender">
+        </div>
+    </section>
+
+    <!-- AFFICHAGE DES RECETTES -->
+    <main>
+        <div class="container" id="recipes-container">
+            <!-- Les cartes de recettes seront injectées ici via JavaScript -->
+        </div>
+    </main>
+
+    <!-- 📌 FOOTER -->
+    <footer>
+        <div class="container">
+            <p>© 2025 Les Petits Plats. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <!-- Fichier JavaScript -->
+    <script src="js/app.js" defer></script>
+</body>
+</html>

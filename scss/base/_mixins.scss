@@ -1,0 +1,28 @@
+/* ====================================================== */
+/*  Nom du fichier    : _mixins.scss                */
+/* Auteur            : Trackozor                        */
+/* Date de création  : 25/09/24                        */
+/*  Dernière modif.   : 08/01/25                        */
+/*  Description       : Fichier regroupant tout les mixins    */
+/* ====================================================== */
+
+/* Mixins pour gérer les tablettes */
+@mixin tablet {
+  @media (min-width: 767px) {
+    @content;
+  }
+}
+
+/* Mixin pour gérer les écrans desktop */
+@mixin desktop {
+  @media (min-width: 1024px) {
+    @content;
+  }
+}
+
+/* Mixin pour gérer les écrans larges */
+@mixin large-desktop {
+  @media (min-width: 1440px) {
+    @content;
+  }
+}

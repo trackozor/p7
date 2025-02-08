@@ -1,0 +1,105 @@
+/* =============================================================================
+    Projet      :   Fisheye
+    Fichier     :   _variables.scss
+    Auteur      :   Trackozor
+    Date        :   01/01/2025
+    Version     :   1.0.0
+    Description :   Contient les variables globales utilisées dans le projet.
+                    Couvre les couleurs, typographies, tailles et espacements.
+============================================================================= */
+
+:root {
+  /* ================================ */
+  /* Palette principale               */
+  /* ================================ */
+  --primary-color: #901c1c; /* Rouge foncé pour accentuation */
+  --primary-color-light: #d3573c; /* Rouge plus clair pour hover */
+  --secondary-color: #d88878; /* Rouge clair pour éléments secondaires */
+  --neutral-color: #fafafa; /* Blanc cassé pour les fonds */
+
+  /* Couleurs complémentaires */
+  --accent-color: #ff5722; /* Orange vif pour les appels à l'action */
+  --secondary-neutral: #525252; /* Gris foncé pour textes secondaires */
+
+  /* Couleurs de texte */
+  --text-color-primary: #000; /* Texte principal (noir) */
+  --text-color-secondary: #901c1c; /* Texte secondaire */
+  --text-color-tertiary: #757575; /* Texte peu important */
+  --text-color-name: #d3573c; /* Texte pour noms ou accents */
+
+  /* Couleurs d'état */
+  --success-color: #4caf50; /* Succès */
+  --warning-color: #ff9800; /* Avertissement */
+  --error-color: #f44336; /* Erreur */
+  --info-color: #2196f3; /* Information */
+
+  /* ================================ */
+  /* Typographie                      */
+  /* ================================ */
+  --font-primary: "DM Sans", sans-serif; /* Police principale */
+  --font-secondary: "Arial", sans-serif; /* Police secondaire */
+
+  /* Tailles des polices */
+  --font-size-xsmall: 0.7rem; /* Texte très petit */
+  --font-size-small: 0.8rem; /* Texte petit */
+  --font-size-base: 1rem; /* Texte de base */
+  --font-size-medium: 1.2rem; /* Texte légèrement plus grand */
+  --font-size-large: 1.6rem; /* Grand texte */
+  --font-size-xlarge: 2rem; /* Très grand texte */
+  --font-size-giant: 2.4rem; /* Texte énorme */
+
+  /* Poids des polices */
+  --font-weight-light: 300; /* Poids léger */
+  --font-weight-regular: 400; /* Poids normal */
+  --font-weight-medium: 500; /* Poids intermédiaire */
+  --font-weight-bold: 700; /* Poids gras */
+
+  /* Hauteur de ligne */
+  --line-height-tight: 1.2; /* Compact */
+  --line-height-normal: 1.4; /* Standard */
+  --line-height-loose: 1.6; /* Espacé */
+
+  /* ================================ */
+  /* Espacements                      */
+  /* ================================ */
+  --spacing-xxsmall: 0.2rem; /* Très petit */
+  --spacing-xsmall: 0.4rem; /* Petit */
+  --spacing-small: 0.8rem; /* Moyen-petit */
+  --spacing-medium: 1.6rem; /* Moyen */
+  --spacing-large: 2.4rem; /* Grand */
+  --spacing-xlarge: 3.2rem; /* Très grand */
+  --spacing-xxlarge: 4rem; /* Énorme */
+
+  /* ================================ */
+  /* Gaps                             */
+  /* ================================ */
+  --gap-small: 0.8rem; /* Petit espace */
+  --gap-medium: 1.6rem; /* Moyen espace */
+  --gap-large: 2.4rem; /* Grand espace */
+
+  /* ================================ */
+  /* Tailles                          */
+  /* ================================ */
+  --size-small: 2rem; /* Objets petits */
+  --size-medium: 4rem; /* Objets moyens */
+  --size-large: 6rem; /* Objets grands */
+  --size-xlarge: 8rem; /* Objets très grands */
+
+  /* ================================ */
+  /* Bordures et ombres               */
+  /* ================================ */
+  --border-radius-small: 0.3rem; /* Coins légèrement arrondis */
+  --border-radius-medium: 0.5rem; /* Coins arrondis */
+  --border-radius-large: 1rem; /* Coins très arrondis */
+
+  --box-shadow-small: 0 1px 3px rgba(0, 0, 0, 0.1); /* Ombre légère */
+  --box-shadow-medium: 0 3px 6px rgba(0, 0, 0, 0.15); /* Ombre moyenne */
+  --box-shadow-large: 0 10px 20px rgba(0, 0, 0, 0.2); /* Ombre prononcée */
+
+  /* ================================ */
+  /* Transitions et Animations        */
+  /* ================================ */
+  --transition-fast: 0.2s ease-in-out; /* Animation rapide */
+  --transition-default: 0.3s ease; /* Animation standard */
+  --transition-slow: 0.5s ease-out; /* Animation lente */
+}
