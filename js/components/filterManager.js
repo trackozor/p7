@@ -30,7 +30,7 @@ class FilterManager {
     /* ================================================================================
     Récupère toutes les recettes et génère les options des combobox dynamiquement
     ================================================================================ */
-    async initFilters() {
+    async  initFilters() {
         try {
             const recipes = await dataManager.getAllRecipes();
 
@@ -58,7 +58,7 @@ class FilterManager {
     }
 
     /* ================================================================================
-     Ajoute les options aux combobox en évitant les doublons
+    Ajoute les options aux combobox en évitant les doublons
     ================================================================================ */
     populateCombobox(selector, dataSet) {
         const combobox = document.querySelector(selector);
@@ -149,6 +149,6 @@ class FilterManager {
 }
 
 /* ================================================================================
-   🔹 EXPORT DU MODULE `FilterManager`
+    EXPORT DU MODULE `FilterManager`
 ================================================================================ */
 export const filterManager = new FilterManager();

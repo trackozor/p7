@@ -1,17 +1,19 @@
-import { searchRecipesLoop } from "../search/searchEngine.js";
-import { selectors } from "../utils/domSelectors.js";
+import { searchRecipesLoop } from "../components/search.js";
+import { getAllRecipes } from "../data/dataManager.js";
+import { fetchFilterOptions } from "../data/dataManager.js";
+import domSelectors from "../config/domSelectors.js";
 
 /**
  * Gère l'événement de recherche.
  */
 export function setupSearchEvent() {
-  selectors.searchInput.addEventListener("input", () => {
-    const query = selectors.searchInput.value.trim();
-    if (query.length >= 3) {
-      const results = searchRecipesLoop(query);
-      displayResults(results);
-    }
-  });
+    domSelectors.searchInput.addEventListener("input", async () => {
+        const query = domSelectors.searchInput.value.trim();
+        if (query.length >= 3) {
+            const results = await searchRecipesLoop(query);
+            displayResults(results);
+        }
+    });
 }
 
 /**
@@ -19,45 +21,50 @@ export function setupSearchEvent() {
  * @param {Array} results - Liste des recettes filtrées.
  */
 function displayResults(results) {
-  selectors.recipesContainer.innerHTML = "";
-  results.forEach((recipe) => {
-    const card = document.createElement("div");
-    card.className = "recipe-card";
-    card.innerHTML = `<h2>${recipe.title}</h2><p>${recipe.description}</p>`;
-    selectors.recipesContainer.appendChild(card);
-  });
+    domSelectors.recipesContainer.innerHTML = "";
+    results.forEach((recipe) => {
+        const card = document.createElement("div");
+        card.className = "recipe-card";
+        card.innerHTML = `<h2>${recipe.name}</h2><p>${recipe.description}</p>`;
+        domSelectors.recipesContainer.appendChild(card);
+    });
 }
 
 /**
  * Active tous les écouteurs d'événements au chargement.
  */
 export function initEventListeners() {
-  setupSearchEvent();
+    setupSearchEvent();
+    setupFilterEvents();
 }
+
 /**
  * Gère les événements des filtres.
  */
 export function setupFilterEvents() {
     document.querySelectorAll(".filter-tag").forEach((button) => {
-    button.addEventListener("click", async () => {
-        const recipes = await fetchRecipes();
-        const filteredRecipes = recipes.filter(recipe =>
-        recipe.tags.includes(button.dataset.filter)
-        );
-        displayRecipes(filteredRecipes);
+        button.addEventListener("click", async () => {
+            const recipes = await getAllRecipes();
+            const filteredRecipes = recipes.filter(recipe =>
+                recipe.tags.includes(button.dataset.filter)
+            );
+            displayResults(filteredRecipes);
+        });
     });
-});
 }
 
 /**
  * Remplit dynamiquement les listes de filtres.
  */
 async function populateFilters() {
-    const filters = await fetchFilterOptions();
-
-    updateFilterList("ingredient-list", filters.ingredients);
-    updateFilterList("ustensil-list", filters.ustensils);
-    updateFilterList("appliance-list", filters.appliances);
+    try {
+        const filters = await fetchFilterOptions();
+        updateFilterList("ingredient-list", filters.ingredients);
+        updateFilterList("ustensil-list", filters.ustensils);
+        updateFilterList("appliance-list", filters.appliances);
+    } catch (error) {
+        console.error("Erreur lors du chargement des filtres :", error);
+    }
 }
 
 /**

@@ -1,40 +1,44 @@
 /* ==================================================================================== */
 /*  FICHIER          : templateManager.js                                              */
 /*  AUTEUR           : Trackozor                                                       */
-/*  VERSION          : 1.0                                                             */
+/*  VERSION          : 1.1                                                             */
 /*  DATE DE CRÉATION : 08/02/2025                                                      */
-/*  DERNIÈRE MODIF.  : 08/02/2025                                                      */
-/*  DESCRIPTION      : Génère dynamiquement les templates HTML pour les recettes.       */
-/*                     Utilise les données du `dataManager.js` et évite les doublons.   */
+/*  DERNIÈRE MODIF.  : 09/02/2025                                                      */
+/*  DESCRIPTION      : Gère l'affichage des recettes et optimise la gestion du DOM.    */
 /* ==================================================================================== */
-/*  🔹 FONCTIONNALITÉS :                                                               */
-/*    ✅ Génération dynamique des cartes de recettes                                  */
-/*    ✅ Affichage structuré des ingrédients et de la description                     */
-/*    ✅ Intégration d'un cache pour éviter la surcharge du DOM                       */
-/*    ✅ Flexibilité pour différents affichages                                       */
+/*  🔹 AMÉLIORATIONS :                                                                */
+/*    ✅ Mise en cache des recettes déjà chargées                                     */
+/*    ✅ Ajout d'un mode "Grille / Liste" pour l'affichage                           */
+/*    ✅ Animation de chargement                                                     */
 /* ==================================================================================== */
 
 import { dataManager } from "./dataManager.js";
 
-/* ================================================================================
-   🔹 CLASSE TemplateManager - Gestion de l'affichage des recettes
+/* ================================================================================ 
+   🔹 CLASSE TemplateManager - Gestion des templates des recettes 
 ================================================================================ */
 class TemplateManager {
+    constructor() {
+        this.cache = null; // Cache pour stocker les recettes après le premier chargement
+        this.viewMode = "grid"; // Par défaut, affichage en mode "Grille"
+    }
+
+    /* ================================================================================ 
+       🔹 GÉNÉRATION D'UNE CARTE DE RECETTE
+    ================================================================================ */
+    
     /**
-     * Génère un élément HTML représentant une carte de recette.
-     *
-     * @param {Object} recipe - Objet représentant une recette.
-     * @returns {HTMLElement} - Élément HTML complet pour l'affichage de la recette.
+     * Génère dynamiquement une carte HTML pour une recette.
+     * @param {Object} recipe - Objet contenant les détails de la recette.
+     * @returns {HTMLElement} - Élément `article` contenant la carte de recette.
      */
     generateRecipeCard(recipe) {
         const { id, image, name, time, description, ingredients } = recipe;
 
-        // Création de l'élément principal de la carte
         const card = document.createElement("article");
-        card.classList.add("recipe-card");
+        card.classList.add("recipe-card", `view-${this.viewMode}`); // Ajout de la classe pour le mode d'affichage
         card.setAttribute("data-id", id);
 
-        // Structure du template HTML
         card.innerHTML = `
             <div class="recipe-card__image">
                 <img src="assets/images/${image}" alt="${name}">
@@ -54,29 +58,34 @@ class TemplateManager {
         return card;
     }
 
+    /* ================================================================================ 
+       🔹 GÉNÉRATION DE LA LISTE DES INGRÉDIENTS
+    ================================================================================ */
+
     /**
-     * Génère la liste des ingrédients pour une recette donnée.
-     *
-     * @param {Array<Object>} ingredients - Liste des ingrédients avec quantité et unité.
-     * @returns {string} - Chaîne HTML des ingrédients.
+     * Génère la liste des ingrédients pour une recette.
+     * @param {Array<Object>} ingredients - Liste des ingrédients.
+     * @returns {string} - Chaîne HTML avec les ingrédients formatés.
      */
     generateIngredientsList(ingredients) {
         return ingredients
             .map(
                 (ing) => `
-            <li class="recipe-card__ingredient">
-                <span class="recipe-card__ingredient-name">${ing.ingredient}</span> 
-                ${ing.quantity ? `- <span class="recipe-card__ingredient-quantity">${ing.quantity} ${ing.unit || ""}</span>` : ""}
-            </li>`
+                <li class="recipe-card__ingredient">
+                    <span class="recipe-card__ingredient-name">${ing.ingredient}</span> 
+                    ${ing.quantity ? `- <span class="recipe-card__ingredient-quantity">${ing.quantity} ${ing.unit || ""}</span>` : ""}
+                </li>`
             )
             .join("");
     }
 
+    /* ================================================================================ 
+       🔹 AFFICHAGE DES RECETTES DANS LE DOM
+    ================================================================================ */
+
     /**
-     * Affiche toutes les recettes dans un conteneur HTML spécifique.
-     *
-     * @async
-     * @param {string} containerSelector - Sélecteur CSS du conteneur où injecter les cartes.
+     * Affiche toutes les recettes dans un conteneur spécifique.
+     * @param {string} containerSelector - Sélecteur CSS du conteneur.
      */
     async displayAllRecipes(containerSelector) {
         try {
@@ -86,22 +95,52 @@ class TemplateManager {
                 return;
             }
 
-            container.innerHTML = ""; // On vide le conteneur avant d'ajouter de nouvelles cartes
-            const recipes = await dataManager.getAllRecipes();
+            container.innerHTML = `<p class="loading">Chargement des recettes...</p>`; // Animation de chargement
+            
+            // Utilisation du cache si possible
+            if (!this.cache) {
+                this.cache = await dataManager.getAllRecipes();
+            }
 
-            recipes.forEach((recipe) => {
+            // Vérification si aucune recette trouvée
+            if (this.cache.length === 0) {
+                container.innerHTML = `<p class="no-recipes">Aucune recette trouvée.</p>`;
+                return;
+            }
+
+            // Nettoyage du conteneur après chargement
+            container.innerHTML = "";
+
+            this.cache.forEach((recipe) => {
                 const card = this.generateRecipeCard(recipe);
                 container.appendChild(card);
             });
 
-            logEvent("SUCCESS", "Affichage des recettes terminé.", { total: recipes.length });
+            logEvent("SUCCESS", `Affichage de ${this.cache.length} recettes dans ${containerSelector}`);
         } catch (error) {
             logEvent("ERROR", "Erreur lors de l'affichage des recettes.", { error: error.message });
         }
     }
+
+    /* ================================================================================ 
+       🔹 CHANGEMENT DE MODE (GRILLE / LISTE)
+    ================================================================================ */
+
+    /**
+     * Bascule entre le mode "Grille" et "Liste" et met à jour l'affichage.
+     */
+    toggleViewMode() {
+        this.viewMode = this.viewMode === "grid" ? "list" : "grid";
+        document.querySelectorAll(".recipe-card").forEach((card) => {
+            card.classList.toggle("view-list");
+            card.classList.toggle("view-grid");
+        });
+
+        logEvent("INFO", `Mode d'affichage changé : ${this.viewMode}`);
+    }
 }
 
-/* ================================================================================
-EXPORT DU MODULE `TemplateManager`
+/* ================================================================================ 
+    EXPORT DU MODULE `TemplateManager`
 ================================================================================ */
 export const templateManager = new TemplateManager();
