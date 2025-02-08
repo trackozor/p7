@@ -1,2 +1,29 @@
-
+# Node.js & npm
 node_modules/
+package-lock.json
+
+#  Configuration d'éditeurs
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+#  Build & Compilation
+dist/
+build/
+coverage/
+*.log
+*.cache
+
+ SCSS Compilation
+scss/*.css
+scss/*.map
+
+# Git Ignored Files
+*.env
+*.bak
+*.swp
+
+#  Images générées temporairement
+Actifs/Images/temp/
+Actifs/Images/*.tmp
