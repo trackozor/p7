@@ -174,15 +174,51 @@ export function getCurrentPage() {
  */
 export function getIndexSelectors() {
     return {
-        // Sélecteurs principaux de la page d'accueil
+        // 📌 Sélecteurs principaux de la page
         indexPage: {
-            
-            
+            body: document.body,
+            header: document.querySelector("header"),
+            main: document.querySelector("main"),
+            footer: document.querySelector("footer"),
         },
 
-        // Sélecteurs liés aux modèles réutilisables (templates)
-        templates: {
-        
+        // 📌 Sélecteurs liés au logo et aux images de fond
+        branding: {
+            logo: document.querySelector(".logo"),
+            backgroundImage: document.querySelector(".fond"),
+        },
+
+        // 📌 Barre de recherche
+        search: {
+            form: document.querySelector(".search-bar"),
+            input: document.querySelector("#search"),
+            button: document.querySelector("#search-btn"),
+        },
+
+        // 📌 Filtres interactifs
+        filters: {
+            section: document.querySelector("#filters"),
+            ingredientList: document.querySelector("#ingredient-list"),
+            applianceList: document.querySelector("#appliance-list"),
+            ustensilList: document.querySelector("#ustensil-list"),
+        },
+
+        // 📌 Conteneur des recettes (là où on injecte les cartes)
+        recipes: {
+            container: document.querySelector("#recipes-container .container"),
+        },
+
+        // 📌 Conteneur des filtres dynamiques
+        filterDropdowns: {
+            ingredientDropdown: document.querySelector("#filter-ingredients"),
+            applianceDropdown: document.querySelector("#filter-appliances"),
+            ustensilDropdown: document.querySelector("#filter-ustensils"),
+        },
+
+        // 📌 Footer et informations légales
+        footer: {
+            container: document.querySelector("footer .container"),
+            copyright: document.querySelector("footer p"),
         },
     };
 }
@@ -200,7 +236,7 @@ export function getIndexSelectors() {
  * 
  * - Parcourt de manière récursive un objet contenant des sélecteurs DOM.
  * - Ajoute les sélecteurs manquants dans un tableau `missingSelectors`.
- * - Ignore certains sélecteurs non critiques (`totalLikes`, `dailyRate`).
+ *
  * 
  * @param {Object} obj - Objet contenant les sélecteurs à vérifier.
  * @param {string} [parentKey=""] - Clé parent pour générer le chemin complet du sélecteur.
@@ -211,11 +247,6 @@ export function recursiveCheck(obj, parentKey = "", missingSelectors = []) {
     Object.entries(obj).forEach(([key, value]) => {
         // Construit la clé complète pour suivre la hiérarchie
         const fullKey = parentKey ? `${parentKey}.${key}` : key;
-
-        // Exclut les sélecteurs non critiques de la vérification
-        if (fullKey === "photographerPage.totalLikes" || fullKey === "photographerPage.dailyRate") {
-            return; // Ignore ces sélecteurs spécifiques
-        }
 
         // Si la valeur est un objet, on applique la récursivité
         if (typeof value === "object" && value !== null) {
