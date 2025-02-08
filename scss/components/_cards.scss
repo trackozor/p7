@@ -25,7 +25,7 @@
             font-size: 1.4rem;
             font-weight: bold;
             margin-bottom: 8px;
-            color: $text-color;
+            color: black;
         }
 
         .recipe-info {
@@ -39,13 +39,13 @@
         .recipe-ingredients {
             margin-top: 10px;
             font-size: 0.9rem;
-            color: $secondary-color;
+            color: var(--secondary-color);
         }
 
         .view-recipe-btn {
             margin-top: 12px;
             padding: 8px 12px;
-            background-color: $primary-color;
+            background-color: var(--primary-color);
             color: white;
             border-radius: 6px;
             border: none;
@@ -53,7 +53,7 @@
             transition: background-color 0.3s;
 
             &:hover {
-                background-color: darken($primary-color, 10%);
+                background-color: (var(--primary-color), 10%);
             }
         }
     }

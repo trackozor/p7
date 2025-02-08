@@ -2,63 +2,127 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Recherchez et filtrez vos recettes préférées en quelques clics.">
-    <title>Les Petits Plats - Recherche de Recettes</title>
-    
-    <!-- Fichier CSS -->
-    <link rel="stylesheet" href="css/styles.css">
 
-    <!-- Font et icônes -->
+    <!-- SEO: Description et mots-clés -->
+    <meta name="description" content="Recherchez et filtrez vos recettes préférées facilement et rapidement. Découvrez des recettes simples et délicieuses adaptées à votre quotidien.">
+    <meta name="keywords" content="recettes, cuisine, ingrédients, ustensiles, appareils, repas, plats, cuisine maison">
+    <meta name="author" content="Les Petits Plats">
+    
+    <!-- SEO: Balises Open Graph (Partage sur les réseaux sociaux) -->
+    <meta property="og:title" content="Les Petits Plats - Trouvez la recette parfaite !">
+    <meta property="og:description" content="Découvrez plus de 1500 recettes simples et rapides. Filtrez par ingrédients, ustensiles et appareils de cuisine.">
+    <meta property="og:image" content="https://www.lespetitsplats.com/assets/images/preview.jpg">
+    <meta property="og:url" content="https://www.lespetitsplats.com">
+    <meta property="og:type" content="website">
+    
+    <!-- SEO: Twitter Cards (Optimisation pour Twitter) -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Les Petits Plats - Trouvez la recette parfaite !">
+    <meta name="twitter:description" content="Découvrez plus de 1500 recettes simples et rapides. Filtrez par ingrédients, ustensiles et appareils de cuisine.">
+    <meta name="twitter:image" content="https://www.lespetitsplats.com/assets/images/preview.jpg">
+    
+    <!-- Titre de la page -->
+    <title>Les Petits Plats - Trouvez la recette parfaite !</title>
+
+    <!-- Amélioration de la performance: Préchargement des ressources critiques -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" as="style">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Polices optimisées -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="assets/icons/favicon.png">
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+    <link rel="manifest" href="site.webmanifest">
+
+    <!-- Feuille de style principale -->
+    <link rel="stylesheet" href="../css/main.css">
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
 </head>
+
+
 <body>
-    
-    <!--  HEADER -->
-    <header>
-        <div class="container">
-            <h1>Les Petits Plats</h1>
-            <p>Trouvez la recette parfaite en un clic !</p>
-            <div class="search-bar">
-                <input type="text" id="search" placeholder="Recherchez une recette, un ingrédient..." aria-label="Rechercher une recette">
-                <button id="search-btn" aria-label="Lancer la recherche">🔍</button>
+
+    <!-- Header -->
+    <header role="banner">
+        <div class="header-container">
+            <img src="../assets/icons/fond.png" alt="fond" class="fond">
+            <nav role="navigation" aria-label="Navigation principale">
+                <a href="index.html">
+                    <img src="../assets/icons/Logo.png" alt="Logo Les Petits Plats" class="logo">
+                </a>
+            </nav>
+
+            <h1 class="sr-only">Les Petits Plats</h1>
+            <div class="slogan">
+                <p>CHERCHER PARMI PLUS DE 1500 RECETTES</p>
+                <p>DU QUOTIDIEN, SIMPLES ET DÉLICIEUSES </p>
             </div>
+            <form class="search-bar" role="search" aria-labelledby="search-label">
+                <label id="search-label" for="search" class="sr-only">Rechercher une recette</label>
+                <input type="text" id="search" name="search" placeholder="Recherchez une recette, un ingrédient..." aria-label="Rechercher une recette">
+                <button id="search-btn" type="submit" aria-label="Lancer la recherche">
+                    <i class="fas fa-search"></i>
+                </button>
+
+            </form>
         </div>
     </header>
 
-    <!-- FILTRES AVANCÉS -->
-    <section id="filters">
+    <!-- Filtres avancés -->
+    <section id="filters" role="search" aria-labelledby="filters-title">
         <div class="container">
-            <label for="ingredient-filter">Ingrédients :</label>
-            <input type="text" id="ingredient-filter" placeholder="Ex: Chocolat, Tomate">
-            
-            <label for="ustensil-filter">Ustensiles :</label>
-            <input type="text" id="ustensil-filter" placeholder="Ex: Fouet, Mixeur">
-            
-            <label for="appliance-filter">Appareils :</label>
-            <input type="text" id="appliance-filter" placeholder="Ex: Four, Blender">
+            <h2 class="sr-only" id="filters-title">Filtrer les recettes</h2>
+
+            <!-- Filtre par ingrédient -->
+            <details class="filter">
+                <summary>Ingrédients</summary>
+                <ul id="ingredient-list" class="filter-options">
+                    <!-- Options injectées dynamiquement en JS -->
+                </ul>
+            </details>
+
+            <!-- Filtre par ustensile -->
+            <details class="filter">
+                <summary>Ustensiles</summary>
+                <ul id="ustensil-list" class="filter-options">
+                    <!-- Options injectées dynamiquement en JS -->
+                </ul>
+            </details>
+
+            <!-- Filtre par appareil -->
+            <details class="filter">
+                <summary>Appareils</summary>
+                <ul id="appliance-list" class="filter-options">
+                    <!-- Options injectées dynamiquement en JS -->
+                </ul>
+            </details>
         </div>
     </section>
 
-    <!-- AFFICHAGE DES RECETTES -->
-    <main>
-        <div class="container" id="recipes-container">
+    <!-- Liste des recettes -->
+    <main id="recipes-container" role="main">
+        <div class="container">
+            <h2 class="visually-hidden">Résultats des recettes</h2>
             <!-- Les cartes de recettes seront injectées ici via JavaScript -->
         </div>
     </main>
 
-    <!-- 📌 FOOTER -->
-    <footer>
+    <!-- Footer -->
+    <footer role="contentinfo">
         <div class="container">
             <p>© 2025 Les Petits Plats. Tous droits réservés.</p>
         </div>
     </footer>
 
     <!-- Fichier JavaScript -->
-    <script src="js/app.js" defer></script>
+    <script src="../js/app.js" type="module" ></script>
+
 </body>
 </html>

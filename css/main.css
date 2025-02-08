@@ -1,0 +1,829 @@
+@charset "UTF-8";
+/* =============================================================================
+    Projet      : Fisheye
+    Fichier     : _reset.scss
+    Auteur      : Trackozor
+    Date        : 01/01/2025
+    Version     : 1.0.0
+    Description : Fichier de reset CSS pour normaliser les styles par défaut
+                  des navigateurs. Prépare une base cohérente pour les styles
+                  personnalisés du projet.
+============================================================================= */
+/* ================================ */
+/* Général                          */
+/* ================================ */
+/* Remet à zéro les marges, paddings, bordures et styles par défaut */
+@import url("https://fonts.googleapis.com/css2?family=Anton&display=swap");
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%; /* Taille de police par défaut */
+  font: inherit; /* Hérite de la famille de police du parent */
+  vertical-align: baseline; /* Normalise l'alignement vertical */
+  color: black;
+}
+
+/* ================================ */
+/* HTML5 : Compatibilité des blocs  */
+/* ================================ */
+/* Assure une prise en charge correcte des éléments HTML5 */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block; /* Rend les éléments block-level */
+}
+
+/* ================================ */
+/* Corps du document                */
+/* ================================ */
+/* Configuration de base pour le <body> */
+body {
+  line-height: 1; /* Normalise l'interligne */
+  font-family: var(--font-primary, sans-serif); /* Police par défaut */
+  background-color: white; /* Fond par défaut */
+  color: var(--text-color-primary); /* Texte par défaut */
+}
+
+/* ================================ */
+/* Listes                           */
+/* ================================ */
+/* Supprime les styles par défaut des listes */
+ol,
+ul {
+  list-style: none; /* Retire les puces ou numérotations */
+}
+
+/* ================================ */
+/* Citations                        */
+/* ================================ */
+/* Supprime les guillemets automatiques des citations */
+blockquote,
+q {
+  quotes: none;
+}
+
+/* Empêche les pseudo-éléments de guillemets */
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: "";
+}
+
+/* ================================ */
+/* Tables                           */
+/* ================================ */
+/* Supprime les espacements entre les cellules des tableaux */
+table {
+  border-collapse: collapse; /* Fusionne les bordures */
+  border-spacing: 0; /* Supprime les espaces entre les cellules */
+}
+
+/* ================================ */
+/* Médias                           */
+/* ================================ */
+/* Adapte les images et vidéos au conteneur parent */
+img,
+video {
+  max-width: 100%; /* Limite la largeur à celle du conteneur */
+  height: 100%; /* Conserve les proportions des médias */
+}
+
+/* =============================================================================
+    Projet      :   Fisheye
+    Fichier     :   _variables.scss
+    Auteur      :   Trackozor
+    Date        :   01/01/2025
+    Version     :   1.0.0
+    Description :   Contient les variables globales utilisées dans le projet.
+                    Couvre les couleurs, typographies, tailles et espacements.
+============================================================================= */
+:root {
+  /* ================================ */
+  /* Palette principale               */
+  /* ================================ */
+  --primary-color: #ff6b6b;
+  --secondary-color: #4ecdc4;
+  --text-color: #333;
+  --background-color: #f8f8f8;
+  --font-primary: "Poppins", sans-serif;
+  --font-secondary: "Roboto", sans-serif;
+  /* Couleurs de texte */
+  --text-color-primary: #000; /* Texte principal (noir) */
+  --text-color-secondary: #901c1c; /* Texte secondaire */
+  --text-color-tertiary: #757575; /* Texte peu important */
+  --text-color-name: #d3573c; /* Texte pour noms ou accents */
+  /* Couleurs d'état */
+  --success-color: #4caf50; /* Succès */
+  --warning-color: #ff9800; /* Avertissement */
+  --error-color: #f44336; /* Erreur */
+  --info-color: #2196f3; /* Information */
+  /* ================================ */
+  /* Typographie                      */
+  /* ================================ */
+  --font-primary: "DM Sans", sans-serif; /* Police principale */
+  --font-secondary: "Arial", sans-serif; /* Police secondaire */
+  /* Tailles des polices */
+  --font-size-xsmall: 0.7rem; /* Texte très petit */
+  --font-size-small: 0.8rem; /* Texte petit */
+  --font-size-base: 1rem; /* Texte de base */
+  --font-size-medium: 1.2rem; /* Texte légèrement plus grand */
+  --font-size-large: 1.6rem; /* Grand texte */
+  --font-size-xlarge: 2rem; /* Très grand texte */
+  --font-size-giant: 2.4rem; /* Texte énorme */
+  /* Poids des polices */
+  --font-weight-light: 300; /* Poids léger */
+  --font-weight-regular: 400; /* Poids normal */
+  --font-weight-medium: 500; /* Poids intermédiaire */
+  --font-weight-bold: 700; /* Poids gras */
+  /* Hauteur de ligne */
+  --line-height-tight: 1.2; /* Compact */
+  --line-height-normal: 1.4; /* Standard */
+  --line-height-loose: 1.6; /* Espacé */
+  /* ================================ */
+  /* Espacements                      */
+  /* ================================ */
+  --spacing-xxsmall: 0.2rem; /* Très petit */
+  --spacing-xsmall: 0.4rem; /* Petit */
+  --spacing-small: 0.8rem; /* Moyen-petit */
+  --spacing-medium: 1.6rem; /* Moyen */
+  --spacing-large: 2.4rem; /* Grand */
+  --spacing-xlarge: 3.2rem; /* Très grand */
+  --spacing-xxlarge: 4rem; /* Énorme */
+  /* ================================ */
+  /* Gaps                             */
+  /* ================================ */
+  --gap-small: 0.8rem; /* Petit espace */
+  --gap-medium: 1.6rem; /* Moyen espace */
+  --gap-large: 2.4rem; /* Grand espace */
+  /* ================================ */
+  /* Tailles                          */
+  /* ================================ */
+  --size-small: 2rem; /* Objets petits */
+  --size-medium: 4rem; /* Objets moyens */
+  --size-large: 6rem; /* Objets grands */
+  --size-xlarge: 8rem; /* Objets très grands */
+  /* ================================ */
+  /* Bordures et ombres               */
+  /* ================================ */
+  --border-radius-small: 0.3rem; /* Coins légèrement arrondis */
+  --border-radius-medium: 0.5rem; /* Coins arrondis */
+  --border-radius-large: 1rem; /* Coins très arrondis */
+  --box-shadow-small: 0 1px 3px rgba(0, 0, 0, 0.1); /* Ombre légère */
+  --box-shadow-medium: 0 3px 6px rgba(0, 0, 0, 0.15); /* Ombre moyenne */
+  --box-shadow-large: 0 10px 20px rgba(0, 0, 0, 0.2); /* Ombre prononcée */
+  /* ================================ */
+  /* Transitions et Animations        */
+  /* ================================ */
+  --transition-fast: 0.2s ease-in-out; /* Animation rapide */
+  --transition-default: 0.3s ease; /* Animation standard */
+  --transition-slow: 0.5s ease-out; /* Animation lente */
+}
+
+/* ====================================================== */
+/*  Nom du fichier    : _mixins.scss                */
+/* Auteur            : Trackozor                        */
+/* Date de création  : 25/09/24                        */
+/*  Dernière modif.   : 08/01/25                        */
+/*  Description       : Fichier regroupant tout les mixins    */
+/* ====================================================== */
+/* Mixins pour gérer les tablettes */
+/* Mixin pour gérer les écrans desktop */
+/* Mixin pour gérer les écrans larges */
+/* ====================================================== */
+/*  Nom du fichier    : _animations.scss                */
+/* Auteur            : Trackozor                        */
+/* Date de création  : 25/09/24                        */
+/*  Dernière modif.   : 08/01/25                        */
+/*  Description       : Fichier regroupant toutes les   */
+/*                        animations réutilisables       */
+/*                                                        */
+/* ====================================================== */
+/* ====================================================== */
+/*  Effets de Fondu (Fade In / Fade Out) */
+/* ====================================================== */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+/*  Classe utilitaire */
+.fade-in {
+  animation: fade-in 0.5s ease-in-out forwards;
+}
+
+.fade-out {
+  animation: fade-out 0.5s ease-in-out forwards;
+}
+
+/* ====================================================== */
+/*  Effets de Zoom et Échelle */
+/* ====================================================== */
+@keyframes scale-up {
+  from {
+    transform: scale(0.8);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+@keyframes scale-down {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(0.8);
+  }
+}
+/*  Classes utilitaires */
+.scale-up {
+  animation: scale-up 0.5s ease-in-out forwards;
+}
+
+.scale-down {
+  animation: scale-down 0.5s ease-in-out forwards;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+.pulse {
+  animation: pulse 2s infinite ease-in-out;
+}
+
+/* ====================================================== */
+/*  Effets de Glissement (Slide In / Slide Out) */
+/* ====================================================== */
+@keyframes slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+@keyframes slide-out {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+/*  Classes utilitaires */
+.slide-in {
+  animation: slide-in 0.5s ease-in-out forwards;
+}
+
+.slide-out {
+  animation: slide-out 0.5s ease-in-out forwards;
+}
+
+/* ====================================================== */
+/*  Effets de Rotation */
+/* ====================================================== */
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes rotate-reverse {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+/*  Classes utilitaires */
+.rotate {
+  animation: rotate 1s linear infinite;
+}
+
+.rotate-reverse {
+  animation: rotate-reverse 1s linear infinite;
+}
+
+/* ====================================================== */
+/*  Effets pour la Lightbox */
+/* ====================================================== */
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateX(20px) scale(0.95);
+  }
+  60% {
+    opacity: 1;
+    transform: translateX(-3px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+@keyframes fade-out-scale {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+/*  Classes utilitaires */
+.fade-in-up {
+  animation: fade-in-up 0.5s ease-in-out forwards;
+}
+
+.fade-out-scale {
+  animation: fade-out-scale 0.5s ease-in-out forwards;
+}
+
+/* ====================================================== */
+/*  Animations de navigation Lightbox (Gauche/Droite) */
+/* ====================================================== */
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+@keyframes slide-out-left {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+@keyframes slide-in-left {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+@keyframes slide-out-right {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+/*  Classes spécifiques pour la Lightbox */
+.lightbox-enter-right {
+  animation: slide-in-right 0.5s ease-in-out forwards;
+}
+
+.lightbox-exit-left {
+  animation: slide-out-left 0.5s ease-in-out forwards;
+}
+
+.lightbox-enter-left {
+  animation: slide-in-left 0.5s ease-in-out forwards;
+}
+
+.lightbox-exit-right {
+  animation: slide-out-right 0.5s ease-in-out forwards;
+}
+
+/* ====================================================== */
+/*  Effet de rebond (Bounce) pour les transitions */
+/* ====================================================== */
+@keyframes bounce-in {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+/*  Classe utilitaire */
+.bounce-in {
+  animation: bounce-in 0.6s ease-out forwards;
+}
+
+/* ====================================================== */
+/*  Animation Like (HeartBeat) */
+/* ====================================================== */
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+/*  Classe utilitaire */
+.heartbeat {
+  animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+/* ====================================================== */
+/*  Animation de Chargement (Loader) */
+/* ====================================================== */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+/*  Classe utilitaire */
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+/* =============================================================================
+    Projet      :   Fisheye
+    Fichier     :   _utilities.scss
+    Auteur      :   Trackozor
+    Date        :   01/01/2025
+    Version     :   1.0.0
+    Description :   Classes utilitaires pour des fonctionnalités spécifiques,
+                    notamment pour l'accessibilité et des comportements génériques.
+============================================================================= */
+/* =========================================================================== */
+/*                          Classes pour l'accessibilité                       */
+/* =========================================================================== */
+/* Masque visuellement un élément tout en le gardant accessible aux lecteurs d'écran */
+.sr-only {
+  position: absolute; /* Retire l'élément du flux visuel */
+  width: 1px; /* Taille réduite à 1 pixel */
+  height: 1px; /* Taille réduite à 1 pixel */
+  padding: 0; /* Pas de padding */
+  margin: -1px; /* Place l'élément hors écran */
+  overflow: hidden; /* Masque le contenu débordant */
+  clip: rect(0, 0, 0, 0); /* Masque visuellement l'élément */
+  border: 0; /* Supprime les bordures */
+}
+
+/* Affiche un élément précédemment masqué pour les lecteurs d'écran */
+.sr-only-focusable:focus {
+  position: static; /* Rétablit la position par défaut */
+  width: auto; /* Rétablit la largeur */
+  height: auto; /* Rétablit la hauteur */
+  padding: var(--padding-small, 0.5rem); /* Ajoute du padding pour plus de clarté */
+  margin: 0; /* Supprime les marges négatives */
+  overflow: visible; /* Rend le contenu visible */
+  clip: auto; /* Rétablit le contenu */
+  border: 2px solid var(--primary-color); /* Ajoute une bordure pour la mise en évidence */
+}
+
+/* Classe pour masquer le scroll du corps de la page */
+.no-scroll {
+  overflow: hidden;
+}
+
+/* =========================================================================== */
+/*                     Classes pour les styles par défaut                      */
+/* =========================================================================== */
+/* Retire les soulignements des liens */
+a {
+  text-decoration: none; /* Supprime la décoration par défaut */
+  color: inherit; /* Hérite de la couleur du texte parent */
+}
+
+.focus-orange {
+  outline: 2rem solid orange !important;
+  background-color: rgba(255, 165, 0, 0.2);
+  transition: background-color 0.2s ease-in-out;
+}
+
+main {
+  background-color: #EDEDED;
+}
+
+/* ====================================================== */
+/*  Nom du fichier    : _header.scss                      */
+/*  Auteur           : Trackozor                          */
+/*  Date de création : 25/09/24                           */
+/*  Dernière modif.  : 08/01/25                           */
+/*  Description      : Styles pour l'en-tête du site      */
+/*                     incluant le logo, le fond et la    */
+/*                     barre de recherche                 */
+/* ====================================================== */
+/* ====================================================== */
+/*  Styles généraux du header */
+/* ====================================================== */
+header {
+  position: relative; /* Permet de positionner les éléments internes avec un z-index */
+  z-index: 1; /* Assure que le header reste en arrière-plan par rapport aux autres éléments */
+  display: flex; /* Utilisation de flexbox pour aligner les enfants */
+  flex-direction: column; /* Dispose les éléments du header en colonne */
+  background-color: #d9d9d9; /* Couleur de fond du header */
+  width: 100%; /* Largeur du header sur toute la page */
+  justify-content: center;
+}
+
+/* ====================================================== */
+/*  Logo du site */
+/* ====================================================== */
+.logo {
+  position: relative; /* Permet un positionnement indépendant du flux normal */
+  z-index: 3; /* Place le logo au-dessus de l’image de fond */
+  width: 25%; /* Définit la largeur du logo à 25% du parent */
+  height: 15%; /* Hauteur proportionnelle, peut être ajustée */
+  object-fit: contain; /* Assure que le logo reste dans son cadre sans déformation */
+  margin-top: 5%; /* Espacement en haut du logo */
+  margin-left: 5%; /* Décalage du logo sur la gauche */
+}
+
+/* ====================================================== */
+/*  Image de fond du header */
+/* ====================================================== */
+.fond {
+  position: absolute; /* Positionnement absolu pour recouvrir le header */
+  z-index: 2; /* Placée en arrière-plan, sous le logo et les textes */
+  width: 100%; /* Largeur ajustée au conteneur */
+  height: auto; /* Hauteur adaptative */
+  overflow: hidden; /* Empêche les débordements visuels */
+  left: 0; /* Positionnée à gauche du parent */
+  top: 0%; /* Alignement en haut du header */
+  font-style: anton;
+}
+
+/* ====================================================== */
+/*  Texte et slogan du header */
+/* ====================================================== */
+.slogan {
+  display: flex;
+  flex-direction: column;
+  margin: 15% 0 4% 0; /* Espacement autour du slogan */
+  text-align: center; /* Centrage du texte */
+  justify-content: center;
+  margin: 5% auto 2% auto;
+  width: 70%;
+}
+
+.slogan p {
+  position: relative; /* Permet un contrôle du positionnement sans sortir du flux */
+  z-index: 3; /* Assure que le texte s'affiche au-dessus de l'image de fond */
+  display: flex; /* Utilisation de flexbox pour une meilleure gestion du contenu */
+  color: #FFD15B; /* Couleur du texte en jaune doré */
+  font-size: 1rem; /* Taille de police standard */
+  font-weight: 500; /* Met en valeur le texte */
+  margin: 2% auto; /* Centrage vertical et horizontal */
+  letter-spacing: -0.2px;
+  font-family: "Anton", sans-serif;
+}
+
+/* ====================================================== */
+/*  Barre de recherche */
+/* ====================================================== */
+.search-bar {
+  position: relative; /* Positionnement dans le flux du document */
+  display: flex; /* Utilisation de flexbox pour aligner l'input et le bouton */
+  flex-direction: row; /* Alignement horizontal des enfants */
+  z-index: 3; /* Priorité d'affichage sur l’image de fond */
+  background-color: white; /* Fond blanc pour bien distinguer la barre */
+  border-radius: 0.5rem; /* Coins arrondis pour un effet esthétique */
+  height: 2%; /* Hauteur réduite pour un design épuré */
+  width: 90%; /* Largeur ajustée au conteneur */
+  margin: 0 auto; /* Centrage horizontal */
+}
+
+.search-bar input {
+  width: 75%; /* Largeur de l’input relative à la barre */
+  padding: 2%; /* Espacement interne pour meilleure lisibilité */
+  border: none; /* Suppression des bordures natives */
+  border-radius: 0.5rem; /* Uniformisation avec la barre de recherche */
+  font-size: 0.9rem; /* Taille de police lisible */
+}
+
+/*  Bouton de recherche */
+.search-bar button {
+  position: relative; /* Permet un positionnement sans casser le flux */
+  left: 8%; /* Décalage vers la droite pour l’alignement */
+  font-size: 1rem; /* Taille du texte du bouton */
+  background-color: white; /* Couleur de fond du bouton */
+  color: black; /* Couleur du texte */
+  filter: invert(1); /* Inversion des couleurs pour un effet visuel */
+  padding: 2%; /* Espacement interne pour meilleur confort d’interaction */
+  margin: 2%; /* Espacement autour du bouton */
+}
+
+.recipe-card {
+  background-color: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out;
+}
+.recipe-card:hover {
+  transform: scale(1.02);
+}
+.recipe-card .recipe-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+.recipe-card .recipe-content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+.recipe-card .recipe-content .recipe-title {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: black;
+}
+.recipe-card .recipe-content .recipe-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #666;
+}
+.recipe-card .recipe-content .recipe-ingredients {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: var(--secondary-color);
+}
+.recipe-card .recipe-content .view-recipe-btn {
+  margin-top: 12px;
+  padding: 8px 12px;
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.recipe-card .recipe-content .view-recipe-btn:hover {
+  background-color: var(--primary-color), 10%;
+}
+
+footer {
+  text-align: center;
+  padding: 2rem;
+  background-color: #EDEDED;
+  color: white;
+  font-size: 1.4rem;
+}
+
+/* ====================================================== */
+/*  Nom du fichier    : _filters.scss                     */
+/*  Auteur           : Trackozor                          */
+/*  Date de création : 06/02/2025                          */
+/*  Dernière modif.  :                                    */
+/*  Description      : Styles pour la section des filtres */
+/*                     incluant les listes déroulantes    */
+/* ====================================================== */
+/* ====================================================== */
+/*  Styles généraux de la section filtres */
+/* ====================================================== */
+#filters {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ====================================================== */
+/*  Styles du conteneur des liste des filtres
+/* ====================================================== */
+#filters .container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: 2% auto;
+}
+
+/* ====================================================== */
+/*  Styles des options dans les filtres */
+/* ====================================================== */
+
+/*# sourceMappingURL=main.css.map */

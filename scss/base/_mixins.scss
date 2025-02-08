@@ -5,7 +5,11 @@
 /*  Dernière modif.   : 08/01/25                        */
 /*  Description       : Fichier regroupant tout les mixins    */
 /* ====================================================== */
-
+@mixin low-mobil {
+  @media (max-width: 320px) {
+    @content;
+  }
+}
 /* Mixins pour gérer les tablettes */
 @mixin tablet {
   @media (min-width: 767px) {
