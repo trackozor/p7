@@ -15,9 +15,8 @@ coverage/
 *.log
 *.cache
 
- SCSS Compilation
-scss/*.css
-scss/*.map
+# SCSS Compilation
+scss
 
 # Git Ignored Files
 *.env
