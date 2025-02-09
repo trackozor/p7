@@ -92,7 +92,7 @@ class TemplateManager {
                 (ing) => `
                 <li class="recipe-card__ingredient">
                     <span class="recipe-card__ingredient-name">${ing.ingredient}</span> 
-                    ${ing.quantity ? `- <span class="recipe-card__ingredient-quantity">${ing.quantity} ${ing.unit || ""}</span>` : ""}
+                    ${ing.quantity ? ` <span class="recipe-card__ingredient-quantity">${ing.quantity} ${ing.unit || ""}</span>` : ""}
                 </li>`
             )
             .join("");

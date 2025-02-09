@@ -647,7 +647,7 @@ a:hover {
 /* =========================================================================== */
 /* Fond général du site */
 main {
-  background-color: var(--background-color, #EDEDED);
+  background-color: var(#8d8b8b);
 }
 
 /* Texte en gras */
@@ -711,6 +711,8 @@ header {
   background-color: #d9d9d9; /* Couleur de fond du header */
   width: 100%; /* Largeur du header sur toute la page */
   justify-content: center;
+  height: 100%;
+  max-height: 500px;
 }
 
 /* ====================================================== */
@@ -826,7 +828,7 @@ header {
   display: flex;
   flex-direction: column;
   height: 100%;
-  width: 90%;
+  width: 80%;
   margin: 5% auto;
 }
 @media (min-width: 767px) {
@@ -922,6 +924,7 @@ header {
  */
 .recipe-card__header {
   margin-bottom: var(--spacing-small);
+  background-color: #fff;
 }
 
 /**
@@ -931,8 +934,9 @@ header {
  */
 .recipe-card__title {
   font-size: clamp(1rem, 2vw, 1.5rem);
-  font-weight: bold;
+  font-weight: 900;
   background-color: #fff;
+  margin: 2%;
 }
 
 /* ============================================= */
@@ -943,6 +947,7 @@ header {
  */
 .recipe-card__details {
   margin-bottom: var(--spacing-small);
+  margin-left: 2%;
 }
 
 /**
@@ -950,11 +955,10 @@ header {
  * - Utilise une police plus petite en majuscules pour structurer.
  */
 .recipe-card__section {
-  font-size: clamp(0.875rem, 2vw, 1rem);
-  font-weight: bold;
+  font-size: 0.8rem;
   text-transform: uppercase;
-  color: var(--text-color-tertiary, #555);
-  margin-bottom: var(--spacing-xsmall);
+  color: #7A7A7A;
+  margin-bottom: 2%;
 }
 
 /**
@@ -962,10 +966,10 @@ header {
  * - Taille flexible avec `clamp()`
  * - Espacement bien défini avec `line-height`
  */
-.recipe-description {
-  font-size: clamp(0.875rem, 2vw, 1rem);
+.recipe-card__description {
+  font-size: 0.9rem;
   color: var(--text-color-tertiary, #666);
-  line-height: 1.5;
+  line-height: 1rem;
 }
 
 /* ============================================= */
@@ -978,35 +982,26 @@ header {
   margin-top: var(--spacing-medium);
 }
 
-/**
- * Grille adaptative des ingrédients.
- * - Affichage en colonnes auto-ajustées.
- */
-.recipe-ingredients {
+.recipe-card__ingredients-container ul {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
-  gap: 0.5rem 1rem;
-  font-size: clamp(0.875rem, 2vw, 1rem);
-  color: var(--text-color-primary, #444);
+  grid-template-columns: repeat(2, 50%);
+  list-style: none;
 }
 
-/**
- * Élément individuel d’ingrédient.
- */
-.recipe-ingredient {
+.recipe-card__ingredients-container li {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xsmall);
+  list-style: none;
 }
 
 /**
  * Nom de l'ingrédient.
  * - En gras et avec une première lettre en majuscule.
  */
-.recipe-ingredient__name {
+.recipe-card__ingredient-name {
   font-weight: bold;
   text-transform: capitalize;
-  color: var(--text-color-primary, #222);
+  color: red;
 }
 
 /**
@@ -1016,6 +1011,7 @@ header {
 .recipe-ingredient__quantity {
   font-size: var(--font-size-small);
   color: var(--text-color-tertiary, #666);
+  font-weight: 500;
 }
 
 /* ============================================= */
@@ -1065,17 +1061,28 @@ footer {
 /*  Styles généraux de la section filtres */
 /* ====================================================== */
 #filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  z-index: 6;
+  background-color: #FFF;
+  margin-top: 10%;
+}
+
+.filter.container {
   display: flex;
-  justify-content: space-between;
+  flex-direction: row;
+  justify-content: space-around;
   align-items: center;
+  margin: 2% auto;
 }
 
 /* ====================================================== */
 /*  Styles du conteneur des liste des filtres
 /* ====================================================== */
-#filters .container {
+.summary {
   display: flex;
-  flex-direction: row;
+  width: 5%;
+  flex-direction: row-reverse;
   justify-content: center;
   align-items: center;
   margin: 2% auto;
