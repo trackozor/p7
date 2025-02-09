@@ -33,30 +33,49 @@ class TemplateManager {
      * @returns {HTMLElement} - Élément `article` contenant la carte de recette.
      */
     generateRecipeCard(recipe) {
-        const { id, image, name, time, description, ingredients } = recipe;
+    const { id, image, name, time, description, ingredients } = recipe;
 
-        const card = document.createElement("article");
-        card.classList.add("recipe-card", `view-${this.viewMode}`); // Ajout de la classe pour le mode d'affichage
-        card.setAttribute("data-id", id);
+    // Création de l'élément article
+    const card = document.createElement("article");
+    card.classList.add("recipe-card", `view-${this.viewMode}`);
+    card.setAttribute("data-id", id);
 
-        card.innerHTML = `
-            <div class="recipe-card__image">
-                <img src="../assets/images/${image}" alt="${name}">
-                <span class="recipe-card__time">${time}min</span>
-            </div>
-            <div class="recipe-card__content">
+    // Construction du contenu HTML
+    card.innerHTML = `
+        <!-- Image de la recette -->
+        <figure class="recipe-card__image">
+            <img src="../assets/images/${image}" alt="${name}" class="recipe-card__img" loading="lazy">
+            <figcaption class="recipe-card__time">${time} min</figcaption>
+        </figure>
+        
+        <!-- Contenu textuel de la carte -->
+        <div class="recipe-card__content">
+            
+            <!-- Titre de la recette -->
+            <header class="recipe-card__header">
                 <h3 class="recipe-card__title">${name}</h3>
+            </header>
+
+            <!-- Description de la recette -->
+            <section class="recipe-card__details">
                 <h4 class="recipe-card__section">Recette</h4>
                 <p class="recipe-card__description">${description}</p>
+            </section>
+
+            <!-- Liste des ingrédients -->
+            <section class="recipe-card__ingredients-container">
                 <h4 class="recipe-card__section">Ingrédients</h4>
                 <ul class="recipe-card__ingredients">
                     ${this.generateIngredientsList(ingredients)}
                 </ul>
-            </div>
-        `;
+            </section>
+        </div>
+    `;
 
-        return card;
-    }
+    return card;
+}
+
+    
 
     /* ================================================================================ 
     GÉNÉRATION DE LA LISTE DES INGRÉDIENTS

@@ -1,0 +1,274 @@
+{
+    "ingredients": [
+        {
+            "id": 1,
+            "name": "carotte"
+        },
+        {
+            "id": 2,
+            "name": "citron vert"
+        },
+        {
+            "id": 3,
+            "name": "concombre"
+        },
+        {
+            "id": 4,
+            "name": "crème de coco"
+        },
+        {
+            "id": 5,
+            "name": "glaçons"
+        },
+        {
+            "id": 6,
+            "name": "jus de citron"
+        },
+        {
+            "id": 7,
+            "name": "lait de coco"
+        },
+        {
+            "id": 8,
+            "name": "sucre"
+        },
+        {
+            "id": 9,
+            "name": "thon rouge (ou blanc)"
+        },
+        {
+            "id": 10,
+            "name": "tomate"
+        },
+        {
+            "id": 11,
+            "name": "oeuf"
+        },
+        {
+            "id": 12,
+            "name": "vinaigre balsamique"
+        },
+        {
+            "id": 13,
+            "name": "huile d'olive"
+        },
+        {
+            "id": 14,
+            "name": "basilic"
+        },
+        {
+            "id": 15,
+            "name": "fromage de chèvre"
+        },
+        {
+            "id": 16,
+            "name": "pâte feuilletée"
+        },
+        {
+            "id": 17,
+            "name": "pommes de terre"
+        },
+        {
+            "id": 18,
+            "name": "jambon fumé"
+        },
+        {
+            "id": 19,
+            "name": "oignon"
+        },
+        {
+            "id": 20,
+            "name": "reblochon"
+        }
+    ],
+    "ustensils": [
+        {
+            "id": 1,
+            "name": "cuillère à soupe"
+        },
+        {
+            "id": 2,
+            "name": "presse citron"
+        },
+        {
+            "id": 3,
+            "name": "verres"
+        },
+        {
+            "id": 4,
+            "name": "couteau"
+        },
+        {
+            "id": 5,
+            "name": "saladier"
+        },
+        {
+            "id": 6,
+            "name": "passoire"
+        },
+        {
+            "id": 7,
+            "name": "moule à tarte"
+        },
+        {
+            "id": 8,
+            "name": "fourchette"
+        },
+        {
+            "id": 9,
+            "name": "cuillère en bois"
+        }
+    ],
+    "appliances": [
+        {
+            "id": 1,
+            "name": "blender"
+        },
+        {
+            "id": 2,
+            "name": "saladier"
+        },
+        {
+            "id": 3,
+            "name": "cocotte"
+        },
+        {
+            "id": 4,
+            "name": "four"
+        },
+        {
+            "id": 5,
+            "name": "casserole"
+        },
+        {
+            "id": 6,
+            "name": "mixer"
+        },
+        {
+            "id": 7,
+            "name": "poêle"
+        }
+    ],
+    "recipes": [
+        {
+            "id": 1,
+            "image": "Recette01.jpg",
+            "name": "Limonade de Coco",
+            "servings": 1,
+            "ingredients": [
+                {
+                    "id": 7,
+                    "quantity": 400,
+                    "unit": "ml"
+                },
+                {
+                    "id": 6,
+                    "quantity": 2,
+                    "unit": null
+                },
+                {
+                    "id": 4,
+                    "quantity": 2,
+                    "unit": "cuillères à soupe"
+                },
+                {
+                    "id": 8,
+                    "quantity": 30,
+                    "unit": "grammes"
+                },
+                {
+                    "id": 5,
+                    "quantity": null,
+                    "unit": null
+                }
+            ],
+            "time": 10,
+            "description": "Mettre les glaçons à votre goût dans le blender, ajouter le lait, la crème de coco, le jus de 2 citrons et le sucre. Mixer jusqu'à avoir la consistance désirée.",
+            "appliance_id": 1,
+            "ustensils": [
+                1,
+                3,
+                2
+            ]
+        },
+        {
+            "id": 2,
+            "image": "Recette02.jpg",
+            "name": "Poisson Cru à la tahitienne",
+            "servings": 2,
+            "ingredients": [
+                {
+                    "id": 9,
+                    "quantity": 200,
+                    "unit": "grammes"
+                },
+                {
+                    "id": 3,
+                    "quantity": 1,
+                    "unit": null
+                },
+                {
+                    "id": 10,
+                    "quantity": 2,
+                    "unit": null
+                },
+                {
+                    "id": 1,
+                    "quantity": 1,
+                    "unit": null
+                },
+                {
+                    "id": 2,
+                    "quantity": 5,
+                    "unit": null
+                },
+                {
+                    "id": 7,
+                    "quantity": 100,
+                    "unit": "ml"
+                }
+            ],
+            "time": 60,
+            "description": "Découper le thon en dés, mettre dans un plat et recouvrir de jus de citron vert. Laisser reposer au réfrigérateur au moins 2 heures. Ajouter les légumes au poisson avec le citron et le lait de coco.",
+            "appliance_id": 2,
+            "ustensils": [
+                2
+            ]
+        },
+        {
+            "id": 3,
+            "image": "Recette03.jpg",
+            "name": "Tartiflette",
+            "servings": 4,
+            "ingredients": [
+                {
+                    "id": 20,
+                    "quantity": 1,
+                    "unit": null
+                },
+                {
+                    "id": 17,
+                    "quantity": 4.5,
+                    "unit": "kg"
+                },
+                {
+                    "id": 18,
+                    "quantity": 2,
+                    "unit": "tranches"
+                },
+                {
+                    "id": 19,
+                    "quantity": 300,
+                    "unit": "grammes"
+                }
+            ],
+            "time": 60,
+            "description": "Faire cuire les pommes de terre dans l'eau bouillante, les couper en rondelles. Émincer les oignons et les faire dorer avec le jambon. Ajouter les pommes de terre et cuire 10 minutes. Ajouter le reblochon et enfourner 25 minutes à 220°C.",
+            "appliance_id": 4,
+            "ustensils": [
+                4,
+                8
+            ]
+        }
+    ]
+}
