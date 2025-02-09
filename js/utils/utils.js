@@ -1,14 +1,14 @@
 /* =============================================================================*/
-/* 🎯 PROJET      : Fisheye */
-/* 📄 FICHIER     : utils.js */
-/* 🖊️ AUTEUR      : Trackozor */
-/* 📆 DATE        : 21/01/2025 */
-/* 🔄 VERSION     : 1.2.0 */
-/* 📝 DESCRIPTION : Fonctions utilitaires globales du projet Fisheye :     */
-/*   - Gestion et vérification des logs.                                    */
-/*   - Manipulation sécurisée des classes CSS.                               */
-/*   - Détection de la page actuelle.                                        */
-/*   - Gestion des erreurs des formulaires.                                  */
+/* PROJET      : les petits plats */
+/* FICHIER     : utils.js */
+/* AUTEUR      : Trackozor */
+/* DATE        : 21/01/2025 */
+/* VERSION     : 1.2.0 */
+/* DESCRIPTION : Fonctions utilitaires globales du projet Fisheye :            */
+/*   - Gestion et vérification des logs.                                       */
+/*   - Manipulation sécurisée des classes CSS.                                 */
+/*   - Détection de la page actuelle.                                          */
+/*   - Gestion des erreurs des formulaires.                                    */
 /* ============================================================================= */
 
 

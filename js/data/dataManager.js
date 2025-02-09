@@ -5,8 +5,8 @@
 /*  DESCRIPTION      : Gère la récupération et la recherche de recettes avec cache.    */
 /* ==================================================================================== */
 
-import { recipe } from "../data/recipe.js"; // 🔥 Import direct des recettes JS
-import { logEvent } from "../utils/utils.js"; // 📜 Gestion des logs
+import { recipe } from "../data/recipe1.js"; // Import direct des recettes JS
+import { logEvent } from "../utils/utils.js"; // Gestion des logs
 
 class DataManager {
     constructor() {
@@ -20,10 +20,10 @@ class DataManager {
      */
     getAllRecipes() {
         try {
-            logEvent("SUCCESS", "📋 Récupération de toutes les recettes réussie.", { total: this.cache.length });
+            logEvent("SUCCESS", "Récupération de toutes les recettes réussie.", { total: this.cache.length });
             return this.cache;
         } catch (error) {
-            logEvent("ERROR", "❌ Impossible de récupérer les recettes.", { error: error.message });
+            logEvent("ERROR", "Impossible de récupérer les recettes.", { error: error.message });
             return [];
         }
     }
@@ -37,11 +37,11 @@ class DataManager {
         try {
             const recipe = this.cache.find(recipe => recipe.id === id) || null;
             recipe
-                ? logEvent("SUCCESS", `🔍 Recette trouvée : ${recipe.name}`, { id })
-                : logEvent("WARNING", "⚠️ Aucune recette trouvée avec cet ID.", { id });
+                ? logEvent("SUCCESS", ` Recette trouvée : ${recipe.name}`, { id })
+                : logEvent("WARNING", " Aucune recette trouvée avec cet ID.", { id });
             return recipe;
         } catch (error) {
-            logEvent("ERROR", `🚨 Erreur lors de la récupération de la recette ID ${id}`, { error: error.message });
+            logEvent("ERROR", ` Erreur lors de la récupération de la recette ID ${id}`, { error: error.message });
             return null;
         }
     }
@@ -62,10 +62,10 @@ class DataManager {
                 this.filterRecipeByKeyword(keyword, recipe)
             );
 
-            logEvent("SUCCESS", `🔍 ${filteredRecipes.length} recettes trouvées pour "${keyword}".`);
+            logEvent("SUCCESS", ` ${filteredRecipes.length} recettes trouvées pour "${keyword}".`);
             return filteredRecipes;
         } catch (error) {
-            logEvent("ERROR", `❌ Erreur lors de la recherche pour '${keyword}'`, { error: error.message });
+            logEvent("ERROR", ` Erreur lors de la recherche pour '${keyword}'`, { error: error.message });
             return [];
         }
     }
@@ -108,7 +108,7 @@ export async function fetchFilterOptions() {
             ustensils: [...ustensilsSet].sort()
         };
     } catch (error) {
-        logEvent("ERROR", "🚨 Erreur lors du chargement des filtres.", { error: error.message });
+        logEvent("ERROR", " Erreur lors du chargement des filtres.", { error: error.message });
         return { ingredients: [], appliances: [], ustensils: [] };
     }
 }

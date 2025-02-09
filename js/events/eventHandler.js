@@ -24,17 +24,17 @@ export async function handleSearch() {
         const query = domSelectors.searchInput.value.trim();
 
         if (query.length < 3) {
-            logEvent("INFO", "🔍 Recherche ignorée : moins de 3 caractères.");
+            logEvent("INFO", "Recherche ignorée : moins de 3 caractères.");
             return;
         }
 
-        logEvent("INFO", `🔍 Recherche en cours : "${query}"`);
+        logEvent("INFO", `Recherche en cours : "${query}"`);
         const results = await searchRecipesLoop(query);
         displayResults(results);
-        logEvent("SUCCESS", `✅ ${results.length} résultats trouvés.`);
+        logEvent("SUCCESS", `${results.length} résultats trouvés.`);
 
     } catch (error) {
-        logEvent("ERROR", "🚨 Erreur lors de la recherche.", { error: error.message });
+        logEvent("ERROR", " Erreur lors de la recherche.", { error: error.message });
     }
 }
 
@@ -51,7 +51,7 @@ export function displayResults(results) {
 
     if (results.length === 0) {
         domSelectors.recipesContainer.innerHTML = `<p class="no-results">Aucune recette trouvée.</p>`;
-        logEvent("WARNING", "⚠️ Aucun résultat pour cette recherche.");
+        logEvent("WARNING", "Aucun résultat pour cette recherche.");
         return;
     }
 
@@ -75,7 +75,7 @@ export async function handleFilterChange(event) {
         const {filterType} = event.target.dataset; // Exemple : "ingredient", "appliance", "ustensil"
         const selectedValue = event.target.value;
 
-        logEvent("INFO", `📂 Filtre modifié : ${filterType} = ${selectedValue}`);
+        logEvent("INFO", `Filtre modifié : ${filterType} = ${selectedValue}`);
 
         const recipes = await getAllRecipes();
         const filteredRecipes = recipes.filter(recipe =>
@@ -83,9 +83,9 @@ export async function handleFilterChange(event) {
         );
 
         displayResults(filteredRecipes);
-        logEvent("SUCCESS", `✅ ${filteredRecipes.length} recettes trouvées après filtrage.`);
+        logEvent("SUCCESS", ` ${filteredRecipes.length} recettes trouvées après filtrage.`);
     } catch (error) {
-        logEvent("ERROR", "🚨 Erreur lors du filtrage.", { error: error.message });
+        logEvent("ERROR", " Erreur lors du filtrage.", { error: error.message });
     }
 }
 
@@ -94,16 +94,16 @@ export async function handleFilterChange(event) {
  */
 export async function populateFilters() {
     try {
-        logEvent("INFO", "🔄 Chargement des options de filtre...");
+        logEvent("INFO", "Chargement des options de filtre...");
         const filters = await fetchFilterOptions();
 
         updateFilterList("ingredient-list", filters.ingredients);
         updateFilterList("ustensil-list", filters.ustensils);
         updateFilterList("appliance-list", filters.appliances);
 
-        logEvent("SUCCESS", "✅ Options de filtre chargées avec succès.");
+        logEvent("SUCCESS", "Options de filtre chargées avec succès.");
     } catch (error) {
-        logEvent("ERROR", "🚨 Erreur lors du chargement des filtres.", { error: error.message });
+        logEvent("ERROR", " Erreur lors du chargement des filtres.", { error: error.message });
     }
 }
 
@@ -119,7 +119,7 @@ export async function populateFilters() {
 function updateFilterList(listId, options) {
     const listElement = document.getElementById(listId);
     if (!listElement) {
-        logEvent("ERROR", `⚠️ Impossible de trouver l'élément ${listId}`);
+        logEvent("ERROR", ` Impossible de trouver l'élément ${listId}`);
         return;
     }
 
@@ -131,13 +131,13 @@ function updateFilterList(listId, options) {
         li.classList.add("filter-option");
         li.setAttribute("tabindex", "0"); // Rend cliquable avec Tab
         li.addEventListener("click", () => {
-            logEvent("INFO", `🟢 Filtre sélectionné : ${option}`);
+            logEvent("INFO", ` Filtre sélectionné : ${option}`);
         });
 
         listElement.appendChild(li);
     });
 
-    logEvent("SUCCESS", `✅ Liste ${listId} mise à jour avec ${options.length} éléments.`);
+    logEvent("SUCCESS", ` Liste ${listId} mise à jour avec ${options.length} éléments.`);
 }
 
 /* ================================================================================ 

@@ -1,67 +1,73 @@
 /* =============================================================================
-    Projet      :   Fisheye
+    Projet      :   Les petits plats
     Fichier     :   _variables.scss
     Auteur      :   Trackozor
     Date        :   01/01/2025
     Version     :   1.0.0
     Description :   Contient les variables globales utilisées dans le projet.
-                    Couvre les couleurs, typographies, tailles et espacements.
+                    Ce fichier regroupe :
+                    - Palette de couleurs (fond, texte, accent)
+                    - Typographie (polices, tailles, poids, interligne)
+                    - Espacements (marges, paddings, gaps)
+                    - Styles divers (bordures, ombres, transitions)
 ============================================================================= */
 
 :root {
   /* ================================ */
-  /* Palette principale               */
+  /*  PALETTE DE COULEURS           */
   /* ================================ */
-  --primary-color: #ff6b6b;
-  --secondary-color: #4ecdc4;
-  --text-color: #333;
-  --background-color: #f8f8f8;
-  --font-primary: 'Poppins', sans-serif;
-  --font-secondary: 'Roboto', sans-serif;
 
+  /*  Couleurs principales */
+  --primary-color: #C6C6C6; /* Gris clair pour les éléments principaux */
+  --background-color: #7A7A7A; /* Gris foncé pour le fond global */
 
+  /*  Couleurs de texte */
+  --text-color-primary: #000000; /* Texte principal (noir) */
+  --text-color-secondary: #FFD15B; /* Jaune pour les accents et titres */
 
-  /* Couleurs de texte */
-  --text-color-primary: #000; /* Texte principal (noir) */
-  --text-color-secondary: #901c1c; /* Texte secondaire */
-  --text-color-tertiary: #757575; /* Texte peu important */
-  --text-color-name: #d3573c; /* Texte pour noms ou accents */
+  /*  Couleurs d'état (feedback utilisateur) */
+  --success-color: #4CAF50; /* Vert (succès, validation) */
+  --warning-color: #FF9800; /* Orange (avertissement, attention) */
+  --error-color: #F44336; /* Rouge (erreur, problème) */
+  --info-color: #2196F3; /* Bleu (information, conseils) */
 
-  /* Couleurs d'état */
-  --success-color: #4caf50; /* Succès */
-  --warning-color: #ff9800; /* Avertissement */
-  --error-color: #f44336; /* Erreur */
-  --info-color: #2196f3; /* Information */
+  /*  Couleurs pour les cartes et éléments interactifs */
+  --card-background: #FFFFFF; /* Fond des cartes (blanc) */
+  --card-shadow: rgba(0, 0, 0, 0.1); /* Ombre légère des cartes */
 
   /* ================================ */
-  /* Typographie                      */
+  /* 🖋 TYPOGRAPHIE                   */
   /* ================================ */
-  --font-primary: "DM Sans", sans-serif; /* Police principale */
+
+  /*  Polices principales */
+  --font-primary: "Anton", sans-serif; /* Police principale */
   --font-secondary: "Arial", sans-serif; /* Police secondaire */
 
-  /* Tailles des polices */
-  --font-size-xsmall: 0.7rem; /* Texte très petit */
-  --font-size-small: 0.8rem; /* Texte petit */
-  --font-size-base: 1rem; /* Texte de base */
-  --font-size-medium: 1.2rem; /* Texte légèrement plus grand */
-  --font-size-large: 1.6rem; /* Grand texte */
-  --font-size-xlarge: 2rem; /* Très grand texte */
-  --font-size-giant: 2.4rem; /* Texte énorme */
+  /*  Tailles de police */
+  --font-size-xsmall: 0.7rem; /* Très petit */
+  --font-size-small: 0.8rem; /* Petit */
+  --font-size-base: 1rem; /* Texte standard */
+  --font-size-medium: 1.2rem; /* Moyenne */
+  --font-size-large: 1.6rem; /* Grande */
+  --font-size-xlarge: 2rem; /* Très grande */
+  --font-size-giant: 2.4rem; /* Énorme */
 
-  /* Poids des polices */
-  --font-weight-light: 300; /* Poids léger */
-  --font-weight-regular: 400; /* Poids normal */
-  --font-weight-medium: 500; /* Poids intermédiaire */
-  --font-weight-bold: 700; /* Poids gras */
+  /*  Poids des polices */
+  --font-weight-light: 300; /* Fin */
+  --font-weight-regular: 400; /* Normal */
+  --font-weight-medium: 500; /* Moyen */
+  --font-weight-bold: 700; /* Gras */
 
-  /* Hauteur de ligne */
+  /*  Hauteur de ligne */
   --line-height-tight: 1.2; /* Compact */
   --line-height-normal: 1.4; /* Standard */
   --line-height-loose: 1.6; /* Espacé */
 
   /* ================================ */
-  /* Espacements                      */
+  /*  ESPACEMENTS & GAPS            */
   /* ================================ */
+
+  /* Marges et Paddings */
   --spacing-xxsmall: 0.2rem; /* Très petit */
   --spacing-xsmall: 0.4rem; /* Petit */
   --spacing-small: 0.8rem; /* Moyen-petit */
@@ -70,35 +76,38 @@
   --spacing-xlarge: 3.2rem; /* Très grand */
   --spacing-xxlarge: 4rem; /* Énorme */
 
-  /* ================================ */
-  /* Gaps                             */
-  /* ================================ */
+  /* Gaps entre éléments */
   --gap-small: 0.8rem; /* Petit espace */
   --gap-medium: 1.6rem; /* Moyen espace */
   --gap-large: 2.4rem; /* Grand espace */
 
   /* ================================ */
-  /* Tailles                          */
+  /*  DIMENSIONS & TAILLES          */
   /* ================================ */
-  --size-small: 2rem; /* Objets petits */
-  --size-medium: 4rem; /* Objets moyens */
-  --size-large: 6rem; /* Objets grands */
-  --size-xlarge: 8rem; /* Objets très grands */
+
+  --size-small: 2rem; /* Petits éléments */
+  --size-medium: 4rem; /* Éléments moyens */
+  --size-large: 6rem; /* Grands éléments */
+  --size-xlarge: 8rem; /* Très grands éléments */
 
   /* ================================ */
-  /* Bordures et ombres               */
+  /* BORDURES & OMBRES             */
   /* ================================ */
+
+  /*  Bordures */
   --border-radius-small: 0.3rem; /* Coins légèrement arrondis */
   --border-radius-medium: 0.5rem; /* Coins arrondis */
   --border-radius-large: 1rem; /* Coins très arrondis */
 
+  /*  Ombres */
   --box-shadow-small: 0 1px 3px rgba(0, 0, 0, 0.1); /* Ombre légère */
   --box-shadow-medium: 0 3px 6px rgba(0, 0, 0, 0.15); /* Ombre moyenne */
   --box-shadow-large: 0 10px 20px rgba(0, 0, 0, 0.2); /* Ombre prononcée */
 
   /* ================================ */
-  /* Transitions et Animations        */
+  /* TRANSITIONS & ANIMATIONS      */
   /* ================================ */
+
   --transition-fast: 0.2s ease-in-out; /* Animation rapide */
   --transition-default: 0.3s ease; /* Animation standard */
   --transition-slow: 0.5s ease-out; /* Animation lente */

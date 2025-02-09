@@ -6,10 +6,10 @@
 /*  DERNIÈRE MODIF.  : 09/02/2025                                                      */
 /*  DESCRIPTION      : Gère l'affichage des recettes et optimise la gestion du DOM.    */
 /* ==================================================================================== */
-/*  🔹 AMÉLIORATIONS :                                                                */
-/*    ✅ Mise en cache des recettes déjà chargées                                     */
-/*    ✅ Ajout d'un mode "Grille / Liste" pour l'affichage                           */
-/*    ✅ Animation de chargement                                                     */
+/*  AMÉLIORATIONS :                                                                */
+/*    Mise en cache des recettes déjà chargées                                     */
+/*    Ajout d'un mode "Grille / Liste" pour l'affichage                           */
+/*    Animation de chargement                                                     */
 /* ==================================================================================== */
 
 import { dataManager } from "./dataManager.js";

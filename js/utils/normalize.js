@@ -8,7 +8,7 @@
 /*                     afin d'optimiser la recherche et éviter les erreurs liées aux   */
 /*                     accents, majuscules et espaces inutiles.                        */
 /* ==================================================================================== */
-/* 🔹 FONCTIONNALITÉS :                                                                */
+/*  FONCTIONNALITÉS :                                                                */
 /*    Suppression des accents (é -> e, à -> a, etc.)                               */
 /*    Conversion en minuscules pour une recherche insensible à la casse           */
 /*    Suppression des espaces inutiles                                            */

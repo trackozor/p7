@@ -7,7 +7,7 @@
 /*  DESCRIPTION      : Gestion dynamique des filtres pour les recettes.                */
 /*                     Gère les combobox et la barre de recherche.                     */
 /* ==================================================================================== */
-/*  🔹 FONCTIONNALITÉS :                                                               */
+/*  FONCTIONNALITÉS :                                                               */
 /*    Remplit dynamiquement les filtres (ingrédients, ustensiles, appareils).      */
 /*    Filtrage en temps réel via la barre de recherche.                           */
 /*    Applique les filtres sélectionnés pour afficher uniquement les recettes.    */
@@ -63,7 +63,7 @@ class FilterManager {
     populateCombobox(selector, dataSet) {
         const combobox = document.querySelector(selector);
         if (!combobox) {
-            console.error(`❌ Combobox ${selector} introuvable.`);
+            console.error(` Combobox ${selector} introuvable.`);
             return;
         }
 

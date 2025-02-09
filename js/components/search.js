@@ -7,7 +7,7 @@ import { normalizeText } from "../utils/normalize.js";
  */
 export async function searchRecipesLoop(query) {
     try {
-        logEvent("INFO", `🔎 Recherche (Loop) pour "${query}"`);
+        logEvent("INFO", ` Recherche (Loop) pour "${query}"`);
         const normalizedQuery = normalizeText(query);
         const recipes = await getAllRecipes();
         const results = [];
@@ -24,10 +24,10 @@ export async function searchRecipesLoop(query) {
             }
         }
 
-        logEvent("SUCCESS", `✅ ${results.length} résultats trouvés.`);
+        logEvent("SUCCESS", ` ${results.length} résultats trouvés.`);
         return results;
     } catch (error) {
-        logEvent("ERROR", "❌ Erreur lors de la recherche (Loop)", { error: error.message });
+        logEvent("ERROR", "Erreur lors de la recherche (Loop)", { error: error.message });
         return [];
     }
 }
@@ -37,7 +37,7 @@ export async function searchRecipesLoop(query) {
  */
 export async function searchRecipesFunctional(query) {
     try {
-        logEvent("INFO", `🔎 Recherche (Functional) pour "${query}"`);
+        logEvent("INFO", `Recherche (Functional) pour "${query}"`);
         const normalizedQuery = normalizeText(query);
         const recipes = await getAllRecipes();
 
@@ -50,10 +50,10 @@ export async function searchRecipesFunctional(query) {
                 normalizeText(recipe.description).includes(normalizedQuery)
         );
 
-        logEvent("SUCCESS", `✅ ${results.length} résultats trouvés.`);
+        logEvent("SUCCESS", `${results.length} résultats trouvés.`);
         return results;
     } catch (error) {
-        logEvent("ERROR", "❌ Erreur lors de la recherche (Functional)", { error: error.message });
+        logEvent("ERROR", "Erreur lors de la recherche (Functional)", { error: error.message });
         return [];
     }
 }
