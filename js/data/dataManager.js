@@ -1,60 +1,27 @@
 /* ==================================================================================== */
 /*  FICHIER          : dataManager.js                                                   */
 /*  AUTEUR           : Trackozor                                                        */
-/*  VERSION          : 1.2                                                              */
-/*  DATE DE CRÉATION : 08/02/2025                                                       */
-/*  DERNIÈRE MODIF.  : 09/02/2025                                                       */
-/*  DESCRIPTION      : Gère le chargement, la mise en cache et la recherche des recettes */
-/*                     en utilisant un système de logs avancé et une gestion robuste des */
-/*                     erreurs.                                                         */
+/*  VERSION          : 1.3                                                              */
+/*  DESCRIPTION      : Gère la récupération et la recherche de recettes avec cache.    */
 /* ==================================================================================== */
 
-import { logEvent } from "../utils/utils.js";
+import { recipe } from "../data/recipe.js"; // 🔥 Import direct des recettes JS
+import { logEvent } from "../utils/utils.js"; // 📜 Gestion des logs
 
 class DataManager {
-    /**
-     * Initialise la gestion des données avec une mise en cache.
-     */
     constructor() {
-        /** @type {Array<Object>|null} Stocke les recettes après chargement */
-        this.cache = null;
+        /** @type {Array<Object>} Cache interne des recettes */
+        this.cache = recipe;
     }
 
     /**
-     * Charge les recettes depuis le fichier JSON et les stocke en cache.
-     * @async
-     * @returns {Promise<Array<Object>>} Un tableau d'objets contenant toutes les recettes.
-     * @throws {Error} En cas d'échec du chargement des données.
+     * Retourne toutes les recettes stockées.
+     * @returns {Array<Object>} Liste des recettes.
      */
-    async loadRecipes() {
-        if (!this.cache) {
-            try {
-                logEvent("INFO", "🔄 Chargement des recettes depuis le fichier JSON...");
-
-                const response = await fetch("../data/recipes.json");
-                if (!response.ok) throw new Error(`❌ Erreur HTTP : ${response.status}`);
-
-                this.cache = await response.json();
-                logEvent("SUCCESS", "✅ Données chargées et stockées en cache.", { total: this.cache.length });
-
-            } catch (error) {
-                logEvent("ERROR", "🚨 Échec du chargement des recettes.", { error: error.message });
-                throw error;
-            }
-        }
-        return this.cache;
-    }
-
-    /**
-     * Récupère toutes les recettes disponibles.
-     * @async
-     * @returns {Promise<Array<Object>>} Une liste complète des recettes.
-     */
-    async getAllRecipes() {
+    getAllRecipes() {
         try {
-            const recipes = await this.loadRecipes();
-            logEvent("SUCCESS", "📋 Récupération de toutes les recettes réussie.", { total: recipes.length });
-            return recipes;
+            logEvent("SUCCESS", "📋 Récupération de toutes les recettes réussie.", { total: this.cache.length });
+            return this.cache;
         } catch (error) {
             logEvent("ERROR", "❌ Impossible de récupérer les recettes.", { error: error.message });
             return [];
@@ -62,23 +29,17 @@ class DataManager {
     }
 
     /**
-     * Recherche une recette par son identifiant.
-     * @async
-     * @param {number} id - Identifiant unique de la recette.
-     * @returns {Promise<Object|null>} La recette trouvée ou `null` si non trouvée.
+     * Recherche une recette par son identifiant unique.
+     * @param {number} id - Identifiant de la recette.
+     * @returns {Object|null} La recette trouvée ou `null` si inexistante.
      */
-    async getRecipeById(id) {
+    getRecipeById(id) {
         try {
-            const recipes = await this.loadRecipes();
-            const recipe = recipes.find(recipe => recipe.id === id) || null;
-
-            if (recipe) {
-                logEvent("SUCCESS", `🔍 Recette trouvée : ${recipe.name}`, { id });
-            } else {
-                logEvent("WARNING", "⚠️ Aucune recette trouvée avec cet ID.", { id });
-            }
+            const recipe = this.cache.find(recipe => recipe.id === id) || null;
+            recipe
+                ? logEvent("SUCCESS", `🔍 Recette trouvée : ${recipe.name}`, { id })
+                : logEvent("WARNING", "⚠️ Aucune recette trouvée avec cet ID.", { id });
             return recipe;
-
         } catch (error) {
             logEvent("ERROR", `🚨 Erreur lors de la récupération de la recette ID ${id}`, { error: error.message });
             return null;
@@ -87,34 +48,33 @@ class DataManager {
 
     /**
      * Recherche des recettes contenant un mot-clé.
-     * @async
      * @param {string} keyword - Mot-clé à rechercher.
-     * @returns {Promise<Array<Object>>} Liste des recettes correspondant au mot-clé.
+     * @returns {Array<Object>} Liste des recettes correspondantes.
      */
-    async searchRecipes(keyword) {
+    searchRecipes(keyword) {
         try {
             if (!keyword.trim()) {
                 logEvent("INFO", "🔍 Aucun mot-clé fourni, retour de toutes les recettes.");
                 return this.getAllRecipes();
             }
 
-            const recipes = await this.loadRecipes();
-            const filteredRecipes = recipes.filter(recipe => this.filterRecipeByKeyword(keyword, recipe));
+            const filteredRecipes = this.cache.filter(recipe =>
+                this.filterRecipeByKeyword(keyword, recipe)
+            );
 
-            logEvent("SUCCESS", `🔍 Recherche terminée : ${filteredRecipes.length} recettes trouvées.`, { keyword });
+            logEvent("SUCCESS", `🔍 ${filteredRecipes.length} recettes trouvées pour "${keyword}".`);
             return filteredRecipes;
-
         } catch (error) {
-            logEvent("ERROR", `❌ Erreur lors de la recherche de recettes pour '${keyword}'`, { error: error.message });
+            logEvent("ERROR", `❌ Erreur lors de la recherche pour '${keyword}'`, { error: error.message });
             return [];
         }
     }
 
     /**
-     * Vérifie si une recette contient le mot-clé.
-     * @param {string} keyword - Mot-clé à rechercher.
-     * @param {Object} recipe - Objet représentant une recette.
-     * @returns {boolean} `true` si la recette correspond, sinon `false`.
+     * Vérifie si une recette contient un mot-clé.
+     * @param {string} keyword - Mot-clé.
+     * @param {Object} recipe - Recette à analyser.
+     * @returns {boolean} `true` si correspondance, sinon `false`.
      */
     filterRecipeByKeyword(keyword, recipe) {
         const lowerKeyword = keyword.toLowerCase();
@@ -124,8 +84,36 @@ class DataManager {
         );
     }
 }
+/**
+ * Retourne les ingrédients, appareils et ustensiles uniques pour les filtres.
+ * @returns {Object} { ingredients, appliances, ustensils }
+ */
+export async function fetchFilterOptions() {
+    try {
+        const recipes = await getAllRecipes();
 
-/* Exportation */
+        const ingredientsSet = new Set();
+        const appliancesSet = new Set();
+        const ustensilsSet = new Set();
+
+        recipes.forEach(recipe => {
+            recipe.ingredients.forEach(ing => ingredientsSet.add(ing.ingredient.toLowerCase()));
+            appliancesSet.add(recipe.appliance.toLowerCase());
+            recipe.ustensils.forEach(ust => ustensilsSet.add(ust.toLowerCase()));
+        });
+
+        return {
+            ingredients: [...ingredientsSet].sort(),
+            appliances: [...appliancesSet].sort(),
+            ustensils: [...ustensilsSet].sort()
+        };
+    } catch (error) {
+        logEvent("ERROR", "🚨 Erreur lors du chargement des filtres.", { error: error.message });
+        return { ingredients: [], appliances: [], ustensils: [] };
+    }
+}
+
+/* EXPORTATION */
 export const dataManager = new DataManager();
-export const loadRecipes = () => dataManager.loadRecipes();
 export const getAllRecipes = () => dataManager.getAllRecipes();
+export const searchRecipes = (keyword) => dataManager.searchRecipes(keyword);

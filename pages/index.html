@@ -106,13 +106,28 @@
         </div>
     </section>
 
-    <!-- Liste des recettes -->
     <main id="recipes-container" role="main">
-        <div class="container">
-            <h2 class="visually-hidden">Résultats des recettes</h2>
-            <!-- Les cartes de recettes seront injectées ici via JavaScript -->
-        </div>
-    </main>
+    <div class="container">
+        <h2 class="visually-hidden">Résultats des recettes</h2>
+        
+        <!-- TEMPLATE POUR LES CARTES DE RECETTES -->
+        <template id="recipe-template">
+            <article class="recipe-card">
+                <img class="recipe-img" src="" alt="" loading="lazy">
+                <div class="recipe-content">
+                    <h3 class="recipe-title"></h3>
+                    <p class="recipe-time"><span class="clock-icon">⏱</span> <span class="time-value"></span> min</p>
+                    <p class="recipe-description"></p>
+                    <ul class="recipe-ingredients"></ul>
+                </div>
+            </article>
+        </template>
+
+        <!-- Les cartes de recettes générées seront injectées ici -->
+        <div id="recipes-list"></div>
+    </div>
+</main>
+
 
     <!-- Footer -->
     <footer role="contentinfo">

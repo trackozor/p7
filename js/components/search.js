@@ -1,41 +1,18 @@
-/* ==================================================================================== */
-/*  FICHIER          : search.js                                                       */
-/*  AUTEUR           : Trackozor                                                        */
-/*  VERSION          : 1.2                                                              */
-/*  DATE DE CRÉATION : 09/02/2025                                                       */
-/*  DERNIÈRE MODIF.  : 09/02/2025                                                       */
-/*  DESCRIPTION      : Gère la recherche de recettes par mot-clé avec 2 méthodes :      */
-/*                     - `searchRecipesLoop` (boucle for, approche itérative)           */
-/*                     - `searchRecipesFunctional` (méthode fonctionnelle, `filter`)   */
-/* ==================================================================================== */
-/*  FONCTIONNALITÉS :                                                                */
-/*     Recherche optimisée des recettes par titre, description et ingrédients       */
-/*     Deux approches : itérative et fonctionnelle                                 */
-/*     Gestion robuste des erreurs                                                 */
-/*     Logs détaillés pour le suivi des performances                               */
-/* ==================================================================================== */
-
 import { logEvent } from "../utils/utils.js";
-import { loadRecipes } from "../data/dataManager.js"; // 
-import { normalizeText } from "../utils/normalize.js";  // Normalisation
+import { getAllRecipes } from "../data/dataManager.js"; 
+import { normalizeText } from "../utils/normalize.js"; 
 
-
-/* ================================================================================ 
-  MÉTHODE 1 : RECHERCHE PAR BOUCLE `FOR`
-  Itératif : Parcours les recettes une par une pour trouver des correspondances.
-================================================================================ */
-
+/**
+ * Recherche avec une boucle `for`
+ */
 export async function searchRecipesLoop(query) {
     try {
-        logEvent("INFO", ` Recherche (Loop) en cours pour : "${query}"`);
-
+        logEvent("INFO", `🔎 Recherche (Loop) pour "${query}"`);
         const normalizedQuery = normalizeText(query);
-        const recipes = await loadRecipes(); // Récupère les recettes dynamiquement
+        const recipes = await getAllRecipes();
         const results = [];
 
-        for (let i = 0; i < recipes.length; i++) {
-            const recipe = recipes[i];
-
+        for (let recipe of recipes) {
             if (
                 normalizeText(recipe.name).includes(normalizedQuery) ||
                 recipe.ingredients.some((ingredient) =>
@@ -47,26 +24,22 @@ export async function searchRecipesLoop(query) {
             }
         }
 
-        logEvent("SUCCESS", ` Recherche (Loop) terminée : ${results.length} résultats trouvés.`);
+        logEvent("SUCCESS", `✅ ${results.length} résultats trouvés.`);
         return results;
-
     } catch (error) {
-        logEvent("ERROR", " Erreur lors de la recherche (Loop)", { error: error.message });
+        logEvent("ERROR", "❌ Erreur lors de la recherche (Loop)", { error: error.message });
         return [];
     }
 }
 
-/* ================================================================================ 
-  MÉTHODE 2 : RECHERCHE FONCTIONNELLE (`filter`)
-  Approche plus concise et performante avec `Array.filter()`
-================================================================================ */
-
+/**
+ * Recherche avec `filter()`
+ */
 export async function searchRecipesFunctional(query) {
     try {
-        logEvent("INFO", ` Recherche (Functional) en cours pour : "${query}"`);
-
+        logEvent("INFO", `🔎 Recherche (Functional) pour "${query}"`);
         const normalizedQuery = normalizeText(query);
-        const recipes = await loadRecipes(); // Récupère les recettes dynamiquement
+        const recipes = await getAllRecipes();
 
         const results = recipes.filter(
             (recipe) =>
@@ -77,11 +50,10 @@ export async function searchRecipesFunctional(query) {
                 normalizeText(recipe.description).includes(normalizedQuery)
         );
 
-        logEvent("SUCCESS", `Recherche (Functional) terminée : ${results.length} résultats trouvés.`);
+        logEvent("SUCCESS", `✅ ${results.length} résultats trouvés.`);
         return results;
-
     } catch (error) {
-        logEvent("ERROR", "Erreur lors de la recherche (Functional)", { error: error.message });
+        logEvent("ERROR", "❌ Erreur lors de la recherche (Functional)", { error: error.message });
         return [];
     }
 }

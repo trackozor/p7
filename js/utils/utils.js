@@ -72,7 +72,7 @@ export const logEvent = (type, message, data = {}) => {
   }
 
   const timestamp = new Date().toLocaleTimeString();
-  const prefix = `[Fisheye][${timestamp}]`;
+  const prefix = `[Les-petits-plats][${timestamp}]`;
   const icon =
     CONFIGLOG.LOG_ICONS?.[type] || CONFIGLOG.LOG_ICONS?.default || "🔵";
   const style =

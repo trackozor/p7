@@ -24,7 +24,7 @@ class TemplateManager {
     }
 
     /* ================================================================================ 
-       🔹 GÉNÉRATION D'UNE CARTE DE RECETTE
+    GÉNÉRATION D'UNE CARTE DE RECETTE
     ================================================================================ */
     
     /**
@@ -41,7 +41,7 @@ class TemplateManager {
 
         card.innerHTML = `
             <div class="recipe-card__image">
-                <img src="assets/images/${image}" alt="${name}">
+                <img src="../assets/images/${image}" alt="${name}">
                 <span class="recipe-card__time">${time}min</span>
             </div>
             <div class="recipe-card__content">
@@ -59,7 +59,7 @@ class TemplateManager {
     }
 
     /* ================================================================================ 
-       🔹 GÉNÉRATION DE LA LISTE DES INGRÉDIENTS
+    GÉNÉRATION DE LA LISTE DES INGRÉDIENTS
     ================================================================================ */
 
     /**
@@ -80,7 +80,7 @@ class TemplateManager {
     }
 
     /* ================================================================================ 
-       🔹 AFFICHAGE DES RECETTES DANS LE DOM
+    AFFICHAGE DES RECETTES DANS LE DOM
     ================================================================================ */
 
     /**
@@ -91,7 +91,7 @@ class TemplateManager {
         try {
             const container = document.querySelector(containerSelector);
             if (!container) {
-                console.error(`❌ Conteneur ${containerSelector} introuvable.`);
+                console.error(`Conteneur ${containerSelector} introuvable.`);
                 return;
             }
 
@@ -99,7 +99,7 @@ class TemplateManager {
             
             // Utilisation du cache si possible
             if (!this.cache) {
-                this.cache = await dataManager.getAllRecipes();
+                this.cache = dataManager.getAllRecipes();
             }
 
             // Vérification si aucune recette trouvée
@@ -123,7 +123,7 @@ class TemplateManager {
     }
 
     /* ================================================================================ 
-       🔹 CHANGEMENT DE MODE (GRILLE / LISTE)
+    CHANGEMENT DE MODE (GRILLE / LISTE)
     ================================================================================ */
 
     /**
