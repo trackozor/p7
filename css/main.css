@@ -802,22 +802,25 @@ header {
   margin: 2%; /* Espacement autour du bouton */
 }
 
-/* ==============================================================
+/* ============================================================
     Projet      : Les Petits Plats
-    Fichier     : cards.scss
+    Fichier     : _cards.scss
     Auteur      : Trackozor
     Date        : 10/02/2025
     Version     : 1.0.0
-    Description : Styles pour l'affichage des cartes de recettes 
-================================================================= */
-/* ============================================= */
-/*      I.  Styles de la Carte de Recette         */
-/* ============================================= */
+    Description : 
+        - Styles génériques pour l'affichage des cartes de recettes.
+        - Adaptabilité mobile-first avec support responsive.
+        - Réutilisation possible pour d'autres types de cartes.
+============================================================== */
+/* ============================================================
+    I.  Styles généraux de la carte de recette
+============================================================== */
 /**
- * Conteneur principal de la carte de recette.
- * - Applique un fond blanc et un arrondi aux bords.
- * - Ajoute un effet d'ombre pour donner du relief.
- * - Adapte la largeur en fonction de l’écran.
+ * Conteneur principal de la carte.
+ * - Fond blanc avec arrondis et ombre portée.
+ * - Largeur adaptable selon l'écran.
+ * - Transition douce au survol.
  */
 .recipe-card {
   background: #fff;
@@ -828,6 +831,7 @@ header {
   display: flex;
   flex-direction: column;
   height: 100%;
+  max-height: 100vh;
   width: 80%;
   margin: 5% auto;
 }
@@ -847,46 +851,48 @@ header {
   }
 }
 
-/* ============================================= */
-/*    I.a    Image de la Recette                   */
-/* ============================================= */
+/* ============================================================
+    II.  Section image de la recette
+============================================================== */
 /**
- * Conteneur de l’image principale.
- * - Hauteur fixe avec clamp() pour une bonne adaptation responsive.
- * - Assure que l’image occupe toute la largeur du conteneur.
+ * Conteneur de l’image.
+ * - Hauteur dynamique ajustée avec `clamp()`.
+ * - Assure que l’image prend toute la largeur.
+ * - Permet d’inclure des éléments positionnés en absolu (ex: badge).
  */
 .recipe-card__image {
-  position: relative; /* Permet d’ancrer le badge */
+  position: relative;
   width: 100%;
-  height: 25vh; /* Hauteur adaptative */
+  height: 25vh;
   overflow: hidden;
   border-top-left-radius: var(--border-radius-medium);
   border-top-right-radius: var(--border-radius-medium);
-  display: flex; /* Permet d’aligner les éléments internes */
-  align-items: center; /* Centre l’image verticalement si nécessaire */
+  display: flex;
+  align-items: center;
   justify-content: center;
 }
 
 /**
  * Image de la recette.
- * - Remplit entièrement le conteneur sans déformation.
- * - Utilise object-fit: cover pour un ajustement optimal.
+ * - Remplit tout le conteneur sans déformation.
+ * - Empêche les débordements.
  */
-.recipe-img {
+.recipe-card__img {
   width: 100%;
   height: 100%;
-  object-fit: contain; /* Ajustement parfait sans distorsion */
+  object-fit: cover; /* Coupe l’image au bon format sans distorsion */
   display: block;
 }
 
 /**
- *  Badge du temps de préparation.
- * - Positionné en haut à droite de l’image.
- * - Respecte la maquette et s’adapte à la taille d'écran.
+ * Badge du temps de préparation.
+ * - Position absolue en haut à droite.
+ * - Fond jaune pour visibilité.
+ * - Taille de police responsive.
  */
 .recipe-card__time {
   position: absolute;
-  top: 10px; /* Ajustement précis */
+  top: 10px;
   right: 10px;
   background: var(--text-color-secondary, #FFD15B);
   color: var(--text-color-primary, #000);
@@ -902,13 +908,13 @@ header {
   z-index: 10;
 }
 
-/* ============================================= */
-/*    I.b   Contenu de la Carte                   */
-/* ============================================= */
+/* ============================================================
+    III.  Contenu textuel de la carte
+============================================================== */
 /**
- * Conteneur général du texte (titre, description, ingrédients).
- * - Applique un padding interne pour l'espacement.
- * - Utilise `flex-direction: column` pour un affichage structuré.
+ * Conteneur du texte de la carte.
+ * - Organisation en colonne.
+ * - Espacement homogène entre les sections.
  */
 .recipe-card__content {
   padding: 2%;
@@ -919,8 +925,12 @@ header {
   flex-grow: 1;
 }
 
+/* ------------------------------------------------------------ */
+/*     Titre de la recette                                      */
+/* ------------------------------------------------------------ */
 /**
- * En-tête contenant le titre de la recette.
+ * En-tête contenant le titre.
+ * - Fond blanc pour séparation nette avec l’image.
  */
 .recipe-card__header {
   margin-bottom: var(--spacing-small);
@@ -929,8 +939,8 @@ header {
 
 /**
  * Titre de la recette.
- * - Taille adaptative selon l'écran.
- * - Mise en avant avec `font-weight: bold`.
+ * - Police en gras.
+ * - Espacement adapté.
  */
 .recipe-card__title {
   font-size: clamp(1rem, 2vw, 1.5rem);
@@ -939,11 +949,12 @@ header {
   margin: 2%;
 }
 
-/* ============================================= */
-/*     I.c   Section Recette                      */
-/* ============================================= */
+/* ------------------------------------------------------------ */
+/*     Section "Recette" (description)                          */
+/* ------------------------------------------------------------ */
 /**
- * Section contenant la description de la recette.
+ * Conteneur de la description de la recette.
+ * - Alignement à gauche avec une légère marge.
  */
 .recipe-card__details {
   margin-bottom: var(--spacing-small);
@@ -951,8 +962,9 @@ header {
 }
 
 /**
- * Titre des différentes sections (Recette, Ingrédients).
- * - Utilise une police plus petite en majuscules pour structurer.
+ * Titres des sections (Recette, Ingrédients).
+ * - Taille légèrement réduite.
+ * - Couleur grisée pour un bon contraste.
  */
 .recipe-card__section {
   font-size: 0.8rem;
@@ -962,9 +974,8 @@ header {
 }
 
 /**
- * Description de la recette.
- * - Taille flexible avec `clamp()`
- * - Espacement bien défini avec `line-height`
+ * Texte descriptif de la recette.
+ * - Lecture optimisée avec `line-height`.
  */
 .recipe-card__description {
   font-size: 0.9rem;
@@ -972,73 +983,62 @@ header {
   line-height: 1rem;
 }
 
-/* ============================================= */
-/*     I.d   Liste des Ingrédients                */
-/* ============================================= */
+/* ============================================================
+    IV.  Liste des ingrédients
+============================================================== */
 /**
- * Conteneur des ingrédients.
+ * Conteneur de la liste des ingrédients.
+ * - Marges adaptées pour une séparation nette.
  */
 .recipe-card__ingredients-container {
-  margin-top: var(--spacing-medium);
+  margin: 5% 0;
 }
 
+/**
+ * Liste des ingrédients.
+ * - Affichage en grille avec deux colonnes.
+ * - Suppression des puces.
+ */
 .recipe-card__ingredients-container ul {
   display: grid;
   grid-template-columns: repeat(2, 50%);
   list-style: none;
 }
 
+/**
+ * Élément individuel de la liste.
+ * - Organisation en colonne.
+ * - Espacement entre chaque ingrédient.
+ */
 .recipe-card__ingredients-container li {
   display: flex;
   flex-direction: column;
   list-style: none;
+  margin-bottom: 5%;
 }
 
 /**
- * Nom de l'ingrédient.
- * - En gras et avec une première lettre en majuscule.
+ * Nom de l’ingrédient.
+ * - Texte en gras.
+ * - Première lettre en majuscule.
  */
 .recipe-card__ingredient-name {
-  font-weight: bold;
+  font-weight: 500;
   text-transform: capitalize;
-  color: red;
+  color: black;
+  font-size: 0.9rem;
+  margin-bottom: 2%;
 }
 
 /**
- * Quantité de l'ingrédient.
- * - Plus petit et en gris clair.
+ * Quantité de l’ingrédient.
+ * - Taille de police plus petite.
+ * - Couleur grisée pour différenciation visuelle.
  */
-.recipe-ingredient__quantity {
+.recipe-card__ingredient-quantity {
   font-size: var(--font-size-small);
   color: var(--text-color-tertiary, #666);
-  font-weight: 500;
-}
-
-/* ============================================= */
-/*     I.e   Effet au Survol                      */
-/* ============================================= */
-/**
- * Effet au survol de la carte.
- * - Léger zoom pour donner une sensation d'interaction.
- */
-.recipe-card:hover {
-  transform: scale(1.03);
-  box-shadow: var(--box-shadow-large);
-}
-
-/**
- * Effet de survol sur l’image.
- */
-.recipe-card__image:hover .recipe-img {
-  filter: brightness(90%);
-}
-
-/**
- * Effet de clic sur la carte.
- * - Réduit légèrement l’échelle pour donner un effet "pressé".
- */
-.recipe-card:active {
-  transform: scale(0.98);
+  font-weight: 300;
 }
 
 footer {
@@ -1050,46 +1050,124 @@ footer {
 }
 
 /* ====================================================== */
-/*  Nom du fichier    : _filters.scss                     */
-/*  Auteur           : Trackozor                          */
-/*  Date de création : 06/02/2025                          */
-/*  Dernière modif.  :                                    */
-/*  Description      : Styles pour la section des filtres */
-/*                     incluant les listes déroulantes    */
-/* ====================================================== */
-/* ====================================================== */
-/*  Styles généraux de la section filtres */
+/*  Filtres avancés - Dropdowns et Badges                */
 /* ====================================================== */
 #filters {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  z-index: 6;
-  background-color: #FFF;
-  margin-top: 10%;
-}
-
-.filter.container {
+  width: 100%;
+  background: #F5F5F5;
+  padding: 1rem 0;
   display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  align-items: center;
-  margin: 2% auto;
-}
-
-/* ====================================================== */
-/*  Styles du conteneur des liste des filtres
-/* ====================================================== */
-.summary {
-  display: flex;
-  width: 5%;
-  flex-direction: row-reverse;
   justify-content: center;
   align-items: center;
-  margin: 2% auto;
+  flex-direction: column;
 }
 
-/* ====================================================== */
-/*  Styles des options dans les filtres */
-/* ====================================================== */
+.filter-container {
+  width: 90%;
+  max-width: 900px;
+}
+
+/* ============================== */
+/* 🎛️ 1. Boutons de sélection */
+/* ============================== */
+.filter-dropdowns {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.filter-button {
+  background: #fff;
+  border: 1px solid #D9D9D9;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+.filter-button:hover {
+  background: #EFEFEF;
+}
+
+/* ============================== */
+/* 🏷️ 2. Filtres Actifs (Badges) */
+/* ============================== */
+.filter-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.filter-tag {
+  background: #FFD15B;
+  color: #000;
+  font-size: 0.8rem;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.remove-filter {
+  background: transparent;
+  border: none;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  color: #333;
+}
+
+#benchmark-dashboard {
+  position: fixed;
+  top: 10%;
+  right: 2%;
+  width: 350px;
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  transition: all 0.3s ease-in-out;
+}
+
+#benchmark-dashboard.hidden {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.benchmark-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.benchmark-config {
+  margin-bottom: 10px;
+}
+
+#benchmarkChart {
+  width: 100%;
+  height: 250px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th, td {
+  padding: 5px;
+  text-align: left;
+  border-bottom: 1px solid #444;
+}
 
 /*# sourceMappingURL=main.css.map */

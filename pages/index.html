@@ -80,31 +80,16 @@
         <div class="filter-container">
             <h2 class="sr-only" id="filters-title">Filtrer les recettes</h2>
 
-            <!-- Filtre par ingrédient -->
-            <details class="filter">
-                <summary>Ingrédients</summary>
-                <ul id="ingredient-list" class="filter-options">
-                    <!-- Options injectées dynamiquement en JS -->
-                </ul>
-            </details>
+            <!-- Filtres sous forme de dropdown générés en JS -->
+            <div class="filter-dropdowns"></div>
 
-            <!-- Filtre par ustensile -->
-            <details class="filter">
-                <summary>Ustensiles</summary>
-                <ul id="ustensil-list" class="filter-options">
-                    <!-- Options injectées dynamiquement en JS -->
-                </ul>
-            </details>
-
-            <!-- Filtre par appareil -->
-            <details class="filter">
-                <summary>Appareils</summary>
-                <ul id="appliance-list" class="filter-options">
-                    <!-- Options injectées dynamiquement en JS -->
-                </ul>
-            </details>
+            <!-- Conteneur des filtres sélectionnés -->
+            <div class="filter-tags"></div>
         </div>
     </section>
+
+
+    
 
     <main id="recipes-container" class="recipes-container" role="main">
         <div class="main-container">

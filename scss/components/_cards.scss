@@ -1,21 +1,24 @@
-/* ==============================================================
+/* ============================================================
     Projet      : Les Petits Plats
-    Fichier     : cards.scss
+    Fichier     : _cards.scss
     Auteur      : Trackozor
     Date        : 10/02/2025
     Version     : 1.0.0
-    Description : Styles pour l'affichage des cartes de recettes 
-================================================================= */
+    Description : 
+        - Styles génériques pour l'affichage des cartes de recettes.
+        - Adaptabilité mobile-first avec support responsive.
+        - Réutilisation possible pour d'autres types de cartes.
+============================================================== */
 
-/* ============================================= */
-/*      I.  Styles de la Carte de Recette         */
-/* ============================================= */
+/* ============================================================
+    I.  Styles généraux de la carte de recette
+============================================================== */
 
 /**
- * Conteneur principal de la carte de recette.
- * - Applique un fond blanc et un arrondi aux bords.
- * - Ajoute un effet d'ombre pour donner du relief.
- * - Adapte la largeur en fonction de l’écran.
+ * Conteneur principal de la carte.
+ * - Fond blanc avec arrondis et ombre portée.
+ * - Largeur adaptable selon l'écran.
+ * - Transition douce au survol.
  */
 .recipe-card {
     background: #fff;
@@ -26,9 +29,10 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    max-height: 100vh;
     width: 80%;
-    margin:5% auto;
-    
+    margin: 5% auto;
+
     @include tablet {
         width: 40vw;
     }
@@ -40,47 +44,49 @@
     }
 }
 
-/* ============================================= */
-/*    I.a    Image de la Recette                   */
-/* ============================================= */
+/* ============================================================
+    II.  Section image de la recette
+============================================================== */
 
 /**
- * Conteneur de l’image principale.
- * - Hauteur fixe avec clamp() pour une bonne adaptation responsive.
- * - Assure que l’image occupe toute la largeur du conteneur.
+ * Conteneur de l’image.
+ * - Hauteur dynamique ajustée avec `clamp()`.
+ * - Assure que l’image prend toute la largeur.
+ * - Permet d’inclure des éléments positionnés en absolu (ex: badge).
  */
 .recipe-card__image {
-    position: relative; /* Permet d’ancrer le badge */
+    position: relative;
     width: 100%;
-    height: clamp(8vh, 25vh, 35vh); /* Hauteur adaptative */
+    height: clamp(8vh, 25vh, 35vh);
     overflow: hidden;
     border-top-left-radius: var(--border-radius-medium);
     border-top-right-radius: var(--border-radius-medium);
-    display: flex; /* Permet d’aligner les éléments internes */
-    align-items: center; /* Centre l’image verticalement si nécessaire */
+    display: flex;
+    align-items: center;
     justify-content: center;
 }
 
 /**
  * Image de la recette.
- * - Remplit entièrement le conteneur sans déformation.
- * - Utilise object-fit: cover pour un ajustement optimal.
+ * - Remplit tout le conteneur sans déformation.
+ * - Empêche les débordements.
  */
-.recipe-img {
+.recipe-card__img {
     width: 100%;
     height: 100%;
-    object-fit: contain; /* Ajustement parfait sans distorsion */
+    object-fit: cover; /* Coupe l’image au bon format sans distorsion */
     display: block;
 }
 
 /**
- *  Badge du temps de préparation.
- * - Positionné en haut à droite de l’image.
- * - Respecte la maquette et s’adapte à la taille d'écran.
+ * Badge du temps de préparation.
+ * - Position absolue en haut à droite.
+ * - Fond jaune pour visibilité.
+ * - Taille de police responsive.
  */
 .recipe-card__time {
     position: absolute;
-    top: 10px; /* Ajustement précis */
+    top: 10px;
     right: 10px;
     background: var(--text-color-secondary, #FFD15B);
     color: var(--text-color-primary, #000);
@@ -96,15 +102,14 @@
     z-index: 10;
 }
 
-
-/* ============================================= */
-/*    I.b   Contenu de la Carte                   */
-/* ============================================= */
+/* ============================================================
+    III.  Contenu textuel de la carte
+============================================================== */
 
 /**
- * Conteneur général du texte (titre, description, ingrédients).
- * - Applique un padding interne pour l'espacement.
- * - Utilise `flex-direction: column` pour un affichage structuré.
+ * Conteneur du texte de la carte.
+ * - Organisation en colonne.
+ * - Espacement homogène entre les sections.
  */
 .recipe-card__content {
     padding: 2%;
@@ -115,8 +120,13 @@
     flex-grow: 1;
 }
 
+/* ------------------------------------------------------------ */
+/*     Titre de la recette                                      */
+/* ------------------------------------------------------------ */
+
 /**
- * En-tête contenant le titre de la recette.
+ * En-tête contenant le titre.
+ * - Fond blanc pour séparation nette avec l’image.
  */
 .recipe-card__header {
     margin-bottom: var(--spacing-small);
@@ -125,44 +135,44 @@
 
 /**
  * Titre de la recette.
- * - Taille adaptative selon l'écran.
- * - Mise en avant avec `font-weight: bold`.
+ * - Police en gras.
+ * - Espacement adapté.
  */
-.recipe-card__title  {
+.recipe-card__title {
     font-size: clamp(1rem, 2vw, 1.5rem);
     font-weight: 900;
     background-color: #fff;
-    margin:2%;
-
+    margin: 2%;
 }
 
-/* ============================================= */
-/*     I.c   Section Recette                      */
-/* ============================================= */
+/* ------------------------------------------------------------ */
+/*     Section "Recette" (description)                          */
+/* ------------------------------------------------------------ */
 
 /**
- * Section contenant la description de la recette.
+ * Conteneur de la description de la recette.
+ * - Alignement à gauche avec une légère marge.
  */
 .recipe-card__details {
     margin-bottom: var(--spacing-small);
-    margin-left:2%;
+    margin-left: 2%;
 }
 
 /**
- * Titre des différentes sections (Recette, Ingrédients).
- * - Utilise une police plus petite en majuscules pour structurer.
+ * Titres des sections (Recette, Ingrédients).
+ * - Taille légèrement réduite.
+ * - Couleur grisée pour un bon contraste.
  */
 .recipe-card__section {
     font-size: 0.8rem;
     text-transform: uppercase;
     color: #7A7A7A;
-    margin-bottom:2%;
+    margin-bottom: 2%;
 }
 
 /**
- * Description de la recette.
- * - Taille flexible avec `clamp()`
- * - Espacement bien défini avec `line-height`
+ * Texte descriptif de la recette.
+ * - Lecture optimisée avec `line-height`.
  */
 .recipe-card__description {
     font-size: 0.9rem;
@@ -170,74 +180,62 @@
     line-height: 1rem;
 }
 
-/* ============================================= */
-/*     I.d   Liste des Ingrédients                */
-/* ============================================= */
+/* ============================================================
+    IV.  Liste des ingrédients
+============================================================== */
 
 /**
- * Conteneur des ingrédients.
+ * Conteneur de la liste des ingrédients.
+ * - Marges adaptées pour une séparation nette.
  */
 .recipe-card__ingredients-container {
-    margin-top: var(--spacing-medium);
+    margin: 5% 0;
 }
+
+/**
+ * Liste des ingrédients.
+ * - Affichage en grille avec deux colonnes.
+ * - Suppression des puces.
+ */
 .recipe-card__ingredients-container ul {
     display: grid;
-    grid-template-columns: repeat(2,50%);
+    grid-template-columns: repeat(2, 50%);
     list-style: none;
 }
+
+/**
+ * Élément individuel de la liste.
+ * - Organisation en colonne.
+ * - Espacement entre chaque ingrédient.
+ */
 .recipe-card__ingredients-container li {
     display: flex;
     flex-direction: column;
     list-style: none;
-    
+    margin-bottom: 5%;
 }
 
 /**
- * Nom de l'ingrédient.
- * - En gras et avec une première lettre en majuscule.
+ * Nom de l’ingrédient.
+ * - Texte en gras.
+ * - Première lettre en majuscule.
  */
 .recipe-card__ingredient-name {
-    font-weight: bold;
+    font-weight: 500;
     text-transform: capitalize;
-    color: red;
-
+    color: black;
+    font-size: 0.9rem;
+    margin-bottom: 2%;
 }
 
 /**
- * Quantité de l'ingrédient.
- * - Plus petit et en gris clair.
+ * Quantité de l’ingrédient.
+ * - Taille de police plus petite.
+ * - Couleur grisée pour différenciation visuelle.
  */
-.recipe-ingredient__quantity {
+.recipe-card__ingredient-quantity {
     font-size: var(--font-size-small);
     color: var(--text-color-tertiary, #666);
-    font-weight: 500;
-}
-
-/* ============================================= */
-/*     I.e   Effet au Survol                      */
-/* ============================================= */
-
-/**
- * Effet au survol de la carte.
- * - Léger zoom pour donner une sensation d'interaction.
- */
-.recipe-card:hover {
-    transform: scale(1.03);
-    box-shadow: var(--box-shadow-large);
-}
-
-/**
- * Effet de survol sur l’image.
- */
-.recipe-card__image:hover .recipe-img {
-    filter: brightness(90%);
-}
-
-/**
- * Effet de clic sur la carte.
- * - Réduit légèrement l’échelle pour donner un effet "pressé".
- */
-.recipe-card:active {
-    transform: scale(0.98);
+    font-weight: 300;
 }
 

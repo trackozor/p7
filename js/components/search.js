@@ -57,3 +57,39 @@ export async function searchRecipesFunctional(query) {
         return [];
     }
 }
+document.addEventListener("DOMContentLoaded", () => {
+    const filterContainer = document.querySelector(".filter-tags"); // Zone où les filtres sont affichés
+    const filterButtons = document.querySelectorAll(".filter-button"); // Tous les boutons dropdown
+
+    // Stockage des filtres sélectionnés pour éviter les doublons
+    let selectedFilters = new Set();
+
+    // Événement sur chaque bouton dropdown
+    filterButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            const filterType = button.dataset.filter; // Récupère le type de filtre
+            const selectedValue = prompt(`Ajoutez un ${filterType} :`); // Simule une sélection (remplace par un menu dynamique)
+
+            if (selectedValue && !selectedFilters.has(selectedValue)) {
+                selectedFilters.add(selectedValue);
+                addFilterTag(selectedValue);
+            }
+        });
+    });
+
+    // Fonction pour ajouter un badge de filtre
+    function addFilterTag(value) {
+        const tag = document.createElement("span");
+        tag.classList.add("filter-tag");
+        tag.innerHTML = `${value} <button class="remove-filter">&times;</button>`;
+
+        // Ajoute le badge au conteneur
+        filterContainer.appendChild(tag);
+
+        // Événement pour supprimer le filtre au clic sur le bouton "X"
+        tag.querySelector(".remove-filter").addEventListener("click", () => {
+            tag.remove(); // Supprime le badge du DOM
+            selectedFilters.delete(value); // Supprime le filtre du Set
+        });
+    }
+});
