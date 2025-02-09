@@ -1,10 +1,10 @@
 /* ==================================================================================== */
 /*  FICHIER          : filterManager.js                                                */
 /*  AUTEUR           : Trackozor                                                       */
-/*  VERSION          : 2.0                                                             */
+/*  VERSION          : 2.1                                                             */
 /*  DATE DE CRÉATION : 08/02/2025                                                      */
 /*  DERNIÈRE MODIF.  : 09/02/2025                                                      */
-/*  DESCRIPTION      : Gestion dynamique des filtres + Génération HTML.                */
+/*  DESCRIPTION      : Gestion dynamique des filtres + Génération HTML améliorée.      */
 /* ==================================================================================== */
 
 import { dataManager } from "../data/dataManager.js";
@@ -23,13 +23,13 @@ class FilterManager {
     }
 
     /* ================================================================================ 
-    🔹 Initialisation des filtres (récupère les recettes et génère les éléments HTML)
+    Initialisation des filtres (récupère les recettes et génère les éléments HTML)
     ================================================================================ */
-   async initFilters() {
+    async initFilters() {
         try {
             this.allRecipes = await dataManager.getAllRecipes();
             if (!this.allRecipes.length) {
-              throw new Error("Aucune recette trouvée.");
+                throw new Error("Aucune recette trouvée.");
             }
 
             const ingredientsSet = new Set();
@@ -46,61 +46,99 @@ class FilterManager {
             this.createFilterSection("#filters", "Appareils", "appliances", appliancesSet);
             this.createFilterSection("#filters", "Ustensiles", "utensils", utensilsSet);
 
-            this.setupEventListeners();
-            logEvent("SUCCESS", "Filtres initialisés avec succès.");
+            logEvent("success", " Filtres générés avec succès.");
         } catch (error) {
-            logEvent("ERROR", "Erreur lors de l'initialisation des filtres.", { error: error.message });
+            logEvent("error", " Erreur lors de l'initialisation des filtres.", { error: error.message });
         }
     }
 
     /* ================================================================================ 
-    🔹 Génère dynamiquement les filtres sous forme de listes déroulantes 
+    🔹 Génère dynamiquement les filtres sous forme de dropdown avec recherche et scroll 
     ================================================================================ */
     createFilterSection(parentSelector, title, filterType, dataSet) {
         const parent = document.querySelector(parentSelector);
         if (!parent) {
-          return logEvent("ERROR", `Impossible de trouver le parent ${parentSelector}`);
+            return logEvent("error", ` Impossible de trouver ${parentSelector}`);
         }
 
-        const filterSection = document.createElement("details");
-        filterSection.classList.add("filter");
+        //  Conteneur du filtre
+        const filterContainer = document.createElement("div");
+        filterContainer.classList.add("filter-group");
 
-        filterSection.innerHTML = `
-            <summary>${title} ▼</summary>
-            <input type="text" class="filter-search" placeholder="Rechercher..." data-filter="${filterType}">
-            <ul class="filter-options" id="filter-${filterType}">
-                ${Array.from(dataSet).map(item => `<li data-value="${item}">${item.charAt(0).toUpperCase() + item.slice(1)}</li>`).join("")}
-            </ul>
-        `;
+        //  Bouton principal du filtre
+        const filterButton = document.createElement("button");
+        filterButton.classList.add("filter-button");
+        filterButton.dataset.filter = filterType;
+        filterButton.innerHTML = `${title} <i class="fas fa-chevron-down"></i>`;
 
-        parent.appendChild(filterSection);
+        //  Liste déroulante avec scroll
+        const dropdownContainer = document.createElement("div");
+        dropdownContainer.classList.add("filter-dropdown", "hidden");
+        dropdownContainer.dataset.filter = filterType;
 
-        // Ajout des événements pour filtrer la liste interne
-        filterSection.querySelector(".filter-search").addEventListener("input", (e) => {
-            this.filterList(e.target.value, `#filter-${filterType}`);
+        // Champ de recherche
+        const searchInput = document.createElement("input");
+        searchInput.type = "text";
+        searchInput.classList.add("filter-search");
+        searchInput.placeholder = `Rechercher ${title.toLowerCase()}...`;
+
+        // Liste des options
+        const listContainer = document.createElement("ul");
+        listContainer.classList.add("filter-options");
+        listContainer.style.maxHeight = "250px"; // 🌟 Limite la hauteur pour scroll
+        listContainer.style.overflowY = "auto";
+
+        // Ajout des éléments dans la liste
+        Array.from(dataSet).forEach((item) => {
+            const listItem = document.createElement("li");
+            listItem.dataset.value = item;
+            listItem.textContent = item.charAt(0).toUpperCase() + item.slice(1);
+            listItem.addEventListener("click", () => this.updateMultiFilter(filterType, item));
+            listContainer.appendChild(listItem);
         });
 
-        filterSection.querySelectorAll("li").forEach(item => {
-            item.addEventListener("click", () => this.updateMultiFilter(filterType, item.dataset.value));
-        });
+        //  Ajout des éléments au DOM
+        dropdownContainer.appendChild(searchInput);
+        dropdownContainer.appendChild(listContainer);
+        filterContainer.appendChild(filterButton);
+        filterContainer.appendChild(dropdownContainer);
+        parent.appendChild(filterContainer);
+
+        // Gestion des événements
+        this.setupDropdownEvents(filterButton, dropdownContainer, searchInput, listContainer, filterType);
     }
 
     /* ================================================================================ 
-    🔹 Filtre dynamiquement la liste des options dans les dropdowns
+    Gère les interactions avec les dropdowns 
     ================================================================================ */
-    filterList(query, listSelector) {
-        const items = document.querySelectorAll(`${listSelector} li`);
-        items.forEach(item => {
-            item.style.display = item.innerText.toLowerCase().includes(query.toLowerCase()) ? "block" : "none";
+    setupDropdownEvents(filterButton, dropdownContainer, searchInput, listContainer, filterType) {
+        // 🔹 Toggle ouverture/fermeture du dropdown
+        filterButton.addEventListener("click", () => {
+            dropdownContainer.classList.toggle("hidden");
+        });
+
+        // 🔹 Ferme le dropdown si on clique en dehors
+        document.addEventListener("click", (event) => {
+            if (!filterButton.contains(event.target) && !dropdownContainer.contains(event.target)) {
+                dropdownContainer.classList.add("hidden");
+            }
+        });
+
+        // 🔹 Filtrage en temps réel des options
+        searchInput.addEventListener("input", () => {
+            const query = searchInput.value.toLowerCase();
+            listContainer.querySelectorAll("li").forEach(item => {
+                item.style.display = item.textContent.toLowerCase().includes(query) ? "block" : "none";
+            });
         });
     }
 
     /* ================================================================================ 
-    🔹 Gère la sélection multi-filtre + affichage des tags dynamiques 
+    Gère la sélection multi-filtre + affichage des tags dynamiques 
     ================================================================================ */
     updateMultiFilter(filterType, value) {
         if (!value) {
-          return;
+            return;
         }
 
         if (this.filters[filterType].has(value)) {
@@ -114,7 +152,7 @@ class FilterManager {
     }
 
     /* ================================================================================ 
-    🔹 Met à jour l'affichage des filtres sélectionnés sous forme de badges
+    Met à jour l'affichage des filtres sélectionnés sous forme de badges
     ================================================================================ */
     updateSelectedFilters() {
         const container = document.querySelector(".filter-tags");
@@ -138,7 +176,7 @@ class FilterManager {
     }
 
     /* ================================================================================ 
-    🔹 Applique les filtres pour mettre à jour l'affichage des recettes 
+    Applique les filtres pour mettre à jour l'affichage des recettes 
     ================================================================================ */
     applyFilters() {
         try {
@@ -151,27 +189,15 @@ class FilterManager {
                 );
             }
 
-            if (this.filters.ingredients.size) {
-                filteredRecipes = filteredRecipes.filter(recipe =>
-                    [...this.filters.ingredients].every(filterIng =>
-                        recipe.ingredients.some(ing => ing.ingredient.toLowerCase() === filterIng)
-                    )
-                );
-            }
-
-            if (this.filters.appliances.size) {
-                filteredRecipes = filteredRecipes.filter(recipe =>
-                    this.filters.appliances.has(recipe.appliance.toLowerCase())
-                );
-            }
-
-            if (this.filters.utensils.size) {
-                filteredRecipes = filteredRecipes.filter(recipe =>
-                    [...this.filters.utensils].every(filterUt =>
-                        recipe.ustensils.some(ust => ust.toLowerCase() === filterUt)
-                    )
-                );
-            }
+            ["ingredients", "appliances", "utensils"].forEach(type => {
+                if (this.filters[type].size) {
+                    filteredRecipes = filteredRecipes.filter(recipe =>
+                        [...this.filters[type]].every(filterVal =>
+                            recipe[type]?.some(el => el.toLowerCase() === filterVal)
+                        )
+                    );
+                }
+            });
 
             templateManager.displayAllRecipes("#recipe-container", filteredRecipes);
             logEvent("SUCCESS", `Filtres appliqués : ${filteredRecipes.length} recettes affichées.`);

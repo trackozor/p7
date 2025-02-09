@@ -245,45 +245,42 @@ export function getCurrentPage() {
  * 
  * }
  */
+
 export function getIndexSelectors() {
     return {
-        /** Contient les éléments généraux de la page */
+        /** 🏠 Contient les éléments principaux de la page */
         indexPage: {
             body: document.body,
             header: safeQuerySelector("header"),
             main: safeQuerySelector("main"),
             footer: safeQuerySelector("footer"),
         },
-        /** Contient les éléments liés à l’identité visuelle et branding */
+
+        /** 🎨 Contient les éléments liés au branding */
         branding: {
             logo: safeQuerySelector(".logo"),
             backgroundImage: safeQuerySelector(".fond", true), // Optionnel
         },
-        /** Contient les éléments relatifs à la barre de recherche */
+
+        /** 🔎 Contient les éléments liés à la barre de recherche */
         search: {
             form: safeQuerySelector(".search-bar"),
             input: safeQuerySelector("#search"),
             button: safeQuerySelector("#search-btn"),
         },
-        /** Contient les sélecteurs liés aux filtres dynamiques */
+
+        /** 🎚️ Contient les éléments liés aux filtres dynamiques */
         filters: {
-            section: safeQuerySelector("#filters"),
-            ingredientList: safeQuerySelector("#ingredient-list"),
-            applianceList: safeQuerySelector("#appliance-list"),
-            ustensilList: safeQuerySelector("#ustensil-list"),
+            section: safeQuerySelector("#filters"), // Section principale
+            
         },
-        /** Conteneur où seront affichées les recettes */
+
+        /** 🍽️ Conteneur des recettes */
         recipes: {
-            container: safeQuerySelector("#recipes-container"), // Corrigé
-            list: document.getElementById("recipes-list") || null, // Vérification alternative
-            template: document.getElementById("recipe-template") || null, // Vérification alternative
-            recipeCards: () => safeQuerySelectorAll(".recipe-card"), // Fonction pour récupération dynamique
+            recipeCards: () => safeQuerySelectorAll(".recipe-card"),
         },
     };
 }
-
-
-
 
 /*==============================================*/
 /*    Vérification de la Présence des Éléments  */

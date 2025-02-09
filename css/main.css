@@ -727,6 +727,14 @@ header {
   margin-top: 5%; /* Espacement en haut du logo */
   margin-left: 5%; /* Décalage du logo sur la gauche */
 }
+@media (min-width: 1024px) {
+  .logo {
+    width: 10%;
+    height: 5%;
+    margin-top: 2%;
+    margin-left: 2%;
+  }
+}
 
 /* ====================================================== */
 /*  Image de fond du header */
@@ -739,7 +747,13 @@ header {
   overflow: hidden; /* Empêche les débordements visuels */
   left: 0; /* Positionnée à gauche du parent */
   top: 0%; /* Alignement en haut du header */
-  font-style: anton;
+}
+@media (min-width: 1024px) {
+  .fond {
+    height: 100%;
+    object-fit: cover;
+    min-height: 600px;
+  }
 }
 
 /* ====================================================== */
@@ -754,6 +768,11 @@ header {
   margin: 5% auto 2% auto;
   width: 70%;
 }
+@media (min-width: 1024px) {
+  .slogan {
+    margin: 7% auto 2% auto;
+  }
+}
 
 .slogan p {
   position: relative; /* Permet un contrôle du positionnement sans sortir du flux */
@@ -765,6 +784,17 @@ header {
   margin: 2% auto; /* Centrage vertical et horizontal */
   letter-spacing: -0.2px;
   font-family: "Anton", sans-serif;
+}
+@media (min-width: 767px) {
+  .slogan p {
+    font-size: 1.6rem;
+  }
+}
+@media (min-width: 1024px) {
+  .slogan p {
+    font-size: 2.2rem;
+    margin: 1% auto;
+  }
 }
 
 /* ====================================================== */
@@ -781,25 +811,54 @@ header {
   width: 90%; /* Largeur ajustée au conteneur */
   margin: 0 auto; /* Centrage horizontal */
 }
+@media (min-width: 767px) {
+  .search-bar {
+    width: 70%;
+  }
+}
+@media (min-width: 1024px) {
+  .search-bar {
+    width: 50%;
+  }
+}
 
 .search-bar input {
-  width: 75%; /* Largeur de l’input relative à la barre */
+  width: 100%; /* Largeur de l’input relative à la barre */
   padding: 2%; /* Espacement interne pour meilleure lisibilité */
   border: none; /* Suppression des bordures natives */
   border-radius: 0.5rem; /* Uniformisation avec la barre de recherche */
   font-size: 0.9rem; /* Taille de police lisible */
 }
+@media (min-width: 767px) {
+  .search-bar input {
+    font-size: 1.2rem;
+  }
+}
+@media (min-width: 1024px) {
+  .search-bar input {
+    font-size: 1rem;
+    padding: 1% 2%;
+  }
+}
 
 /*  Bouton de recherche */
 .search-bar button {
   position: relative; /* Permet un positionnement sans casser le flux */
-  left: 8%; /* Décalage vers la droite pour l’alignement */
-  font-size: 1rem; /* Taille du texte du bouton */
-  background-color: white; /* Couleur de fond du bouton */
+  font-size: 1.5rem; /* Taille du texte du bouton */
+  font-weight: 100;
+  background-color: rgb(255, 255, 255); /* Couleur de fond du bouton */
   color: black; /* Couleur du texte */
   filter: invert(1); /* Inversion des couleurs pour un effet visuel */
   padding: 2%; /* Espacement interne pour meilleur confort d’interaction */
   margin: 2%; /* Espacement autour du bouton */
+  border-radius: 0.5rem;
+}
+@media (min-width: 1024px) {
+  .search-bar button {
+    font-size: 1rem;
+    padding: 2%;
+    margin: 1%;
+  }
 }
 
 /* ============================================================
@@ -1053,47 +1112,55 @@ footer {
 /*  Filtres avancés - Dropdowns et Badges                */
 /* ====================================================== */
 #filters {
-  width: 100%;
-  background: #F5F5F5;
-  padding: 1rem 0;
+  width: 90%;
+  background: white;
+  margin: 10% 0;
   display: flex;
-  justify-content: center;
+  flex-direction: row;
   align-items: center;
-  flex-direction: column;
+  justify-content: justify space-between;
+  gap: 10%;
 }
 
 .filter-container {
   width: 90%;
-  max-width: 900px;
+  display: flex;
+  justify-content: space-around;
+  margin: 2% auto;
+  gap: 2%;
+  align-items: center;
 }
 
 /* ============================== */
-/* 🎛️ 1. Boutons de sélection */
+/* 1. Boutons de sélection */
 /* ============================== */
 .filter-dropdowns {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 1rem;
+  margin: 5% auto;
+  align-items: center;
 }
 
 .filter-button {
+  display: flex;
   background: #fff;
   border: 1px solid #D9D9D9;
-  padding: 0.75rem 1.5rem;
+  padding: 8% 4%;
   font-size: 1rem;
   font-weight: 500;
   color: #333;
   border-radius: 0.5rem;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
+  gap: 3%;
 }
 .filter-button:hover {
   background: #EFEFEF;
 }
 
 /* ============================== */
-/* 🏷️ 2. Filtres Actifs (Badges) */
+/* 2. Filtres Actifs (Badges) */
 /* ============================== */
 .filter-tags {
   display: flex;
@@ -1168,6 +1235,67 @@ th, td {
   padding: 5px;
   text-align: left;
   border-bottom: 1px solid #444;
+}
+
+/* ==================================================================================== */
+/*  📌 SCSS : Modale Mot de Passe Admin */
+/* ==================================================================================== */
+#password-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out, visibility 0.3s;
+}
+#password-modal.active {
+  visibility: visible;
+  opacity: 1;
+}
+#password-modal .modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  width: 350px;
+}
+#password-modal .modal-content h2 {
+  font-size: 20px;
+  margin-bottom: 15px;
+}
+#password-modal .modal-content .password-input {
+  width: 90%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+#password-modal .modal-content .modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+#password-modal .modal-content .modal-buttons button {
+  padding: 8px 15px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: bold;
+}
+#password-modal .modal-content .modal-buttons .validate-btn {
+  background-color: #28a745;
+  color: white;
+}
+#password-modal .modal-content .modal-buttons .cancel-btn {
+  background-color: #dc3545;
+  color: white;
 }
 
 /*# sourceMappingURL=main.css.map */

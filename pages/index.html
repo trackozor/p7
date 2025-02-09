@@ -10,14 +10,14 @@
     <meta name="keywords" content="recettes, cuisine, ingrédients, ustensiles, appareils, repas, plats, cuisine maison">
     <meta name="author" content="Les Petits Plats">
     
-    <!-- SEO: Balises Open Graph (Partage sur les réseaux sociaux) -->
+    <!-- SEO: Open Graph (Facebook, LinkedIn) -->
     <meta property="og:title" content="Les Petits Plats - Trouvez la recette parfaite !">
     <meta property="og:description" content="Découvrez plus de 1500 recettes simples et rapides. Filtrez par ingrédients, ustensiles et appareils de cuisine.">
     <meta property="og:image" content="https://www.lespetitsplats.com/assets/images/preview.jpg">
     <meta property="og:url" content="https://www.lespetitsplats.com">
     <meta property="og:type" content="website">
     
-    <!-- SEO: Twitter Cards (Optimisation pour Twitter) -->
+    <!-- SEO: Twitter Cards -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Les Petits Plats - Trouvez la recette parfaite !">
     <meta name="twitter:description" content="Découvrez plus de 1500 recettes simples et rapides. Filtrez par ingrédients, ustensiles et appareils de cuisine.">
@@ -26,22 +26,16 @@
     <!-- Titre de la page -->
     <title>Les Petits Plats - Trouvez la recette parfaite !</title>
 
-    <!-- Amélioration de la performance: Préchargement des ressources critiques -->
+    <!-- Polices Google Fonts -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" as="style">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <!-- Polices optimisées -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" media="print" onload="this.media='all'">
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="assets/icons/favicon.png">
     <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
     
-
-    <!-- Feuille de style principale -->
+    <!-- Feuilles de styles -->
     <link rel="stylesheet" href="../css/main.css">
-    <!-- FontAwesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
 </head>
@@ -70,7 +64,6 @@
                 <button id="search-btn" type="submit" aria-label="Lancer la recherche">
                     <i class="fas fa-search"></i>
                 </button>
-
             </form>
         </div>
     </header>
@@ -88,23 +81,18 @@
         </div>
     </section>
 
+    <!-- 🔐 La modale d'authentification sera injectée dynamiquement en JS -->
+    <div id="password-modal"></div>
 
-    
-
+    <!-- Conteneur principal des recettes -->
     <main id="recipes-container" class="recipes-container" role="main">
         <div class="main-container">
             <h2 class="visually-hidden">Résultats des recettes</h2>
 
-            <!-- TEMPLATE POUR LES CARTES DE RECETTES -->
-            <template id="recipe-template">
-            </template>
-
-            <!-- Conteneur dynamique où les recettes seront injectées -->
+            <!-- 🔄 Les recettes seront générées via JS -->
             <div id="recipes-list" class="recipes-list"></div>
         </div>
     </main>
-
-
 
     <!-- Footer -->
     <footer role="contentinfo">
@@ -114,7 +102,7 @@
     </footer>
 
     <!-- Fichier JavaScript -->
-    <script src="../js/main.js" type="module" ></script>
+    <script src="../js/main.js" type="module"></script>
 
 </body>
 </html>
