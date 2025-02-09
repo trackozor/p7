@@ -1,63 +1,117 @@
 /* =============================================================================
-    Projet      :   Fisheye
-    Fichier     :   _utilities.scss
+    Projet      :   Les Petits Plats
+    Fichier     :   _global.scss
     Auteur      :   Trackozor
     Date        :   01/01/2025
     Version     :   1.0.0
-    Description :   Classes utilitaires pour des fonctionnalités spécifiques,
-                    notamment pour l'accessibilité et des comportements génériques.
+    Description :   Contient les styles globaux et classes utilitaires du projet.
 ============================================================================= */
 
 /* =========================================================================== */
-/*                          Classes pour l'accessibilité                       */
+/*  CLASSES D'ACCESSIBILITÉ                                                  */
 /* =========================================================================== */
+
 /* Masque visuellement un élément tout en le gardant accessible aux lecteurs d'écran */
 .sr-only {
-  position: absolute; /* Retire l'élément du flux visuel */
-  width: 1px; /* Taille réduite à 1 pixel */
-  height: 1px; /* Taille réduite à 1 pixel */
-  padding: 0; /* Pas de padding */
-  margin: -1px; /* Place l'élément hors écran */
-  overflow: hidden; /* Masque le contenu débordant */
-  clip: rect(0, 0, 0, 0); /* Masque visuellement l'élément */
-  border: 0; /* Supprime les bordures */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
 }
 
-/* Affiche un élément précédemment masqué pour les lecteurs d'écran */
+/* Affiche un élément masqué quand il est ciblé au focus */
 .sr-only-focusable:focus {
-  position: static; /* Rétablit la position par défaut */
-  width: auto; /* Rétablit la largeur */
-  height: auto; /* Rétablit la hauteur */
-  padding: var(
-    --padding-small,
-    0.5rem
-  ); /* Ajoute du padding pour plus de clarté */
-  margin: 0; /* Supprime les marges négatives */
-  overflow: visible; /* Rend le contenu visible */
-  clip: auto; /* Rétablit le contenu */
-  border: 2px solid var(--primary-color); /* Ajoute une bordure pour la mise en évidence */
+  position: static;
+  width: auto;
+  height: auto;
+  padding: var(--spacing-small, 0.5rem);
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  border: 2px solid var(--primary-color);
+  background-color: rgba(255, 165, 0, 0.2);
+  transition: background-color 0.2s ease-in-out;
 }
 
-/* Classe pour masquer le scroll du corps de la page */
+/* Désactive le scroll du corps de la page */
 .no-scroll {
   overflow: hidden;
 }
 
 /* =========================================================================== */
-/*                     Classes pour les styles par défaut                      */
+/* STYLES PAR DÉFAUT                                                        */
 /* =========================================================================== */
-/* Retire les soulignements des liens */
+
+/* Supprime les soulignements des liens */
 a {
-  text-decoration: none; /* Supprime la décoration par défaut */
-  color: inherit; /* Hérite de la couleur du texte parent */
+  text-decoration: none;
+  color: inherit;
 }
 
-.focus-orange {
-  outline: 2rem solid orange !important;
+/* Style général des liens au survol */
+a:hover {
+  color: var(--text-color-secondary);
+  transition: color 0.2s ease-in-out;
+}
+
+/* Mise en évidence des éléments interactifs au focus */
+.focus-orange:focus {
+  outline: 2px solid orange !important;
   background-color: rgba(255, 165, 0, 0.2);
   transition: background-color 0.2s ease-in-out;
 }
-main{
-  background-color: #EDEDED;
+
+/* =========================================================================== */
+/*  STYLES GÉNÉRAUX                                                          */
+/* =========================================================================== */
+
+/* Fond général du site */
+main {
+  background-color: var(--background-color, #EDEDED);
+}
+
+/* Texte en gras */
+.bold {
+  font-weight: var(--font-weight-bold, 700);
+}
+
+/* Texte centré */
+.text-center {
+  text-align: center;
+}
+
+/* Masque un élément (display: none) */
+.hidden {
+  display: none;
+}
+
+/* Ajoute un espacement autour d'un élément */
+.margin-small {
+  margin: var(--spacing-small);
+}
+
+.margin-medium {
+  margin: var(--spacing-medium);
+}
+
+.margin-large {
+  margin: var(--spacing-large);
+}
+
+/* Ajoute un padding à un élément */
+.padding-small {
+  padding: var(--spacing-small);
+}
+
+.padding-medium {
+  padding: var(--spacing-medium);
+}
+
+.padding-large {
+  padding: var(--spacing-large);
 }
 

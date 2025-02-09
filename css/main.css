@@ -1,19 +1,27 @@
 @charset "UTF-8";
 /* =============================================================================
-    Projet      : Fisheye
+    Projet      : Les petits plats
     Fichier     : _reset.scss
     Auteur      : Trackozor
     Date        : 01/01/2025
     Version     : 1.0.0
-    Description : Fichier de reset CSS pour normaliser les styles par défaut
-                  des navigateurs. Prépare une base cohérente pour les styles
-                  personnalisés du projet.
+    Description : Fichier de reset CSS complet pour supprimer les styles par défaut
+                  des navigateurs et partir d'une base propre avant d'appliquer 
+                  les styles globaux.
 ============================================================================= */
 /* ================================ */
-/* Général                          */
+/*  REMISE À ZÉRO GLOBALE         */
 /* ================================ */
-/* Remet à zéro les marges, paddings, bordures et styles par défaut */
 @import url("https://fonts.googleapis.com/css2?family=Anton&display=swap");
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; /* Évite les calculs de largeur compliqués */
+}
+
+/* Supprime tous les styles par défaut des éléments */
 html,
 body,
 div,
@@ -99,15 +107,14 @@ video {
   padding: 0;
   border: 0;
   font-size: 100%; /* Taille de police par défaut */
-  font: inherit; /* Hérite de la famille de police du parent */
-  vertical-align: baseline; /* Normalise l'alignement vertical */
-  color: black;
+  font: inherit; /* Hérite de la police du parent */
+  vertical-align: baseline; /* Alignement standardisé */
 }
 
 /* ================================ */
-/* HTML5 : Compatibilité des blocs  */
+/*  HTML5 : NORMALISATION         */
 /* ================================ */
-/* Assure une prise en charge correcte des éléments HTML5 */
+/* Assure une prise en charge correcte des nouveaux éléments HTML5 */
 article,
 aside,
 details,
@@ -119,63 +126,65 @@ hgroup,
 menu,
 nav,
 section {
-  display: block; /* Rend les éléments block-level */
+  display: block; /* Rend ces éléments block-level */
 }
 
 /* ================================ */
-/* Corps du document                */
+/*  TYPOGRAPHIE & BODY            */
 /* ================================ */
-/* Configuration de base pour le <body> */
 body {
-  line-height: 1; /* Normalise l'interligne */
-  font-family: var(--font-primary, sans-serif); /* Police par défaut */
-  background-color: white; /* Fond par défaut */
-  color: var(--text-color-primary); /* Texte par défaut */
+  line-height: 1; /* Interligne normalisé */
+  font-family: sans-serif; /* Police générique de base */
+  background: white; /* Fond neutre */
+  color: black; /* Texte par défaut */
+  -webkit-font-smoothing: antialiased; /* Améliore le rendu du texte */
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* ================================ */
-/* Listes                           */
+/*  LISTES & TABLEAUX             */
 /* ================================ */
-/* Supprime les styles par défaut des listes */
+/* Supprime les puces et numéros des listes */
 ol,
 ul {
-  list-style: none; /* Retire les puces ou numérotations */
+  list-style: none;
 }
 
-/* ================================ */
-/* Citations                        */
-/* ================================ */
-/* Supprime les guillemets automatiques des citations */
-blockquote,
-q {
-  quotes: none;
-}
-
-/* Empêche les pseudo-éléments de guillemets */
-blockquote:before,
-blockquote:after,
-q:before,
-q:after {
-  content: "";
-}
-
-/* ================================ */
-/* Tables                           */
-/* ================================ */
-/* Supprime les espacements entre les cellules des tableaux */
+/* Fusionne les bordures et enlève les espacements dans les tableaux */
 table {
-  border-collapse: collapse; /* Fusionne les bordures */
-  border-spacing: 0; /* Supprime les espaces entre les cellules */
+  border-collapse: collapse;
+  border-spacing: 0;
 }
 
 /* ================================ */
-/* Médias                           */
+/*  MÉDIAS & IMAGES               */
 /* ================================ */
-/* Adapte les images et vidéos au conteneur parent */
+/* Empêche les images et vidéos de dépasser leur conteneur */
 img,
 video {
-  max-width: 100%; /* Limite la largeur à celle du conteneur */
-  height: 100%; /* Conserve les proportions des médias */
+  max-width: 100%;
+  height: auto;
+  display: block; /* Évite les espaces indésirables */
+}
+
+/* ================================ */
+/*  FORMULAIRES & INTERACTIONS    */
+/* ================================ */
+/* Supprime les styles des boutons et liens */
+button,
+input,
+select,
+textarea {
+  font: inherit; /* Hérite de la police du parent */
+  border: none;
+  background: none;
+  outline: none;
+}
+
+/* Enlève les styles par défaut des liens */
+a {
+  text-decoration: none;
+  color: inherit;
 }
 
 /* =============================================================================
@@ -570,63 +579,116 @@ video {
 }
 
 /* =============================================================================
-    Projet      :   Fisheye
-    Fichier     :   _utilities.scss
+    Projet      :   Les Petits Plats
+    Fichier     :   _global.scss
     Auteur      :   Trackozor
     Date        :   01/01/2025
     Version     :   1.0.0
-    Description :   Classes utilitaires pour des fonctionnalités spécifiques,
-                    notamment pour l'accessibilité et des comportements génériques.
+    Description :   Contient les styles globaux et classes utilitaires du projet.
 ============================================================================= */
 /* =========================================================================== */
-/*                          Classes pour l'accessibilité                       */
+/*  CLASSES D'ACCESSIBILITÉ                                                  */
 /* =========================================================================== */
 /* Masque visuellement un élément tout en le gardant accessible aux lecteurs d'écran */
 .sr-only {
-  position: absolute; /* Retire l'élément du flux visuel */
-  width: 1px; /* Taille réduite à 1 pixel */
-  height: 1px; /* Taille réduite à 1 pixel */
-  padding: 0; /* Pas de padding */
-  margin: -1px; /* Place l'élément hors écran */
-  overflow: hidden; /* Masque le contenu débordant */
-  clip: rect(0, 0, 0, 0); /* Masque visuellement l'élément */
-  border: 0; /* Supprime les bordures */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
 }
 
-/* Affiche un élément précédemment masqué pour les lecteurs d'écran */
+/* Affiche un élément masqué quand il est ciblé au focus */
 .sr-only-focusable:focus {
-  position: static; /* Rétablit la position par défaut */
-  width: auto; /* Rétablit la largeur */
-  height: auto; /* Rétablit la hauteur */
-  padding: var(--padding-small, 0.5rem); /* Ajoute du padding pour plus de clarté */
-  margin: 0; /* Supprime les marges négatives */
-  overflow: visible; /* Rend le contenu visible */
-  clip: auto; /* Rétablit le contenu */
-  border: 2px solid var(--primary-color); /* Ajoute une bordure pour la mise en évidence */
+  position: static;
+  width: auto;
+  height: auto;
+  padding: var(--spacing-small, 0.5rem);
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  border: 2px solid var(--primary-color);
+  background-color: rgba(255, 165, 0, 0.2);
+  transition: background-color 0.2s ease-in-out;
 }
 
-/* Classe pour masquer le scroll du corps de la page */
+/* Désactive le scroll du corps de la page */
 .no-scroll {
   overflow: hidden;
 }
 
 /* =========================================================================== */
-/*                     Classes pour les styles par défaut                      */
+/* STYLES PAR DÉFAUT                                                        */
 /* =========================================================================== */
-/* Retire les soulignements des liens */
+/* Supprime les soulignements des liens */
 a {
-  text-decoration: none; /* Supprime la décoration par défaut */
-  color: inherit; /* Hérite de la couleur du texte parent */
+  text-decoration: none;
+  color: inherit;
 }
 
-.focus-orange {
-  outline: 2rem solid orange !important;
+/* Style général des liens au survol */
+a:hover {
+  color: var(--text-color-secondary);
+  transition: color 0.2s ease-in-out;
+}
+
+/* Mise en évidence des éléments interactifs au focus */
+.focus-orange:focus {
+  outline: 2px solid orange !important;
   background-color: rgba(255, 165, 0, 0.2);
   transition: background-color 0.2s ease-in-out;
 }
 
+/* =========================================================================== */
+/*  STYLES GÉNÉRAUX                                                          */
+/* =========================================================================== */
+/* Fond général du site */
 main {
-  background-color: #EDEDED;
+  background-color: var(--background-color, #EDEDED);
+}
+
+/* Texte en gras */
+.bold {
+  font-weight: var(--font-weight-bold, 700);
+}
+
+/* Texte centré */
+.text-center {
+  text-align: center;
+}
+
+/* Masque un élément (display: none) */
+.hidden {
+  display: none;
+}
+
+/* Ajoute un espacement autour d'un élément */
+.margin-small {
+  margin: var(--spacing-small);
+}
+
+.margin-medium {
+  margin: var(--spacing-medium);
+}
+
+.margin-large {
+  margin: var(--spacing-large);
+}
+
+/* Ajoute un padding à un élément */
+.padding-small {
+  padding: var(--spacing-small);
+}
+
+.padding-medium {
+  padding: var(--spacing-medium);
+}
+
+.padding-large {
+  padding: var(--spacing-large);
 }
 
 /* ====================================================== */
@@ -739,12 +801,12 @@ header {
 }
 
 /* ==============================================================
-    Projet      : Fisheye
+    Projet      : Les Petits Plats
     Fichier     : cards.scss
     Auteur      : Trackozor
     Date        : 10/02/2025
     Version     : 1.0.0
-    Description : Styles pour l'affichage des cartes 
+    Description : Styles pour l'affichage des cartes de recettes 
 ================================================================= */
 /* ============================================= */
 /*      I.  Styles de la Carte de Recette         */
@@ -757,14 +819,15 @@ header {
  */
 .recipe-card {
   background: #fff;
-  border-radius: 1rem;
+  border-radius: 1.25rem;
   overflow: hidden;
-  box-shadow: 0 0.25rem 0.625rem rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease-in-out;
+  box-shadow: var(--box-shadow-medium);
+  transition: transform var(--transition-default);
   display: flex;
   flex-direction: column;
   height: 100%;
-  margin: 10% 5%;
+  width: 90%;
+  margin: 5% auto;
 }
 @media (min-width: 767px) {
   .recipe-card {
@@ -787,64 +850,58 @@ header {
 /* ============================================= */
 /**
  * Conteneur de l’image principale.
- * - S'assure que l’image prend toute la largeur disponible.
- * - Définit une hauteur adaptable selon la taille d'écran.
+ * - Hauteur fixe avec clamp() pour une bonne adaptation responsive.
+ * - Assure que l’image occupe toute la largeur du conteneur.
  */
-.recipe-card__img {
-  position: relative;
+.recipe-card__image {
+  position: relative; /* Permet d’ancrer le badge */
   width: 100%;
-  height: clamp(10rem, 35vh, 18rem);
+  height: 25vh; /* Hauteur adaptative */
   overflow: hidden;
-}
-@media (min-width: 767px) {
-  .recipe-card__img {
-    height: clamp(12rem, 40vh, 20rem);
-  }
-}
-@media (min-width: 1024px) {
-  .recipe-card__img {
-    height: clamp(13rem, 45vh, 25rem);
-  }
-}
-@media (min-width: 1440px) {
-  .recipe-card__img {
-    height: clamp(12rem, 25vh, 20rem);
-  }
+  border-top-left-radius: var(--border-radius-medium);
+  border-top-right-radius: var(--border-radius-medium);
+  display: flex; /* Permet d’aligner les éléments internes */
+  align-items: center; /* Centre l’image verticalement si nécessaire */
+  justify-content: center;
 }
 
 /**
  * Image de la recette.
- * - Remplit entièrement le conteneur sans distorsion.
- * - Maintient un bon ratio d’affichage.
+ * - Remplit entièrement le conteneur sans déformation.
+ * - Utilise object-fit: cover pour un ajustement optimal.
  */
 .recipe-img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: contain; /* Ajustement parfait sans distorsion */
   display: block;
-  z-index: 1;
 }
 
 /**
- * Affichage du temps de préparation.
- * - Positionné dans un coin supérieur droit de l'image.
- * - Style distinctif en fond jaune.
+ *  Badge du temps de préparation.
+ * - Positionné en haut à droite de l’image.
+ * - Respecte la maquette et s’adapte à la taille d'écran.
  */
 .recipe-card__time {
   position: absolute;
-  z-index: 5;
-  top: 0.75rem;
-  right: 0.75rem;
-  background: #ffcc00;
-  color: #000;
-  font-weight: bold;
+  top: 10px; /* Ajustement précis */
+  right: 10px;
+  background: var(--text-color-secondary, #FFD15B);
+  color: var(--text-color-primary, #000);
+  font-weight: var(--font-weight-bold);
   padding: 0.4rem 0.8rem;
-  border-radius: 1.25rem;
-  font-size: clamp(0.75rem, 1.8vw, 0.875rem);
+  border-radius: 1.5rem;
+  font-size: clamp(0.75rem, 1.4vw, 0.875rem);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  z-index: 10;
 }
 
 /* ============================================= */
-/*    I.b    Contenu de la Carte                   */
+/*    I.b   Contenu de la Carte                   */
 /* ============================================= */
 /**
  * Conteneur général du texte (titre, description, ingrédients).
@@ -852,11 +909,11 @@ header {
  * - Utilise `flex-direction: column` pour un affichage structuré.
  */
 .recipe-card__content {
-  padding: 1.5rem;
-  color: #333;
+  padding: 2%;
+  color: var(--text-color-primary);
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 2%;
   flex-grow: 1;
 }
 
@@ -864,7 +921,7 @@ header {
  * En-tête contenant le titre de la recette.
  */
 .recipe-card__header {
-  margin-bottom: 0.75rem;
+  margin-bottom: var(--spacing-small);
 }
 
 /**
@@ -872,19 +929,20 @@ header {
  * - Taille adaptative selon l'écran.
  * - Mise en avant avec `font-weight: bold`.
  */
-.recipe-title {
+.recipe-card__title {
   font-size: clamp(1rem, 2vw, 1.5rem);
   font-weight: bold;
+  background-color: #fff;
 }
 
 /* ============================================= */
-/*     I.c   Section Recette                       */
+/*     I.c   Section Recette                      */
 /* ============================================= */
 /**
  * Section contenant la description de la recette.
  */
 .recipe-card__details {
-  margin-bottom: 1rem;
+  margin-bottom: var(--spacing-small);
 }
 
 /**
@@ -895,8 +953,8 @@ header {
   font-size: clamp(0.875rem, 2vw, 1rem);
   font-weight: bold;
   text-transform: uppercase;
-  color: #555;
-  margin-bottom: 0.5rem;
+  color: var(--text-color-tertiary, #555);
+  margin-bottom: var(--spacing-xsmall);
 }
 
 /**
@@ -906,18 +964,18 @@ header {
  */
 .recipe-description {
   font-size: clamp(0.875rem, 2vw, 1rem);
-  color: #666;
+  color: var(--text-color-tertiary, #666);
   line-height: 1.5;
 }
 
 /* ============================================= */
-/*     I.d   Liste des Ingrédients                 */
+/*     I.d   Liste des Ingrédients                */
 /* ============================================= */
 /**
  * Conteneur des ingrédients.
  */
 .recipe-card__ingredients-container {
-  margin-top: 1rem;
+  margin-top: var(--spacing-medium);
 }
 
 /**
@@ -929,7 +987,7 @@ header {
   grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
   gap: 0.5rem 1rem;
   font-size: clamp(0.875rem, 2vw, 1rem);
-  color: #444;
+  color: var(--text-color-primary, #444);
 }
 
 /**
@@ -938,7 +996,7 @@ header {
 .recipe-ingredient {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: var(--spacing-xsmall);
 }
 
 /**
@@ -948,7 +1006,7 @@ header {
 .recipe-ingredient__name {
   font-weight: bold;
   text-transform: capitalize;
-  color: #222;
+  color: var(--text-color-primary, #222);
 }
 
 /**
@@ -956,8 +1014,35 @@ header {
  * - Plus petit et en gris clair.
  */
 .recipe-ingredient__quantity {
-  font-size: 0.875rem;
-  color: #666;
+  font-size: var(--font-size-small);
+  color: var(--text-color-tertiary, #666);
+}
+
+/* ============================================= */
+/*     I.e   Effet au Survol                      */
+/* ============================================= */
+/**
+ * Effet au survol de la carte.
+ * - Léger zoom pour donner une sensation d'interaction.
+ */
+.recipe-card:hover {
+  transform: scale(1.03);
+  box-shadow: var(--box-shadow-large);
+}
+
+/**
+ * Effet de survol sur l’image.
+ */
+.recipe-card__image:hover .recipe-img {
+  filter: brightness(90%);
+}
+
+/**
+ * Effet de clic sur la carte.
+ * - Réduit légèrement l’échelle pour donner un effet "pressé".
+ */
+.recipe-card:active {
+  transform: scale(0.98);
 }
 
 footer {

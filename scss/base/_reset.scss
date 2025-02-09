@@ -1,18 +1,27 @@
 /* =============================================================================
-    Projet      : Fisheye
+    Projet      : Les petits plats
     Fichier     : _reset.scss
     Auteur      : Trackozor
     Date        : 01/01/2025
     Version     : 1.0.0
-    Description : Fichier de reset CSS pour normaliser les styles par défaut
-                  des navigateurs. Prépare une base cohérente pour les styles
-                  personnalisés du projet.
+    Description : Fichier de reset CSS complet pour supprimer les styles par défaut
+                  des navigateurs et partir d'une base propre avant d'appliquer 
+                  les styles globaux.
 ============================================================================= */
 
 /* ================================ */
-/* Général                          */
+/*  REMISE À ZÉRO GLOBALE         */
 /* ================================ */
-/* Remet à zéro les marges, paddings, bordures et styles par défaut */
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; /* Évite les calculs de largeur compliqués */
+}
+
+/* Supprime tous les styles par défaut des éléments */
 html,
 body,
 div,
@@ -98,15 +107,15 @@ video {
   padding: 0;
   border: 0;
   font-size: 100%; /* Taille de police par défaut */
-  font: inherit; /* Hérite de la famille de police du parent */
-  vertical-align: baseline; /* Normalise l'alignement vertical */
-  color: black;
+  font: inherit; /* Hérite de la police du parent */
+  vertical-align: baseline; /* Alignement standardisé */
 }
 
 /* ================================ */
-/* HTML5 : Compatibilité des blocs  */
+/*  HTML5 : NORMALISATION         */
 /* ================================ */
-/* Assure une prise en charge correcte des éléments HTML5 */
+
+/* Assure une prise en charge correcte des nouveaux éléments HTML5 */
 article,
 aside,
 details,
@@ -118,61 +127,68 @@ hgroup,
 menu,
 nav,
 section {
-  display: block; /* Rend les éléments block-level */
+  display: block; /* Rend ces éléments block-level */
 }
 
 /* ================================ */
-/* Corps du document                */
+/*  TYPOGRAPHIE & BODY            */
 /* ================================ */
-/* Configuration de base pour le <body> */
+
 body {
-  line-height: 1; /* Normalise l'interligne */
-  font-family: var(--font-primary, sans-serif); /* Police par défaut */
-  background-color: white; /* Fond par défaut */
-  color: var(--text-color-primary); /* Texte par défaut */
+  line-height: 1; /* Interligne normalisé */
+  font-family: sans-serif; /* Police générique de base */
+  background: white; /* Fond neutre */
+  color: black; /* Texte par défaut */
+  -webkit-font-smoothing: antialiased; /* Améliore le rendu du texte */
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* ================================ */
-/* Listes                           */
+/*  LISTES & TABLEAUX             */
 /* ================================ */
-/* Supprime les styles par défaut des listes */
+
+/* Supprime les puces et numéros des listes */
 ol,
 ul {
-  list-style: none; /* Retire les puces ou numérotations */
+  list-style: none;
 }
 
-/* ================================ */
-/* Citations                        */
-/* ================================ */
-/* Supprime les guillemets automatiques des citations */
-blockquote,
-q {
-  quotes: none;
-}
-
-/* Empêche les pseudo-éléments de guillemets */
-blockquote:before,
-blockquote:after,
-q:before,
-q:after {
-  content: "";
-}
-
-/* ================================ */
-/* Tables                           */
-/* ================================ */
-/* Supprime les espacements entre les cellules des tableaux */
+/* Fusionne les bordures et enlève les espacements dans les tableaux */
 table {
-  border-collapse: collapse; /* Fusionne les bordures */
-  border-spacing: 0; /* Supprime les espaces entre les cellules */
+  border-collapse: collapse;
+  border-spacing: 0;
 }
 
 /* ================================ */
-/* Médias                           */
+/*  MÉDIAS & IMAGES               */
 /* ================================ */
-/* Adapte les images et vidéos au conteneur parent */
+
+/* Empêche les images et vidéos de dépasser leur conteneur */
 img,
 video {
-  max-width: 100%; /* Limite la largeur à celle du conteneur */
-  height: 100%; /* Conserve les proportions des médias */
+  max-width: 100%;
+  height: auto;
+  display: block; /* Évite les espaces indésirables */
 }
+
+/* ================================ */
+/*  FORMULAIRES & INTERACTIONS    */
+/* ================================ */
+
+/* Supprime les styles des boutons et liens */
+button,
+input,
+select,
+textarea {
+  font: inherit; /* Hérite de la police du parent */
+  border: none;
+  background: none;
+  outline: none;
+}
+
+/* Enlève les styles par défaut des liens */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
