@@ -766,6 +766,7 @@ header {
   overflow: hidden; /* Empêche tout débordement d’image */
   left: 0; /* Position de l’image de fond calée à gauche */
   top: 0; /* Positionnée en haut du header */
+  min-height: 220px;
 }
 @media (min-width: 1024px) {
   .fond {
@@ -789,7 +790,7 @@ header {
 .slogan {
   display: flex; /* Utilisation de flexbox pour organiser les éléments internes */
   flex-direction: column; /* Organisation verticale */
-  width: 70%; /* Largeur fixée à 70% du conteneur */
+  width: 90%; /* Largeur fixée à 70% du conteneur */
   margin: 5% auto 2% auto; /* Centrage horizontal avec un espacement vertical défini */
   text-align: center; /* Alignement du texte au centre */
   justify-content: center; /* Centre verticalement le contenu */
@@ -813,7 +814,7 @@ header {
   z-index: 3; /* Assure que le texte est visible par-dessus l’image de fond */
   display: flex; /* Utilisation de flexbox pour une meilleure organisation */
   color: #FFD15B; /* Définition de la couleur du texte */
-  font-size: 1rem; /* Définition de la taille de la police */
+  font-size: 1.4rem; /* Définition de la taille de la police */
   font-weight: 500; /* Accentue le texte en lui donnant du poids */
   margin: 2% auto; /* Ajout d’un espacement autour du texte */
   letter-spacing: -0.2px; /* Ajustement de l’espacement entre les lettres */
@@ -1221,6 +1222,7 @@ footer {
 .filter-container {
   width: 90%; /* Largeur relative pour assurer un bon alignement */
   display: flex; /* Utilisation de flexbox pour aligner les éléments */
+  flex-direction: row;
   justify-content: space-around; /* Répartition équitable des éléments */
   margin: 2% auto; /* Centrage et espacement vertical */
   gap: 2%; /* Espacement entre les filtres */
@@ -1232,6 +1234,7 @@ footer {
 /* ==================================================================================== */
 .filter-tags {
   display: flex; /* Utilisation de flexbox pour organiser les tags */
+  flex-direction: row;
   flex-wrap: wrap; /* Permet de passer à la ligne lorsque l'espace est insuffisant */
   gap: 0.5rem; /* Espacement entre les badges */
   margin-top: 1rem; /* Espacement au-dessus des tags */
@@ -1448,6 +1451,22 @@ th, td {
     width: 90%; /* Largeur ajustée pour éviter les bords */
     margin: auto; /* Centrage du conteneur */
     row-gap: 0.2%; /* Espacement entre les lignes pour une meilleure lisibilité */
+  }
+}
+@media (min-width: 1024px) {
+  #recipes-container {
+    grid-template-columns: repeat(3, 30vw); /* Remplissage automatique des colonnes */
+    width: 90%; /* Largeur ajustée pour éviter les bords */
+    margin: 0 auto; /* Centrage du conteneur */
+    row-gap: 0.5%; /* Espacement entre les lignes pour une meilleure lisibilité */
+  }
+}
+@media (min-width: 1440px) {
+  #recipes-container {
+    grid-template-columns: repeat(4, 25vw); /* Remplissage automatique des colonnes */
+    width: 100%; /* Largeur ajustée pour éviter les bords */
+    margin: 0 auto; /* Centrage du conteneur */
+    row-gap: 1%; /* Espacement entre les lignes pour une meilleure lisibilité */
   }
 }
 
