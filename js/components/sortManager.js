@@ -17,7 +17,7 @@ class SortManager {
     /* 🔹 Applique un tri aux recettes et met à jour l'affichage */
     applySort(recipes, sortType) {
         if (!recipes.length) {
-          return;
+            return;
         }
 
         switch (sortType) {
@@ -44,7 +44,7 @@ class SortManager {
                 break;
         }
 
-        logEvent("SUCCESS", `✅ Tri appliqué : ${sortType}`);
+        logEvent("SUCCESS", `Tri appliqué : ${sortType}`);
         templateManager.displayAllRecipes("#recipes-container", recipes);
     }
 }

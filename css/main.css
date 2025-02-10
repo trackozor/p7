@@ -1,4 +1,16 @@
 @charset "UTF-8";
+/* ==================================================================================== */
+/*  Nom du fichier    : main.scss                                                       */
+/*  Auteur           : Trackozor                                                        */
+/*  Date de création : 10/02/25                                                         */
+/*  Dernière mise à jour : 10/02/25                                                    */
+/*  Description      : Fichier principal SCSS qui gère l'importation de toutes les     */
+/*                     feuilles de style du projet. Ce fichier centralise les         */
+/*                     styles globaux, les composants et les layouts.                  */
+/* ==================================================================================== */
+/* ==================================================================================== */
+/*  Importation des styles de base                                                  */
+/* ==================================================================================== */
 /* =============================================================================
     Projet      : Les petits plats
     Fichier     : _reset.scss
@@ -187,6 +199,7 @@ a {
   color: inherit;
 }
 
+/* Réinitialisation des styles par défaut des navigateurs */
 /* =============================================================================
     Projet      :   Les petits plats
     Fichier     :   _variables.scss
@@ -219,7 +232,7 @@ a {
   --card-background: #FFFFFF; /* Fond des cartes (blanc) */
   --card-shadow: rgba(0, 0, 0, 0.1); /* Ombre légère des cartes */
   /* ================================ */
-  /* 🖋 TYPOGRAPHIE                   */
+  /* TYPOGRAPHIE                   */
   /* ================================ */
   /*  Polices principales */
   --font-primary: "Anton", sans-serif; /* Police principale */
@@ -282,6 +295,7 @@ a {
   --transition-slow: 0.5s ease-out; /* Animation lente */
 }
 
+/* Déclaration des variables SCSS (couleurs, typographie, etc.) */
 /* ====================================================== */
 /*  Nom du fichier    : _mixins.scss                */
 /* Auteur            : Trackozor                        */
@@ -292,6 +306,7 @@ a {
 /* Mixins pour gérer les tablettes */
 /* Mixin pour gérer les écrans desktop */
 /* Mixin pour gérer les écrans larges */
+/* Fonctions et mixins pour réutilisation */
 /* ====================================================== */
 /*  Nom du fichier    : _animations.scss                */
 /* Auteur            : Trackozor                        */
@@ -578,6 +593,7 @@ a {
   animation: spin 1s linear infinite;
 }
 
+/* Définition des animations globales */
 /* =============================================================================
     Projet      :   Les Petits Plats
     Fichier     :   _global.scss
@@ -691,45 +707,48 @@ main {
   padding: var(--spacing-large);
 }
 
+/* Styles globaux du projet */
+/* ==================================================================================== */
+/*  Importation des composants                                                       */
+/* ==================================================================================== */
 /* ====================================================== */
 /*  Nom du fichier    : _header.scss                      */
 /*  Auteur           : Trackozor                          */
 /*  Date de création : 25/09/24                           */
-/*  Dernière modif.  : 08/01/25                           */
-/*  Description      : Styles pour l'en-tête du site      */
-/*                     incluant le logo, le fond et la    */
-/*                     barre de recherche                 */
+/*  Dernière mise à jour : 08/01/25                      */
+/*  Description      : Définition des styles pour l'en-tête du site, */
+/*                     incluant le logo, l'image de fond et la barre de recherche */
 /* ====================================================== */
 /* ====================================================== */
-/*  Styles généraux du header */
+/*  Définition des styles généraux du header             */
 /* ====================================================== */
 header {
-  position: relative; /* Permet de positionner les éléments internes avec un z-index */
+  position: relative; /* Permet aux éléments internes d’être positionnés en fonction de ce conteneur */
   z-index: 1; /* Assure que le header reste en arrière-plan par rapport aux autres éléments */
-  display: flex; /* Utilisation de flexbox pour aligner les enfants */
-  flex-direction: column; /* Dispose les éléments du header en colonne */
-  background-color: #d9d9d9; /* Couleur de fond du header */
-  width: 100%; /* Largeur du header sur toute la page */
-  justify-content: center;
-  height: 100%;
-  max-height: 500px;
+  display: flex; /* Utilisation de flexbox pour faciliter l'agencement des enfants */
+  flex-direction: column; /* Organisation des éléments du header en colonne */
+  background-color: #d9d9d9; /* Définition de la couleur de fond */
+  width: 100%; /* Largeur définie sur 100% de la page */
+  justify-content: center; /* Centre les éléments enfants verticalement */
+  height: 100%; /* Définit une hauteur relative */
+  max-height: 500px; /* Limite la hauteur maximale à 500px */
 }
 
 /* ====================================================== */
-/*  Logo du site */
+/*  Définition des styles du logo                        */
 /* ====================================================== */
 .logo {
-  position: relative; /* Permet un positionnement indépendant du flux normal */
-  z-index: 3; /* Place le logo au-dessus de l’image de fond */
-  width: 25%; /* Définit la largeur du logo à 25% du parent */
-  height: 15%; /* Hauteur proportionnelle, peut être ajustée */
-  object-fit: contain; /* Assure que le logo reste dans son cadre sans déformation */
-  margin-top: 5%; /* Espacement en haut du logo */
-  margin-left: 5%; /* Décalage du logo sur la gauche */
+  position: relative; /* Permet de contrôler son positionnement indépendamment des autres éléments */
+  z-index: 3; /* Assure que le logo est affiché au-dessus de l’image de fond */
+  width: 25%; /* Définit la largeur du logo sur 25% du parent */
+  height: 15%; /* Définit la hauteur en fonction du parent */
+  object-fit: contain; /* Assure que l'image du logo ne soit pas déformée */
+  margin-top: 5%; /* Ajoute un espacement en haut du logo */
+  margin-left: 5%; /* Décale le logo vers la gauche */
 }
 @media (min-width: 1024px) {
   .logo {
-    width: 10%;
+    width: 10%; /* Réduit la taille du logo sur écran desktop */
     height: 5%;
     margin-top: 2%;
     margin-left: 2%;
@@ -737,130 +756,211 @@ header {
 }
 
 /* ====================================================== */
-/*  Image de fond du header */
+/*  Définition des styles de l’image de fond du header   */
 /* ====================================================== */
 .fond {
-  position: absolute; /* Positionnement absolu pour recouvrir le header */
-  z-index: 2; /* Placée en arrière-plan, sous le logo et les textes */
-  width: 100%; /* Largeur ajustée au conteneur */
-  height: auto; /* Hauteur adaptative */
-  overflow: hidden; /* Empêche les débordements visuels */
-  left: 0; /* Positionnée à gauche du parent */
-  top: 0%; /* Alignement en haut du header */
+  position: absolute; /* Positionnement absolu pour couvrir tout le header */
+  z-index: 2; /* Définit l'image de fond sous le logo et les autres éléments */
+  width: 100%; /* Largeur de l'image de fond définie sur 100% du parent */
+  height: auto; /* Hauteur ajustée automatiquement en fonction du contenu */
+  overflow: hidden; /* Empêche tout débordement d’image */
+  left: 0; /* Position de l’image de fond calée à gauche */
+  top: 0; /* Positionnée en haut du header */
 }
 @media (min-width: 1024px) {
   .fond {
-    height: 100%;
-    object-fit: cover;
-    min-height: 600px;
+    height: 100%; /* Remplit complètement la hauteur du header */
+    object-fit: cover; /* Assure que l’image couvre toute la surface sans être déformée */
+    min-height: 370px; /* Définit une hauteur minimale */
+  }
+}
+@media (min-width: 1440px) {
+  .fond {
+    min-height: 450px; /* Augmente la hauteur minimale pour les grands écrans */
   }
 }
 
 /* ====================================================== */
-/*  Texte et slogan du header */
+/*  Définition des styles du slogan du header            */
 /* ====================================================== */
+/*--------------------------------------------------------------
+/* Conteneunr
+/*--------------------------------------------------------------*/
 .slogan {
-  display: flex;
-  flex-direction: column;
-  margin: 15% 0 4% 0; /* Espacement autour du slogan */
-  text-align: center; /* Centrage du texte */
-  justify-content: center;
-  margin: 5% auto 2% auto;
-  width: 70%;
+  display: flex; /* Utilisation de flexbox pour organiser les éléments internes */
+  flex-direction: column; /* Organisation verticale */
+  width: 70%; /* Largeur fixée à 70% du conteneur */
+  margin: 5% auto 2% auto; /* Centrage horizontal avec un espacement vertical défini */
+  text-align: center; /* Alignement du texte au centre */
+  justify-content: center; /* Centre verticalement le contenu */
 }
 @media (min-width: 1024px) {
   .slogan {
-    margin: 7% auto 2% auto;
+    margin: 7% auto 2% auto; /* Ajustement de la marge sur desktop */
+  }
+}
+@media (min-width: 1440px) {
+  .slogan {
+    margin: 3% auto 1% auto; /* Ajustement supplémentaire pour les grands écrans */
   }
 }
 
+/*--------------------------------------------------------------
+/* Définition du style du texte du slogan */
+/*--------------------------------------------------------------*/
 .slogan p {
-  position: relative; /* Permet un contrôle du positionnement sans sortir du flux */
-  z-index: 3; /* Assure que le texte s'affiche au-dessus de l'image de fond */
-  display: flex; /* Utilisation de flexbox pour une meilleure gestion du contenu */
-  color: #FFD15B; /* Couleur du texte en jaune doré */
-  font-size: 1rem; /* Taille de police standard */
-  font-weight: 500; /* Met en valeur le texte */
-  margin: 2% auto; /* Centrage vertical et horizontal */
-  letter-spacing: -0.2px;
-  font-family: "Anton", sans-serif;
+  position: relative; /* Permet d'ajuster le positionnement sans impacter les autres éléments */
+  z-index: 3; /* Assure que le texte est visible par-dessus l’image de fond */
+  display: flex; /* Utilisation de flexbox pour une meilleure organisation */
+  color: #FFD15B; /* Définition de la couleur du texte */
+  font-size: 1rem; /* Définition de la taille de la police */
+  font-weight: 500; /* Accentue le texte en lui donnant du poids */
+  margin: 2% auto; /* Ajout d’un espacement autour du texte */
+  letter-spacing: -0.2px; /* Ajustement de l’espacement entre les lettres */
+  font-family: "Anton", sans-serif; /* Utilisation d'une police spécifique */
 }
 @media (min-width: 767px) {
   .slogan p {
-    font-size: 1.6rem;
+    font-size: 1.6rem; /* Augmente la taille du texte sur tablette */
   }
 }
 @media (min-width: 1024px) {
   .slogan p {
-    font-size: 2.2rem;
-    margin: 1% auto;
+    font-size: 2.2rem; /* Augmente la taille du texte sur desktop */
+    margin: 1% auto; /* Ajustement des marges */
+  }
+}
+@media (min-width: 1440px) {
+  .slogan p {
+    font-size: 2.5rem; /* Ajustement pour les très grands écrans */
   }
 }
 
 /* ====================================================== */
-/*  Barre de recherche */
+/*  Définition des styles de la barre de recherche       */
 /* ====================================================== */
+/*--------------------------------------------------------------
+/* Conteneunr
+/*--------------------------------------------------------------*/
 .search-bar {
-  position: relative; /* Positionnement dans le flux du document */
-  display: flex; /* Utilisation de flexbox pour aligner l'input et le bouton */
-  flex-direction: row; /* Alignement horizontal des enfants */
-  z-index: 3; /* Priorité d'affichage sur l’image de fond */
-  background-color: white; /* Fond blanc pour bien distinguer la barre */
-  border-radius: 0.5rem; /* Coins arrondis pour un effet esthétique */
-  height: 2%; /* Hauteur réduite pour un design épuré */
-  width: 90%; /* Largeur ajustée au conteneur */
+  position: relative; /* Assure que l'élément reste positionné dans le flux normal */
+  display: flex; /* Utilisation de flexbox pour organiser les enfants */
+  flex-direction: row; /* Disposition en ligne */
+  z-index: 3; /* Assure que la barre de recherche s’affiche au-dessus de l’image de fond */
+  background-color: white; /* Définition de la couleur de fond */
+  border-radius: 0.5rem; /* Arrondi des coins pour un effet plus moderne */
+  height: 2%; /* Hauteur relative */
+  width: 90%; /* Largeur ajustée à 90% du parent */
   margin: 0 auto; /* Centrage horizontal */
 }
 @media (min-width: 767px) {
   .search-bar {
-    width: 70%;
+    width: 70%; /* Ajustement de la largeur sur tablette */
   }
 }
 @media (min-width: 1024px) {
   .search-bar {
-    width: 50%;
+    width: 50%; /* Ajustement de la largeur sur desktop */
   }
 }
 
+/*--------------------------------------------------------------
+/* Définition du style de l’input dans la barre de recherche */
+/*--------------------------------------------------------------*/
 .search-bar input {
-  width: 100%; /* Largeur de l’input relative à la barre */
-  padding: 2%; /* Espacement interne pour meilleure lisibilité */
-  border: none; /* Suppression des bordures natives */
-  border-radius: 0.5rem; /* Uniformisation avec la barre de recherche */
-  font-size: 0.9rem; /* Taille de police lisible */
+  width: 100%; /* Largeur ajustée à 100% du parent */
+  padding: 2%; /* Ajout d’un padding pour améliorer la lisibilité */
+  border: none; /* Suppression des bordures par défaut */
+  border-radius: 0.5rem; /* Arrondi des coins pour uniformiser le design */
+  font-size: 0.9rem; /* Taille de la police adaptée */
 }
 @media (min-width: 767px) {
   .search-bar input {
-    font-size: 1.2rem;
+    font-size: 1.2rem; /* Augmente la taille de la police sur tablette */
   }
 }
 @media (min-width: 1024px) {
   .search-bar input {
-    font-size: 1rem;
-    padding: 1% 2%;
+    font-size: 1rem; /* Ajustement de la taille du texte */
+    padding: 1% 2%; /* Ajustement du padding */
   }
 }
 
-/*  Bouton de recherche */
+/* Styles du header et de la navigation */
+/* ==================================================================================== */
+/*  Nom du fichier    : _button.scss                                                   */
+/*  Auteur           : Trackozor                                                       */
+/*  Date de création : 10/02/25                                                        */
+/*  Dernière mise à jour : 10/02/25                                                   */
+/*  Description      : Définition des styles des boutons de l'interface, y compris     */
+/*                     le bouton de recherche et les boutons de filtres interactifs.  */
+/* ==================================================================================== */
+/* ==================================================================================== */
+/*    Définition du style du bouton de recherche                                     */
+/* ==================================================================================== */
 .search-bar button {
-  position: relative; /* Permet un positionnement sans casser le flux */
-  font-size: 1.5rem; /* Taille du texte du bouton */
-  font-weight: 100;
-  background-color: rgb(255, 255, 255); /* Couleur de fond du bouton */
-  color: black; /* Couleur du texte */
-  filter: invert(1); /* Inversion des couleurs pour un effet visuel */
-  padding: 2%; /* Espacement interne pour meilleur confort d’interaction */
-  margin: 2%; /* Espacement autour du bouton */
-  border-radius: 0.5rem;
+  position: relative; /* Assure que le bouton reste dans le flux normal du document */
+  font-size: 1.5rem; /* Taille du texte pour assurer une bonne lisibilité */
+  font-weight: 100; /* Poids léger du texte pour un effet épuré */
+  background-color: rgb(255, 255, 255); /* Couleur de fond */
+  color: black; /* Couleur du texte pour un bon contraste */
+  filter: invert(1); /* Inversion des couleurs pour améliorer l’accessibilité et le contraste */
+  padding: 2%; /* Ajout d'un espacement interne pour améliorer l’ergonomie */
+  margin: 2%; /* Ajout d’un espacement externe pour séparer le bouton des autres éléments */
+  border-radius: 0.5rem; /* Coins arrondis pour un rendu plus esthétique */
 }
 @media (min-width: 1024px) {
   .search-bar button {
-    font-size: 1rem;
-    padding: 2%;
-    margin: 1%;
+    font-size: 1rem; /* Réduction de la taille de la police pour les grands écrans */
+    padding: 1%; /* Ajustement de l’espacement interne */
+    margin: 0.5%; /* Réduction de la marge pour optimiser l’espace */
   }
 }
 
+/* ==================================================================================== */
+/*   Boutons de sélection des filtres - Dropdowns                                   */
+/* ==================================================================================== */
+.filter-dropdowns {
+  display: flex; /* Utilisation de flexbox pour une meilleure structuration */
+  justify-content: space-between; /* Distribution uniforme des dropdowns */
+  gap: 1rem; /* Espacement entre les boutons */
+  margin: 5% auto; /* Centrage et espacement vertical */
+  align-items: center; /* Alignement vertical */
+}
+
+/* -------------------------------------------------------------- */
+/*   Style des boutons de sélection (Dropdowns)                */
+/* -------------------------------------------------------------- */
+.filter-button {
+  display: flex; /* Utilisation de flexbox pour gérer l'intérieur du bouton */
+  background: #fff; /* Couleur de fond blanche */
+  border: 1px solid #D9D9D9; /* Bordure grise pour démarquer les boutons */
+  padding: 8% 4%; /* Espacement interne pour améliorer l'ergonomie */
+  font-size: 1rem; /* Taille de la police */
+  font-weight: 500; /* Mise en valeur du texte */
+  color: #333; /* Couleur du texte pour une meilleure lisibilité */
+  border-radius: 0.5rem; /* Coins arrondis pour une meilleure apparence */
+  cursor: pointer; /* Ajout d'un pointeur pour indiquer que le bouton est cliquable */
+  transition: all 0.3s ease-in-out; /* Animation fluide des interactions */
+  gap: 3%; /* Espacement entre les éléments à l'intérieur du bouton */
+}
+.filter-button:hover {
+  background: #EFEFEF; /* Changement de couleur au survol pour améliorer l'expérience utilisateur */
+}
+
+/* ==================================================================================== */
+/*   Bouton de suppression d'un filtre actif                                        */
+/* ==================================================================================== */
+.remove-filter {
+  background: transparent; /* Suppression du fond pour s'intégrer harmonieusement */
+  border: none; /* Suppression des bordures */
+  font-size: 1rem; /* Ajustement de la taille de la police */
+  font-weight: bold; /* Mise en valeur du bouton */
+  cursor: pointer; /* Ajout d'un pointeur pour indiquer qu'il est cliquable */
+  color: #333; /* Couleur du texte pour un bon contraste */
+}
+
+/* Définition des boutons et interactions */
 /* ============================================================
     Projet      : Les Petits Plats
     Fichier     : _cards.scss
@@ -875,12 +975,9 @@ header {
 /* ============================================================
     I.  Styles généraux de la carte de recette
 ============================================================== */
-/**
- * Conteneur principal de la carte.
- * - Fond blanc avec arrondis et ombre portée.
- * - Largeur adaptable selon l'écran.
- * - Transition douce au survol.
- */
+/*-------------------------------------------------
+/* Conteneur principal de la carte.
+/*-------------------------------------------------*/
 .recipe-card {
   background: #fff;
   border-radius: 1.25rem;
@@ -901,7 +998,7 @@ header {
 }
 @media (min-width: 1024px) {
   .recipe-card {
-    width: 30vw;
+    width: 25vw;
   }
 }
 @media (min-width: 1440px) {
@@ -913,12 +1010,9 @@ header {
 /* ============================================================
     II.  Section image de la recette
 ============================================================== */
-/**
+/*----------------------------------------------
  * Conteneur de l’image.
- * - Hauteur dynamique ajustée avec `clamp()`.
- * - Assure que l’image prend toute la largeur.
- * - Permet d’inclure des éléments positionnés en absolu (ex: badge).
- */
+/*----------------------------------------------*/
 .recipe-card__image {
   position: relative;
   width: 100%;
@@ -931,11 +1025,9 @@ header {
   justify-content: center;
 }
 
-/**
- * Image de la recette.
- * - Remplit tout le conteneur sans déformation.
- * - Empêche les débordements.
- */
+/*-------------------------------------------
+/* Image de la recette.
+/*-------------------------------------------*/
 .recipe-card__img {
   width: 100%;
   height: 100%;
@@ -943,12 +1035,9 @@ header {
   display: block;
 }
 
-/**
- * Badge du temps de préparation.
- * - Position absolue en haut à droite.
- * - Fond jaune pour visibilité.
- * - Taille de police responsive.
- */
+/*-------------------------------------------
+/* Badge du temps de préparation.
+/*-------------------------------------------*/
 .recipe-card__time {
   position: absolute;
   top: 10px;
@@ -970,11 +1059,9 @@ header {
 /* ============================================================
     III.  Contenu textuel de la carte
 ============================================================== */
-/**
- * Conteneur du texte de la carte.
- * - Organisation en colonne.
- * - Espacement homogène entre les sections.
- */
+/*-------------------------------------------
+/* Conteneur du texte de la carte.
+/*-------------------------------------------*/
 .recipe-card__content {
   padding: 2%;
   color: var(--text-color-primary);
@@ -987,20 +1074,17 @@ header {
 /* ------------------------------------------------------------ */
 /*     Titre de la recette                                      */
 /* ------------------------------------------------------------ */
-/**
- * En-tête contenant le titre.
- * - Fond blanc pour séparation nette avec l’image.
- */
+/* ------------------------------------------------
+/* En-tête contenant le titre.
+/*-------------------------------------------------*/
 .recipe-card__header {
   margin-bottom: var(--spacing-small);
   background-color: #fff;
 }
 
-/**
- * Titre de la recette.
- * - Police en gras.
- * - Espacement adapté.
- */
+/*---------------------------------------------
+/* Titre de la recette.
+/*---------------------------------------------*/
 .recipe-card__title {
   font-size: clamp(1rem, 2vw, 1.5rem);
   font-weight: 900;
@@ -1011,20 +1095,17 @@ header {
 /* ------------------------------------------------------------ */
 /*     Section "Recette" (description)                          */
 /* ------------------------------------------------------------ */
-/**
- * Conteneur de la description de la recette.
- * - Alignement à gauche avec une légère marge.
- */
+/* --------------------------------------------
+/* Conteneur de la description de la recette.
+/* -------------------------------------------- */
 .recipe-card__details {
   margin-bottom: var(--spacing-small);
   margin-left: 2%;
 }
 
-/**
- * Titres des sections (Recette, Ingrédients).
- * - Taille légèrement réduite.
- * - Couleur grisée pour un bon contraste.
- */
+/*--------------------------------------------
+/* Titres des sections (Recette, Ingrédients).
+/*--------------------------------------------*/
 .recipe-card__section {
   font-size: 0.8rem;
   text-transform: uppercase;
@@ -1032,10 +1113,9 @@ header {
   margin-bottom: 2%;
 }
 
-/**
- * Texte descriptif de la recette.
- * - Lecture optimisée avec `line-height`.
- */
+/*-------------------------------------------
+/* Texte descriptif de la recette.
+/*-------------------------------------------*/
 .recipe-card__description {
   font-size: 0.9rem;
   color: var(--text-color-tertiary, #666);
@@ -1045,30 +1125,25 @@ header {
 /* ============================================================
     IV.  Liste des ingrédients
 ============================================================== */
-/**
- * Conteneur de la liste des ingrédients.
- * - Marges adaptées pour une séparation nette.
- */
+/*-------------------------------------------*/
+/* Conteneur de la liste des ingrédients.
+/*-------------------------------------------*/
 .recipe-card__ingredients-container {
   margin: 5% 0;
 }
 
-/**
- * Liste des ingrédients.
- * - Affichage en grille avec deux colonnes.
- * - Suppression des puces.
- */
+/* -----------------------------------------*/
+/* Liste des ingrédients.
+/*-----------------------------------------*/
 .recipe-card__ingredients-container ul {
   display: grid;
   grid-template-columns: repeat(2, 50%);
   list-style: none;
 }
 
-/**
- * Élément individuel de la liste.
- * - Organisation en colonne.
- * - Espacement entre chaque ingrédient.
- */
+/*---------------------------------------*/
+/* Élément individuel de la liste.
+/*---------------------------------------*/
 .recipe-card__ingredients-container li {
   display: flex;
   flex-direction: column;
@@ -1076,11 +1151,9 @@ header {
   margin-bottom: 5%;
 }
 
-/**
- * Nom de l’ingrédient.
- * - Texte en gras.
- * - Première lettre en majuscule.
- */
+/* ------------------------------------------------
+/* Nom de l’ingrédient.
+/* ------------------------------------------------*/
 .recipe-card__ingredient-name {
   font-weight: 500;
   text-transform: capitalize;
@@ -1089,213 +1162,295 @@ header {
   margin-bottom: 2%;
 }
 
-/**
- * Quantité de l’ingrédient.
- * - Taille de police plus petite.
- * - Couleur grisée pour différenciation visuelle.
- */
+/* ------------------------------------------------
+/* Quantité de l’ingrédient.
+/* ------------------------------------------------*/
 .recipe-card__ingredient-quantity {
   font-size: var(--font-size-small);
   color: var(--text-color-tertiary, #666);
   font-weight: 300;
 }
 
+/* Styles des cartes utilisées dans l'interface */
+/* ==================================================================================== */
+/*  Nom du fichier    : _footer.scss                                                   */
+/*  Auteur           : Trackozor                                                       */
+/*  Date de création : 10/02/25                                                        */
+/*  Dernière mise à jour : 10/02/25                                                   */
+/*  Description      : Définition des styles du pied de page du site.                  */
+/*                     Le footer est centré, avec un fond gris clair et un texte blanc. */
+/* ==================================================================================== */
+/* ==================================================================================== */
+/*   Style général du pied de page                                                 */
+/* ==================================================================================== */
 footer {
-  text-align: center;
-  padding: 2rem;
-  background-color: #EDEDED;
-  color: white;
-  font-size: 1.4rem;
+  text-align: center; /* Alignement du texte au centre */
+  padding: 2rem; /* Espacement interne pour aérer le contenu */
+  background-color: #EDEDED; /* Couleur de fond gris clair */
+  color: white; /* Couleur du texte */
+  font-size: 1.4rem; /* Taille de police */
 }
 
-/* ====================================================== */
-/*  Filtres avancés - Dropdowns et Badges                */
-/* ====================================================== */
+/* Styles du pied de page */
+/* ==================================================================================== */
+/*  Nom du fichier    : _filters.scss                                                   */
+/*  Auteur           : Trackozor                                                        */
+/*  Date de création : 10/02/25                                                         */
+/*  Dernière mise à jour : 10/02/25                                                    */
+/*  Description      : Styles pour les filtres avancés permettant à l'utilisateur       */
+/*                     de sélectionner des critères spécifiques via des dropdowns       */
+/*                     et d'afficher des tags de filtres actifs sous forme de badges.  */
+/* ==================================================================================== */
+/* ==================================================================================== */
+/*    Définition du conteneur principal des filtres                                   */
+/* ==================================================================================== */
 #filters {
-  width: 90%;
-  background: white;
-  margin: 10% 0;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: justify space-between;
-  gap: 10%;
-}
-
-.filter-container {
-  width: 90%;
-  display: flex;
-  justify-content: space-around;
-  margin: 2% auto;
-  gap: 2%;
-  align-items: center;
-}
-
-/* ============================== */
-/* 1. Boutons de sélection */
-/* ============================== */
-.filter-dropdowns {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  margin: 5% auto;
-  align-items: center;
-}
-
-.filter-button {
-  display: flex;
-  background: #fff;
-  border: 1px solid #D9D9D9;
-  padding: 8% 4%;
-  font-size: 1rem;
-  font-weight: 500;
-  color: #333;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
-  gap: 3%;
-}
-.filter-button:hover {
-  background: #EFEFEF;
-}
-
-/* ============================== */
-/* 2. Filtres Actifs (Badges) */
-/* ============================== */
-.filter-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 1rem;
-}
-
-.filter-tag {
-  background: #FFD15B;
-  color: #000;
-  font-size: 0.8rem;
-  font-weight: bold;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.remove-filter {
-  background: transparent;
-  border: none;
-  font-size: 1rem;
-  font-weight: bold;
-  cursor: pointer;
-  color: #333;
-}
-
-#benchmark-dashboard {
-  position: fixed;
-  top: 10%;
-  right: 2%;
-  width: 350px;
-  background: rgba(0, 0, 0, 0.9);
-  color: white;
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  z-index: 1000;
-  transition: all 0.3s ease-in-out;
-}
-
-#benchmark-dashboard.hidden {
-  transform: translateX(100%);
-  opacity: 0;
-}
-
-.benchmark-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.benchmark-config {
-  margin-bottom: 10px;
-}
-
-#benchmarkChart {
-  width: 100%;
-  height: 250px;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-
-th, td {
-  padding: 5px;
-  text-align: left;
-  border-bottom: 1px solid #444;
+  width: 90%; /* Largeur ajustée pour s'intégrer harmonieusement à la page */
+  background: #fff; /* Couleur de fond blanche pour s'intégrer au design global */
+  margin: 10% 0; /* Espacement vertical pour une séparation claire avec le contenu */
+  display: flex; /* Utilisation de flexbox pour structurer les éléments */
+  flex-direction: row; /* Disposition horizontale des filtres */
+  align-items: center; /* Alignement vertical au centre */
+  justify-content: space-between; /* Répartition uniforme des éléments */
+  gap: 10%; /* Espacement entre les filtres pour une meilleure lisibilité */
 }
 
 /* ==================================================================================== */
-/*  📌 SCSS : Modale Mot de Passe Admin */
+/*    Conteneur des filtres - Structure et alignement                                */
+/* ==================================================================================== */
+.filter-container {
+  width: 90%; /* Largeur relative pour assurer un bon alignement */
+  display: flex; /* Utilisation de flexbox pour aligner les éléments */
+  justify-content: space-around; /* Répartition équitable des éléments */
+  margin: 2% auto; /* Centrage et espacement vertical */
+  gap: 2%; /* Espacement entre les filtres */
+  align-items: center; /* Alignement vertical */
+}
+
+/* ==================================================================================== */
+/*    Filtres actifs - Badges affichés après sélection                            */
+/* ==================================================================================== */
+.filter-tags {
+  display: flex; /* Utilisation de flexbox pour organiser les tags */
+  flex-wrap: wrap; /* Permet de passer à la ligne lorsque l'espace est insuffisant */
+  gap: 0.5rem; /* Espacement entre les badges */
+  margin-top: 1rem; /* Espacement au-dessus des tags */
+}
+
+/* -------------------------------------------------------------- */
+/*   Style des badges des filtres actifs                        */
+/* -------------------------------------------------------------- */
+.filter-tag {
+  background: #FFD15B; /* Fond jaune pour différencier les tags des autres éléments */
+  color: #000; /* Couleur du texte pour une lisibilité optimale */
+  font-size: 0.8rem; /* Taille de police adaptée aux badges */
+  font-weight: bold; /* Mise en valeur du texte */
+  padding: 0.5rem 1rem; /* Espacement interne pour améliorer l'affichage */
+  border-radius: 0.5rem; /* Coins arrondis pour une meilleure apparence */
+  display: flex; /* Utilisation de flexbox pour aligner le texte et l'icône de suppression */
+  align-items: center; /* Alignement vertical du contenu */
+  gap: 0.5rem; /* Espacement entre le texte et l'icône */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Ajout d'une ombre légère pour améliorer la visibilité */
+}
+
+/* Composants des filtres de recherche */
+/* ==================================================================================== */
+/*  Nom du fichier    : _benchmark.scss                                                */
+/*  Auteur           : Trackozor                                                       */
+/*  Date de création : 10/02/25                                                        */
+/*  Dernière mise à jour : 10/02/25                                                   */
+/*  Description      : Styles pour le tableau de bord de benchmark affichant les      */
+/*                     performances du moteur de recherche et les statistiques.       */
+/* ==================================================================================== */
+/* ==================================================================================== */
+/*  Définition du conteneur principal du benchmark                                 */
+/* ==================================================================================== */
+#benchmark-dashboard {
+  position: fixed; /* Fixe le tableau de bord à un emplacement spécifique */
+  top: 10%; /* Décalage depuis le haut de la page */
+  right: 2%; /* Alignement à droite avec un léger décalage */
+  width: 350px; /* Largeur du tableau de bord */
+  background: rgba(0, 0, 0, 0.9); /* Fond semi-transparent pour un effet sombre */
+  color: white; /* Texte en blanc pour assurer un bon contraste */
+  padding: 15px; /* Ajout d'un espacement interne pour éviter que le contenu soit collé aux bords */
+  border-radius: 8px; /* Coins arrondis pour une apparence plus moderne */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Effet d'ombre pour améliorer la visibilité */
+  z-index: 1000; /* Priorité d'affichage pour rester au-dessus des autres éléments */
+  transition: all 0.3s ease-in-out; /* Animation fluide lors de l'apparition/disparition */
+}
+
+/* -------------------------------------------------------------- */
+/*   Masquage du benchmark dashboard lorsqu'il est caché        */
+/* -------------------------------------------------------------- */
+#benchmark-dashboard.hidden {
+  transform: translateX(100%); /* Déplace le tableau de bord en dehors de l'écran */
+  opacity: 0; /* Rend le tableau de bord totalement invisible */
+}
+
+/* ==================================================================================== */
+/*  En-tête du benchmark - Contient le titre et les boutons d'action                */
+/* ==================================================================================== */
+.benchmark-header {
+  display: flex; /* Utilisation de flexbox pour aligner les éléments */
+  justify-content: space-between; /* Répartition entre le titre et les boutons */
+  align-items: center; /* Alignement vertical */
+}
+
+/* ==================================================================================== */
+/*  Configuration des benchmarks (options et paramètres)                            */
+/* ==================================================================================== */
+.benchmark-config {
+  margin-bottom: 10px; /* Espacement sous la configuration pour séparer des autres éléments */
+}
+
+/* ==================================================================================== */
+/*  Graphique de performance du benchmark                                          */
+/* ==================================================================================== */
+#benchmarkChart {
+  width: 100%; /* Largeur ajustée au conteneur */
+  height: 250px; /* Hauteur fixe du graphique */
+}
+
+/* ==================================================================================== */
+/*  Tableaux des statistiques du benchmark                                         */
+/* ==================================================================================== */
+table {
+  width: 100%; /* Largeur ajustée au conteneur */
+  border-collapse: collapse; /* Suppression des espaces entre les bordures */
+  margin-top: 10px; /* Espacement entre le tableau et les autres éléments */
+}
+
+/* -------------------------------------------------------------- */
+/*    Styles des cellules du tableau                            */
+/* -------------------------------------------------------------- */
+th, td {
+  padding: 5px; /* Ajout d'un espacement interne pour un meilleur affichage */
+  text-align: left; /* Alignement du texte à gauche */
+  border-bottom: 1px solid #444; /* Ligne de séparation entre les lignes */
+}
+
+/* Optimisation et affichage des performances */
+/* ==================================================================================== */
+/*  Nom du fichier    : _password-modal.scss                                            */
+/*  Auteur           : Trackozor                                                       */
+/*  Date de création : 10/02/25                                                        */
+/*  Dernière mise à jour : 10/02/25                                                   */
+/*  Description      : Styles pour la modale de saisie du mot de passe Admin.         */
+/*                     La modale s'affiche en overlay et permet à l'administrateur    */
+/*                     de valider ou d'annuler l'action nécessitant une authentification. */
+/* ==================================================================================== */
+/* ==================================================================================== */
+/*  Définition du conteneur principal de la modale                                     */
 /* ==================================================================================== */
 #password-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  visibility: hidden;
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out, visibility 0.3s;
+  position: fixed; /* Positionnement fixe pour que la modale reste toujours visible */
+  top: 0; /* Alignement en haut de l'écran */
+  left: 0; /* Alignement à gauche de l'écran */
+  width: 100%; /* Largeur à 100% pour couvrir toute la fenêtre */
+  height: 100%; /* Hauteur à 100% pour couvrir toute la fenêtre */
+  background: rgba(0, 0, 0, 0.5); /* Fond semi-transparent pour effet overlay */
+  display: flex; /* Utilisation de flexbox pour centrer la modale */
+  justify-content: center; /* Centrage horizontal */
+  align-items: center; /* Centrage vertical */
+  visibility: hidden; /* Masque la modale par défaut */
+  opacity: 0; /* Rendre la modale totalement transparente */
+  transition: opacity 0.3s ease-in-out, visibility 0.3s; /* Ajout d'une transition fluide */
+  /* -------------------------------------------------------------- */
+  /*  Affichage de la modale lorsqu'elle est active                 */
+  /* -------------------------------------------------------------- */
+  /* ==================================================================================== */
+  /*  Définition du contenu interne de la modale                                          */
+  /* ==================================================================================== */
 }
 #password-modal.active {
-  visibility: visible;
-  opacity: 1;
+  visibility: visible; /* Rendre la modale visible */
+  opacity: 1; /* Rendre la modale totalement opaque */
 }
 #password-modal .modal-content {
-  background: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  text-align: center;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-  width: 350px;
+  background: #fff; /* Fond blanc pour contraster avec le fond sombre */
+  padding: 20px; /* Ajout d'un espacement intérieur */
+  border-radius: 8px; /* Arrondi des coins pour un effet plus moderne */
+  text-align: center; /* Alignement du texte au centre */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); /* Effet d'ombre pour donner du relief */
+  width: 350px; /* Largeur fixe de la modale */
+  /* -------------------------------------------------------------- */
+  /*  Style du titre de la modale                                    */
+  /* -------------------------------------------------------------- */
+  /* ==================================================================================== */
+  /*  Définition du champ de saisie du mot de passe                                       */
+  /* ==================================================================================== */
+  /* ==================================================================================== */
+  /*  Définition des boutons d'action dans la modale                                     */
+  /* ==================================================================================== */
 }
 #password-modal .modal-content h2 {
-  font-size: 20px;
-  margin-bottom: 15px;
+  font-size: 20px; /* Définition de la taille de police */
+  margin-bottom: 15px; /* Espacement sous le titre */
 }
 #password-modal .modal-content .password-input {
-  width: 90%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  margin-bottom: 10px;
+  width: 90%; /* Largeur du champ de saisie relative au conteneur */
+  padding: 8px; /* Espacement interne pour améliorer l'ergonomie */
+  border: 1px solid #ccc; /* Bordure fine et grise pour démarquer le champ */
+  border-radius: 4px; /* Coins légèrement arrondis */
+  margin-bottom: 10px; /* Espacement sous le champ */
 }
 #password-modal .modal-content .modal-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
+  display: flex; /* Utilisation de flexbox pour aligner les boutons */
+  justify-content: space-between; /* Espacement maximum entre les boutons */
+  margin-top: 10px; /* Ajout d'un espacement entre le champ de saisie et les boutons */
+  /* -------------------------------------------------------------- */
+  /*  Styles communs aux boutons                                    */
+  /* -------------------------------------------------------------- */
+  /* -------------------------------------------------------------- */
+  /*  Définition du bouton de validation                            */
+  /* -------------------------------------------------------------- */
+  /* -------------------------------------------------------------- */
+  /*  Définition du bouton d'annulation                             */
+  /* -------------------------------------------------------------- */
 }
 #password-modal .modal-content .modal-buttons button {
-  padding: 8px 15px;
-  border: none;
-  cursor: pointer;
-  border-radius: 4px;
-  font-weight: bold;
+  padding: 8px 15px; /* Ajout d'un padding pour améliorer la lisibilité */
+  border: none; /* Suppression des bordures */
+  cursor: pointer; /* Ajout d'un curseur pointeur pour l'interactivité */
+  border-radius: 4px; /* Coins arrondis pour un meilleur rendu */
+  font-weight: bold; /* Mise en valeur du texte */
 }
 #password-modal .modal-content .modal-buttons .validate-btn {
-  background-color: #28a745;
-  color: white;
+  background-color: #28a745; /* Couleur verte pour indiquer une action positive */
+  color: white; /* Texte blanc pour un meilleur contraste */
 }
 #password-modal .modal-content .modal-buttons .cancel-btn {
-  background-color: #dc3545;
-  color: white;
+  background-color: #dc3545; /* Couleur rouge pour indiquer une action d'annulation */
+  color: white; /* Texte blanc pour une meilleure lisibilité */
 }
+
+/* Styles des modales utilisées dans l'application */
+/* ==================================================================================== */
+/*  Nom du fichier    : _grid.scss                                                      */
+/*  Auteur           : Trackozor                                                        */
+/*  Date de création : 10/02/25                                                         */
+/*  Dernière mise à jour : 10/02/25                                                    */
+/*  Description      : Définition de la grille d'affichage des recettes. Utilisation   */
+/*                     de `flexbox` pour les petits écrans et `grid` pour les plus    */
+/*                     grands afin d'améliorer la disposition et l'organisation.       */
+/* ==================================================================================== */
+/* ==================================================================================== */
+/*   Conteneur principal des recettes                                               */
+/* ==================================================================================== */
+#recipes-container {
+  display: flex; /* Utilisation de flexbox par défaut */
+  flex-direction: column; /* Les éléments sont empilés verticalement */
+}
+@media (min-width: 767px) {
+  #recipes-container {
+    display: grid; /* Passage à une grille CSS pour une meilleure gestion */
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Remplissage automatique des colonnes */
+    width: 90%; /* Largeur ajustée pour éviter les bords */
+    margin: auto; /* Centrage du conteneur */
+    row-gap: 0.2%; /* Espacement entre les lignes pour une meilleure lisibilité */
+  }
+}
+
+/* Système de grille et disposition des éléments */
 
 /*# sourceMappingURL=main.css.map */

@@ -1,12 +1,33 @@
-@import "base/reset";
-@import "base/variables";
-@import "base/mixins";
-@import "base/animation";
-@import "base/global";
-@import "components/header";
-@import "components/button";
-@import "components/cards";
-@import "components/footer";
-@import "components/filters";
-@import "components/benchmark";
-@import "components/modal"
+/* ==================================================================================== */
+/*  Nom du fichier    : main.scss                                                       */
+/*  Auteur           : Trackozor                                                        */
+/*  Date de création : 10/02/25                                                         */
+/*  Dernière mise à jour : 10/02/25                                                    */
+/*  Description      : Fichier principal SCSS qui gère l'importation de toutes les     */
+/*                     feuilles de style du projet. Ce fichier centralise les         */
+/*                     styles globaux, les composants et les layouts.                  */
+/* ==================================================================================== */
+
+/* ==================================================================================== */
+/*  Importation des styles de base                                                  */
+/* ==================================================================================== */
+
+@import "base/reset";       /* Réinitialisation des styles par défaut des navigateurs */
+@import "base/variables";   /* Déclaration des variables SCSS (couleurs, typographie, etc.) */
+@import "base/mixins";      /* Fonctions et mixins pour réutilisation */
+@import "base/animation";   /* Définition des animations globales */
+@import "base/global";      /* Styles globaux du projet */
+
+/* ==================================================================================== */
+/*  Importation des composants                                                       */
+/* ==================================================================================== */
+
+@import "components/header";    /* Styles du header et de la navigation */
+@import "components/button";    /* Définition des boutons et interactions */
+@import "components/cards";     /* Styles des cartes utilisées dans l'interface */
+@import "components/footer";    /* Styles du pied de page */
+@import "components/filters";   /* Composants des filtres de recherche */
+@import "components/benchmark"; /* Optimisation et affichage des performances */
+@import "components/modal";     /* Styles des modales utilisées dans l'application */
+@import "components/grid";      /* Système de grille et disposition des éléments */
+

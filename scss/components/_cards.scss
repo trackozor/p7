@@ -14,12 +14,10 @@
     I.  Styles généraux de la carte de recette
 ============================================================== */
 
-/**
- * Conteneur principal de la carte.
- * - Fond blanc avec arrondis et ombre portée.
- * - Largeur adaptable selon l'écran.
- * - Transition douce au survol.
- */
+/*-------------------------------------------------
+/* Conteneur principal de la carte.
+/*-------------------------------------------------*/
+
 .recipe-card {
     background: #fff;
     border-radius: 1.25rem;
@@ -37,7 +35,7 @@
         width: 40vw;
     }
     @include desktop {
-        width: 30vw;
+        width: 25vw;
     }
     @include large-desktop {
         width: 20vw;
@@ -48,12 +46,10 @@
     II.  Section image de la recette
 ============================================================== */
 
-/**
+/*----------------------------------------------
  * Conteneur de l’image.
- * - Hauteur dynamique ajustée avec `clamp()`.
- * - Assure que l’image prend toute la largeur.
- * - Permet d’inclure des éléments positionnés en absolu (ex: badge).
- */
+/*----------------------------------------------*/
+
 .recipe-card__image {
     position: relative;
     width: 100%;
@@ -66,11 +62,10 @@
     justify-content: center;
 }
 
-/**
- * Image de la recette.
- * - Remplit tout le conteneur sans déformation.
- * - Empêche les débordements.
- */
+/*-------------------------------------------
+/* Image de la recette.
+/*-------------------------------------------*/
+
 .recipe-card__img {
     width: 100%;
     height: 100%;
@@ -78,12 +73,10 @@
     display: block;
 }
 
-/**
- * Badge du temps de préparation.
- * - Position absolue en haut à droite.
- * - Fond jaune pour visibilité.
- * - Taille de police responsive.
- */
+/*-------------------------------------------
+/* Badge du temps de préparation.
+/*-------------------------------------------*/
+
 .recipe-card__time {
     position: absolute;
     top: 10px;
@@ -106,11 +99,10 @@
     III.  Contenu textuel de la carte
 ============================================================== */
 
-/**
- * Conteneur du texte de la carte.
- * - Organisation en colonne.
- * - Espacement homogène entre les sections.
- */
+/*-------------------------------------------
+/* Conteneur du texte de la carte.
+/*-------------------------------------------*/
+
 .recipe-card__content {
     padding: 2%;
     color: var(--text-color-primary);
@@ -124,20 +116,19 @@
 /*     Titre de la recette                                      */
 /* ------------------------------------------------------------ */
 
-/**
- * En-tête contenant le titre.
- * - Fond blanc pour séparation nette avec l’image.
- */
+/* ------------------------------------------------
+/* En-tête contenant le titre.
+/*-------------------------------------------------*/
+
 .recipe-card__header {
     margin-bottom: var(--spacing-small);
     background-color: #fff;
 }
 
-/**
- * Titre de la recette.
- * - Police en gras.
- * - Espacement adapté.
- */
+/*---------------------------------------------
+/* Titre de la recette.
+/*---------------------------------------------*/
+
 .recipe-card__title {
     font-size: clamp(1rem, 2vw, 1.5rem);
     font-weight: 900;
@@ -149,20 +140,19 @@
 /*     Section "Recette" (description)                          */
 /* ------------------------------------------------------------ */
 
-/**
- * Conteneur de la description de la recette.
- * - Alignement à gauche avec une légère marge.
- */
+/* --------------------------------------------
+/* Conteneur de la description de la recette.
+/* -------------------------------------------- */
+
 .recipe-card__details {
     margin-bottom: var(--spacing-small);
     margin-left: 2%;
 }
 
-/**
- * Titres des sections (Recette, Ingrédients).
- * - Taille légèrement réduite.
- * - Couleur grisée pour un bon contraste.
- */
+/*--------------------------------------------
+/* Titres des sections (Recette, Ingrédients).
+/*--------------------------------------------*/
+
 .recipe-card__section {
     font-size: 0.8rem;
     text-transform: uppercase;
@@ -170,10 +160,10 @@
     margin-bottom: 2%;
 }
 
-/**
- * Texte descriptif de la recette.
- * - Lecture optimisée avec `line-height`.
- */
+/*-------------------------------------------
+/* Texte descriptif de la recette.
+/*-------------------------------------------*/
+
 .recipe-card__description {
     font-size: 0.9rem;
     color: var(--text-color-tertiary, #666);
@@ -184,30 +174,28 @@
     IV.  Liste des ingrédients
 ============================================================== */
 
-/**
- * Conteneur de la liste des ingrédients.
- * - Marges adaptées pour une séparation nette.
- */
+/*-------------------------------------------*/
+/* Conteneur de la liste des ingrédients.
+/*-------------------------------------------*/
+
 .recipe-card__ingredients-container {
     margin: 5% 0;
 }
 
-/**
- * Liste des ingrédients.
- * - Affichage en grille avec deux colonnes.
- * - Suppression des puces.
- */
+/* -----------------------------------------*/
+/* Liste des ingrédients.
+/*-----------------------------------------*/
+
 .recipe-card__ingredients-container ul {
     display: grid;
     grid-template-columns: repeat(2, 50%);
     list-style: none;
 }
 
-/**
- * Élément individuel de la liste.
- * - Organisation en colonne.
- * - Espacement entre chaque ingrédient.
- */
+/*---------------------------------------*/
+/* Élément individuel de la liste.
+/*---------------------------------------*/
+
 .recipe-card__ingredients-container li {
     display: flex;
     flex-direction: column;
@@ -215,11 +203,10 @@
     margin-bottom: 5%;
 }
 
-/**
- * Nom de l’ingrédient.
- * - Texte en gras.
- * - Première lettre en majuscule.
- */
+/* ------------------------------------------------
+/* Nom de l’ingrédient.
+/* ------------------------------------------------*/
+
 .recipe-card__ingredient-name {
     font-weight: 500;
     text-transform: capitalize;
@@ -228,11 +215,10 @@
     margin-bottom: 2%;
 }
 
-/**
- * Quantité de l’ingrédient.
- * - Taille de police plus petite.
- * - Couleur grisée pour différenciation visuelle.
- */
+/* ------------------------------------------------
+/* Quantité de l’ingrédient.
+/* ------------------------------------------------*/
+
 .recipe-card__ingredient-quantity {
     font-size: var(--font-size-small);
     color: var(--text-color-tertiary, #666);
