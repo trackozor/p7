@@ -15,31 +15,36 @@
 /* ============================================================ */
 
 .recipe-card {
-    background: #fff;
-    border-radius: 1.25rem;
-    overflow: hidden;
-    box-shadow: var(--box-shadow-medium);
-    transition: transform var(--transition-default);
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    max-width: 300px;
-    margin:2% auto;
-    font-family: 'Arial', sans-serif;
-    height:20%;
+    background: #fff; /* Fond blanc */
+    border-radius: 1.25rem; /* Coins arrondis */
+    overflow: hidden; /* Cache le contenu qui dépasse */
+    box-shadow: var(--box-shadow-medium); /* Ajout d'une ombre */
+    transition: transform var(--transition-default); /* Animation au survol */
+    display: flex; /* Affichage en flexbox */
+    flex-direction: column; /* Organise en colonne */
+    width: 100%; /* Largeur complète */
+    max-width: 300px; /* Largeur maximale */
+    margin: 2% auto; /* Centrage et marges */
+    font-family: 'Arial', sans-serif; /* Police de caractères */
+    height: 20%; /* Hauteur automatique */
 
     &:hover {
-        transform: translateY(-5px);
+        transform: translateY(-5px); /* Effet de levée au survol */
     }
 
     @include tablet {
-        max-width: 320px;
-        height:100vh;
-        max-height:600px;
+        max-width: 320px; /* Ajustement de la largeur sur tablette */
+        height: 100vh; /* Pleine hauteur sur tablette */
+        max-height: 600px; /* Hauteur max */
     }
     @include desktop {
-        max-width: 280px;
-        height:100vh;
+        max-width: 280px; /* Ajustement sur desktop */
+        height: 100vh; /* Pleine hauteur */
+    }
+    @include large-desktop {
+        max-width: 360px; /* Ajustement sur mobile */
+        height: 100vh; /* Pleine hauteur */
+        max-height: 650px; /* Hauteur max */
     }
 }
 
@@ -48,45 +53,55 @@
 /* ============================================================ */
 
 .recipe-card__image {
-    position: relative;
-    width: 100%;
-    height: 180px;
-    overflow: hidden;
-    display: flex;
+    position: relative; /* Position relative pour les éléments internes */
+    width: 100%; /* Largeur complète */
+    height: 180px; /* Hauteur fixe */
+    overflow: hidden; /* Cache tout débordement */
+    display: flex; /* Centrage avec flexbox */
     align-items: center;
     justify-content: center;
+
     @include tablet {
-        max-height: 320px;
+        max-height: 320px; /* Hauteur max sur tablette */
     }
     @include desktop {
-        height: 250px;
+        height: 250px; /* Ajustement pour desktop */
     }
 }
+
+/* ---------------------------------------------- */
+/* Image de la recette                           */
+/* ---------------------------------------------- */
 
 .recipe-card__img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
+    width: 100%; /* Image à 100% du conteneur */
+    height: 100%; /* Hauteur ajustée */
+    object-fit: cover; /* Ajustement de l'image sans déformation */
+    display: block; /* Suppression des espaces indésirables */
+
     @include tablet {
-        max-height:300px;
+        max-height: 300px; /* Ajustement pour tablette */
     }
     @include desktop {
-    height:250px;
+        height: 250px; /* Ajustement pour desktop */
     }
 }
 
+/* ---------------------------------------------- */
+/* Badge du temps de préparation                 */
+/* ---------------------------------------------- */
+
 .recipe-card__time {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background: #FFD15B;
-    color: #000;
-    font-weight: bold;
-    font-size: 14px;
-    padding: 6px 10px;
-    border-radius: 10px;
-    text-transform: uppercase;
+    position: absolute; /* Position absolue dans l'image */
+    top: 8px; /* Distance du haut */
+    right: 8px; /* Distance de la droite */
+    background: #FFD15B; /* Couleur de fond jaune */
+    color: #000; /* Couleur du texte noir */
+    font-weight: bold; /* Texte en gras */
+    font-size: 14px; /* Taille de police */
+    padding: 6px 10px; /* Espacement interne */
+    border-radius: 10px; /* Coins arrondis */
+    text-transform: uppercase; /* Texte en majuscules */
 }
 
 /* ============================================================ */
@@ -94,56 +109,80 @@
 /* ============================================================ */
 
 .recipe-card__content {
-    padding: 16px;
-    display: flex;
-    height:450px;
-    flex-direction: column;
-    gap: 8px;
+    padding: 16px; /* Espacement interne */
+    display: flex; /* Affichage en flexbox */
+    height: 450px; /* Hauteur définie */
+    flex-direction: column; /* Organisation en colonne */
+    gap: 8px; /* Espacement entre les éléments */
+
     @include tablet {
-        height: 450px;
+        height: 450px; /* Ajustement pour tablette */
     }
 }
+/* ---------------------------------------------- */
+/* En-tête de la recette                         */
+/* ---------------------------------------------- */
 
-/* === Titre === */
 .recipe-card__header {
-    margin-bottom: 10%;
-    height:2%;
-    background-color: white;;
+    margin-bottom: 10%; /* Espacement en bas */
+    height: 2%; /* Hauteur réduite */
+    background-color: white; /* Fond blanc */
 }
+
+/* ---------------------------------------------- */
+/* Titre de la recette                           */
+/* ---------------------------------------------- */
 
 .recipe-card__title {
-    font-size: 18px;
-    font-weight: bold;
-    height:1%;
-    margin: 0;
-    color: #333;
+    font-size: 18px; /* Taille de police */
+    font-weight: bold; /* Texte en gras */
+    height: 1%; /* Hauteur réduite */
+    margin: 0; /* Suppression des marges */
+    color: #333; /* Couleur du texte */
 }
 
-/* === Description de la recette === */
+/* ---------------------------------------------- */
+/* Conteneur de la description                   */
+/* ---------------------------------------------- */
+
 .recipe-card__details {
-    margin-bottom: 12px;
-    height:25%;
+    margin-bottom: 12px; /* Espacement en bas */
+    height: 40%; /* Hauteur définie */
 }
+
+/* ---------------------------------------------- */
+/* Titres des sections (Recette, Ingrédients)    */
+/* ---------------------------------------------- */
 
 .recipe-card__section {
-    font-size: 14px;
-    font-weight: bold;
-    color: #7A7A7A;
-    text-transform: uppercase;
-    margin-bottom: 3%;
+    font-size: 14px; /* Taille de police */
+    font-weight: bold; /* Texte en gras */
+    color: #7A7A7A; /* Couleur grise */
+    text-transform: uppercase; /* Texte en majuscules */
+    margin-bottom: 3%; /* Espacement */
 }
+
+/* ---------------------------------------------- */
+/* Titre de la section Ingrédients               */
+/* ---------------------------------------------- */
+
 .recipe-card__section__ingredients {
-    font-size: 14px;
-    font-weight: bold;
-    color: #7A7A7A;
-    text-transform: uppercase;
-    margin:6% 0;
+    font-size: 14px; /* Taille de police */
+    font-weight: bold; /* Texte en gras */
+    color: #7A7A7A; /* Couleur grise */
+    text-transform: uppercase; /* Texte en majuscules */
+    margin: 6% 0; /* Espacement */
 }
+
+/* ---------------------------------------------- */
+/* Texte descriptif de la recette                */
+/* ---------------------------------------------- */
+
 .recipe-card__description {
-    font-size: 13px;
-    height:3px;
-    color: #555;
-    line-height: 1.4;
+    font-size: 13px; /* Taille de police */
+    height: 3px; /* Hauteur réduite */
+    color: #555; /* Couleur du texte */
+    line-height: 1.4; /* Espacement des lignes */
 }
 
 /* ============================================================ */
@@ -151,33 +190,46 @@
 /* ============================================================ */
 
 .recipe-card__ingredients-container {
-    margin-top: 10%;
+    margin-top: 10%;  /* Espacement en haut */
 }
 
+/* ---------------------------------------------- */
+/* Liste des ingrédients                          */
+/* ---------------------------------------------- */
 .recipe-card__ingredients {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: auto;
+    list-style: none;  /* Suppression des puces */
+    padding: 0;  /* Suppression des marges internes */
+    margin: 0;  /* Suppression des marges externes */
+    display: grid;  /* Organisation en grille */
+    grid-template-columns: repeat(2, 1fr);  /* Deux colonnes */
+    gap: auto;  /* Espacement automatique */
 }
 
+/* ---------------------------------------------- */
+/* Élément individuel d'un ingrédient            */
+/* ---------------------------------------------- */
 .recipe-card__ingredient {
-    display: flex;
-    flex-direction: column;
-    font-size: 13px;
-    color: #444;
-    padding: 6px 0;
+    display: flex;  /* Affichage en flexbox */
+    flex-direction: column;  /* Organisation en colonne */
+    font-size: 13px;  /* Taille de police */
+    color: #444;  /* Couleur du texte */
+    padding: 6px 0;  /* Espacement interne */
 }
 
+/* ---------------------------------------------- */
+/* Nom de l’ingrédient                            */
+/* ---------------------------------------------- */
 .recipe-card__ingredient-name {
-    font-weight: bold;
-    text-transform: capitalize;
+    font-weight: bold;  /* Texte en gras */
+    text-transform: capitalize;  /* Première lettre en majuscule */
 }
 
+/* ---------------------------------------------- */
+/* Quantité de l’ingrédient                       */
+/* ---------------------------------------------- */
 .recipe-card__ingredient-quantity {
-    font-size: 12px;
-    color: #777;
-    margin-top:3%;
+    font-size: 12px;  /* Taille de police */
+    color: #777;  /* Couleur grise */
+    margin-top: 3%;  /* Espacement en haut */
 }
+

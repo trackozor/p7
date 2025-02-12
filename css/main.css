@@ -309,12 +309,11 @@ a {
 /* Fonctions et mixins pour réutilisation */
 /* ====================================================== */
 /*  Nom du fichier    : _animations.scss                */
-/* Auteur            : Trackozor                        */
-/* Date de création  : 25/09/24                        */
+/*  Auteur            : Trackozor                        */
+/*  Date de création  : 25/09/24                        */
 /*  Dernière modif.   : 08/01/25                        */
 /*  Description       : Fichier regroupant toutes les   */
-/*                        animations réutilisables       */
-/*                                                        */
+/*                      animations réutilisables       */
 /* ====================================================== */
 /* ====================================================== */
 /*  Effets de Fondu (Fade In / Fade Out) */
@@ -322,26 +321,26 @@ a {
 @keyframes fade-in {
   from {
     opacity: 0;
-  }
+  } /* Début de l'animation, élément totalement transparent */
   to {
     opacity: 1;
-  }
+  } /* Fin de l'animation, élément totalement visible */
 }
 @keyframes fade-out {
   from {
     opacity: 1;
-  }
+  } /* Début de l'animation, élément totalement visible */
   to {
     opacity: 0;
-  }
+  } /* Fin de l'animation, élément totalement transparent */
 }
 /*  Classe utilitaire */
 .fade-in {
-  animation: fade-in 0.5s ease-in-out forwards;
+  animation: fade-in 0.5s ease-in-out forwards; /* Animation fluide en 0.5s */
 }
 
 .fade-out {
-  animation: fade-out 0.5s ease-in-out forwards;
+  animation: fade-out 0.5s ease-in-out forwards; /* Animation fluide en 0.5s */
 }
 
 /* ====================================================== */
@@ -350,18 +349,18 @@ a {
 @keyframes scale-up {
   from {
     transform: scale(0.8);
-  }
+  } /* Départ avec une taille réduite */
   to {
     transform: scale(1);
-  }
+  } /* Arrivée avec une taille normale */
 }
 @keyframes scale-down {
   from {
     transform: scale(1);
-  }
+  } /* Départ avec la taille normale */
   to {
     transform: scale(0.8);
-  }
+  } /* Arrivée avec une taille réduite */
 }
 /*  Classes utilitaires */
 .scale-up {
@@ -375,13 +374,13 @@ a {
 @keyframes pulse {
   0%, 100% {
     transform: scale(1);
-  }
+  } /* Taille normale */
   50% {
     transform: scale(1.1);
-  }
+  } /* Légère augmentation de taille */
 }
 .pulse {
-  animation: pulse 2s infinite ease-in-out;
+  animation: pulse 2s infinite ease-in-out; /* Effet de pulsation répétée */
 }
 
 /* ====================================================== */
@@ -391,21 +390,21 @@ a {
   from {
     transform: translateX(100%);
     opacity: 0;
-  }
+  } /* Départ en dehors de l'écran */
   to {
     transform: translateX(0);
     opacity: 1;
-  }
+  } /* Arrivée en position normale */
 }
 @keyframes slide-out {
   from {
     transform: translateX(0);
     opacity: 1;
-  }
+  } /* Départ en position normale */
   to {
     transform: translateX(-100%);
     opacity: 0;
-  }
+  } /* Disparition vers la gauche */
 }
 /*  Classes utilitaires */
 .slide-in {
@@ -422,26 +421,26 @@ a {
 @keyframes rotate {
   from {
     transform: rotate(0deg);
-  }
+  } /* Début à 0° */
   to {
     transform: rotate(360deg);
-  }
+  } /* Rotation complète */
 }
 @keyframes rotate-reverse {
   from {
     transform: rotate(360deg);
-  }
+  } /* Début à 360° */
   to {
     transform: rotate(0deg);
-  }
+  } /* Retour à 0° */
 }
 /*  Classes utilitaires */
 .rotate {
-  animation: rotate 1s linear infinite;
+  animation: rotate 1s linear infinite; /* Rotation continue */
 }
 
 .rotate-reverse {
-  animation: rotate-reverse 1s linear infinite;
+  animation: rotate-reverse 1s linear infinite; /* Rotation continue inversée */
 }
 
 /* ====================================================== */
@@ -451,25 +450,25 @@ a {
   0% {
     opacity: 0;
     transform: translateX(20px) scale(0.95);
-  }
+  } /* Départ à droite et réduit */
   60% {
     opacity: 1;
     transform: translateX(-3px) scale(1.02);
-  }
+  } /* Déplacement léger */
   100% {
     opacity: 1;
     transform: translateX(0) scale(1);
-  }
+  } /* Stabilisation */
 }
 @keyframes fade-out-scale {
   0% {
     opacity: 1;
     transform: scale(1);
-  }
+  } /* Départ normal */
   100% {
     opacity: 0;
     transform: scale(0.9);
-  }
+  } /* Disparition en rétrécissant */
 }
 /*  Classes utilitaires */
 .fade-in-up {
@@ -487,41 +486,41 @@ a {
   from {
     transform: translateX(100%);
     opacity: 0;
-  }
+  } /* Arrivée de la droite */
   to {
     transform: translateX(0);
     opacity: 1;
-  }
+  } /* Arrêt en position normale */
 }
 @keyframes slide-out-left {
   from {
     transform: translateX(0);
     opacity: 1;
-  }
+  } /* Départ normal */
   to {
     transform: translateX(-100%);
     opacity: 0;
-  }
+  } /* Disparition à gauche */
 }
 @keyframes slide-in-left {
   from {
     transform: translateX(-100%);
     opacity: 0;
-  }
+  } /* Arrivée de la gauche */
   to {
     transform: translateX(0);
     opacity: 1;
-  }
+  } /* Arrêt en position normale */
 }
 @keyframes slide-out-right {
   from {
     transform: translateX(0);
     opacity: 1;
-  }
+  } /* Départ normal */
   to {
     transform: translateX(100%);
     opacity: 0;
-  }
+  } /* Disparition à droite */
 }
 /*  Classes spécifiques pour la Lightbox */
 .lightbox-enter-right {
@@ -547,14 +546,14 @@ a {
   0% {
     transform: scale(0.8);
     opacity: 0;
-  }
+  } /* Départ réduit et transparent */
   50% {
     transform: scale(1.1);
     opacity: 1;
-  }
+  } /* Grossissement temporaire */
   100% {
     transform: scale(1);
-  }
+  } /* Stabilisation */
 }
 /*  Classe utilitaire */
 .bounce-in {
@@ -567,10 +566,10 @@ a {
 @keyframes heartbeat {
   0%, 100% {
     transform: scale(1);
-  }
+  } /* Taille normale */
   50% {
     transform: scale(1.2);
-  }
+  } /* Grossissement au centre */
 }
 /*  Classe utilitaire */
 .heartbeat {
@@ -583,14 +582,14 @@ a {
 @keyframes spin {
   from {
     transform: rotate(0deg);
-  }
+  } /* Départ à 0° */
   to {
     transform: rotate(360deg);
-  }
+  } /* Rotation complète */
 }
 /*  Classe utilitaire */
 .spin {
-  animation: spin 1s linear infinite;
+  animation: spin 1s linear infinite; /* Rotation continue */
 }
 
 /* Définition des animations globales */
@@ -981,33 +980,40 @@ header {
 /*  I.  Conteneur principal de la carte                         */
 /* ============================================================ */
 .recipe-card {
-  background: #fff;
-  border-radius: 1.25rem;
-  overflow: hidden;
-  box-shadow: var(--box-shadow-medium);
-  transition: transform var(--transition-default);
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  max-width: 300px;
-  margin: 2% auto;
-  font-family: "Arial", sans-serif;
-  height: 20%;
+  background: #fff; /* Fond blanc */
+  border-radius: 1.25rem; /* Coins arrondis */
+  overflow: hidden; /* Cache le contenu qui dépasse */
+  box-shadow: var(--box-shadow-medium); /* Ajout d'une ombre */
+  transition: transform var(--transition-default); /* Animation au survol */
+  display: flex; /* Affichage en flexbox */
+  flex-direction: column; /* Organise en colonne */
+  width: 100%; /* Largeur complète */
+  max-width: 300px; /* Largeur maximale */
+  margin: 2% auto; /* Centrage et marges */
+  font-family: "Arial", sans-serif; /* Police de caractères */
+  height: 20%; /* Hauteur automatique */
 }
 .recipe-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-5px); /* Effet de levée au survol */
 }
 @media (min-width: 767px) {
   .recipe-card {
-    max-width: 320px;
-    height: 100vh;
-    max-height: 600px;
+    max-width: 320px; /* Ajustement de la largeur sur tablette */
+    height: 100vh; /* Pleine hauteur sur tablette */
+    max-height: 600px; /* Hauteur max */
   }
 }
 @media (min-width: 1024px) {
   .recipe-card {
-    max-width: 280px;
-    height: 100vh;
+    max-width: 280px; /* Ajustement sur desktop */
+    height: 100vh; /* Pleine hauteur */
+  }
+}
+@media (min-width: 1440px) {
+  .recipe-card {
+    max-width: 360px; /* Ajustement sur mobile */
+    height: 100vh; /* Pleine hauteur */
+    max-height: 650px; /* Hauteur max */
   }
 }
 
@@ -1015,148 +1021,182 @@ header {
 /*  II. Section image de la recette                            */
 /* ============================================================ */
 .recipe-card__image {
-  position: relative;
-  width: 100%;
-  height: 180px;
-  overflow: hidden;
-  display: flex;
+  position: relative; /* Position relative pour les éléments internes */
+  width: 100%; /* Largeur complète */
+  height: 180px; /* Hauteur fixe */
+  overflow: hidden; /* Cache tout débordement */
+  display: flex; /* Centrage avec flexbox */
   align-items: center;
   justify-content: center;
 }
 @media (min-width: 767px) {
   .recipe-card__image {
-    max-height: 320px;
+    max-height: 320px; /* Hauteur max sur tablette */
   }
 }
 @media (min-width: 1024px) {
   .recipe-card__image {
-    height: 250px;
+    height: 250px; /* Ajustement pour desktop */
   }
 }
 
+/* ---------------------------------------------- */
+/* Image de la recette                           */
+/* ---------------------------------------------- */
 .recipe-card__img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
+  width: 100%; /* Image à 100% du conteneur */
+  height: 100%; /* Hauteur ajustée */
+  object-fit: cover; /* Ajustement de l'image sans déformation */
+  display: block; /* Suppression des espaces indésirables */
 }
 @media (min-width: 767px) {
   .recipe-card__img {
-    max-height: 300px;
+    max-height: 300px; /* Ajustement pour tablette */
   }
 }
 @media (min-width: 1024px) {
   .recipe-card__img {
-    height: 250px;
+    height: 250px; /* Ajustement pour desktop */
   }
 }
 
+/* ---------------------------------------------- */
+/* Badge du temps de préparation                 */
+/* ---------------------------------------------- */
 .recipe-card__time {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background: #FFD15B;
-  color: #000;
-  font-weight: bold;
-  font-size: 14px;
-  padding: 6px 10px;
-  border-radius: 10px;
-  text-transform: uppercase;
+  position: absolute; /* Position absolue dans l'image */
+  top: 8px; /* Distance du haut */
+  right: 8px; /* Distance de la droite */
+  background: #FFD15B; /* Couleur de fond jaune */
+  color: #000; /* Couleur du texte noir */
+  font-weight: bold; /* Texte en gras */
+  font-size: 14px; /* Taille de police */
+  padding: 6px 10px; /* Espacement interne */
+  border-radius: 10px; /* Coins arrondis */
+  text-transform: uppercase; /* Texte en majuscules */
 }
 
 /* ============================================================ */
 /*  III. Contenu textuel de la carte                           */
 /* ============================================================ */
 .recipe-card__content {
-  padding: 16px;
-  display: flex;
-  height: 450px;
-  flex-direction: column;
-  gap: 8px;
+  padding: 16px; /* Espacement interne */
+  display: flex; /* Affichage en flexbox */
+  height: 450px; /* Hauteur définie */
+  flex-direction: column; /* Organisation en colonne */
+  gap: 8px; /* Espacement entre les éléments */
 }
 @media (min-width: 767px) {
   .recipe-card__content {
-    height: 450px;
+    height: 450px; /* Ajustement pour tablette */
   }
 }
 
-/* === Titre === */
+/* ---------------------------------------------- */
+/* En-tête de la recette                         */
+/* ---------------------------------------------- */
 .recipe-card__header {
-  margin-bottom: 10%;
-  height: 2%;
-  background-color: white;
+  margin-bottom: 10%; /* Espacement en bas */
+  height: 2%; /* Hauteur réduite */
+  background-color: white; /* Fond blanc */
 }
 
+/* ---------------------------------------------- */
+/* Titre de la recette                           */
+/* ---------------------------------------------- */
 .recipe-card__title {
-  font-size: 18px;
-  font-weight: bold;
-  height: 1%;
-  margin: 0;
-  color: #333;
+  font-size: 18px; /* Taille de police */
+  font-weight: bold; /* Texte en gras */
+  height: 1%; /* Hauteur réduite */
+  margin: 0; /* Suppression des marges */
+  color: #333; /* Couleur du texte */
 }
 
-/* === Description de la recette === */
+/* ---------------------------------------------- */
+/* Conteneur de la description                   */
+/* ---------------------------------------------- */
 .recipe-card__details {
-  margin-bottom: 12px;
-  height: 25%;
+  margin-bottom: 12px; /* Espacement en bas */
+  height: 40%; /* Hauteur définie */
 }
 
+/* ---------------------------------------------- */
+/* Titres des sections (Recette, Ingrédients)    */
+/* ---------------------------------------------- */
 .recipe-card__section {
-  font-size: 14px;
-  font-weight: bold;
-  color: #7A7A7A;
-  text-transform: uppercase;
-  margin-bottom: 3%;
+  font-size: 14px; /* Taille de police */
+  font-weight: bold; /* Texte en gras */
+  color: #7A7A7A; /* Couleur grise */
+  text-transform: uppercase; /* Texte en majuscules */
+  margin-bottom: 3%; /* Espacement */
 }
 
+/* ---------------------------------------------- */
+/* Titre de la section Ingrédients               */
+/* ---------------------------------------------- */
 .recipe-card__section__ingredients {
-  font-size: 14px;
-  font-weight: bold;
-  color: #7A7A7A;
-  text-transform: uppercase;
-  margin: 6% 0;
+  font-size: 14px; /* Taille de police */
+  font-weight: bold; /* Texte en gras */
+  color: #7A7A7A; /* Couleur grise */
+  text-transform: uppercase; /* Texte en majuscules */
+  margin: 6% 0; /* Espacement */
 }
 
+/* ---------------------------------------------- */
+/* Texte descriptif de la recette                */
+/* ---------------------------------------------- */
 .recipe-card__description {
-  font-size: 13px;
-  height: 3px;
-  color: #555;
-  line-height: 1.4;
+  font-size: 13px; /* Taille de police */
+  height: 3px; /* Hauteur réduite */
+  color: #555; /* Couleur du texte */
+  line-height: 1.4; /* Espacement des lignes */
 }
 
 /* ============================================================ */
 /*  IV. Liste des ingrédients                                  */
 /* ============================================================ */
 .recipe-card__ingredients-container {
-  margin-top: 10%;
+  margin-top: 10%; /* Espacement en haut */
 }
 
+/* ---------------------------------------------- */
+/* Liste des ingrédients                          */
+/* ---------------------------------------------- */
 .recipe-card__ingredients {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: auto;
+  list-style: none; /* Suppression des puces */
+  padding: 0; /* Suppression des marges internes */
+  margin: 0; /* Suppression des marges externes */
+  display: grid; /* Organisation en grille */
+  grid-template-columns: repeat(2, 1fr); /* Deux colonnes */
+  gap: auto; /* Espacement automatique */
 }
 
+/* ---------------------------------------------- */
+/* Élément individuel d'un ingrédient            */
+/* ---------------------------------------------- */
 .recipe-card__ingredient {
-  display: flex;
-  flex-direction: column;
-  font-size: 13px;
-  color: #444;
-  padding: 6px 0;
+  display: flex; /* Affichage en flexbox */
+  flex-direction: column; /* Organisation en colonne */
+  font-size: 13px; /* Taille de police */
+  color: #444; /* Couleur du texte */
+  padding: 6px 0; /* Espacement interne */
 }
 
+/* ---------------------------------------------- */
+/* Nom de l’ingrédient                            */
+/* ---------------------------------------------- */
 .recipe-card__ingredient-name {
-  font-weight: bold;
-  text-transform: capitalize;
+  font-weight: bold; /* Texte en gras */
+  text-transform: capitalize; /* Première lettre en majuscule */
 }
 
+/* ---------------------------------------------- */
+/* Quantité de l’ingrédient                       */
+/* ---------------------------------------------- */
 .recipe-card__ingredient-quantity {
-  font-size: 12px;
-  color: #777;
-  margin-top: 3%;
+  font-size: 12px; /* Taille de police */
+  color: #777; /* Couleur grise */
+  margin-top: 3%; /* Espacement en haut */
 }
 
 /* Styles des cartes utilisées dans l'interface */
@@ -1356,18 +1396,18 @@ th, td {
 /*  Définition du conteneur principal de la modale                                     */
 /* ==================================================================================== */
 #password-modal {
-  position: fixed; /* Positionnement fixe pour que la modale reste toujours visible */
-  top: 0; /* Alignement en haut de l'écran */
-  left: 0; /* Alignement à gauche de l'écran */
-  width: 100%; /* Largeur à 100% pour couvrir toute la fenêtre */
-  height: 100%; /* Hauteur à 100% pour couvrir toute la fenêtre */
-  background: rgba(0, 0, 0, 0.5); /* Fond semi-transparent pour effet overlay */
-  display: flex; /* Utilisation de flexbox pour centrer la modale */
-  justify-content: center; /* Centrage horizontal */
-  align-items: center; /* Centrage vertical */
-  visibility: hidden; /* Masque la modale par défaut */
-  opacity: 0; /* Rendre la modale totalement transparente */
-  transition: opacity 0.3s ease-in-out, visibility 0.3s; /* Ajout d'une transition fluide */
+  position: fixed; /* Fixe la modale sur l'écran pour qu'elle ne bouge pas */
+  top: 0; /* Positionnée en haut de l'écran */
+  left: 0; /* Positionnée à gauche de l'écran */
+  width: 100%; /* Largeur à 100% pour recouvrir toute la fenêtre */
+  height: 100%; /* Hauteur à 100% pour couvrir toute la page */
+  background: rgba(0, 0, 0, 0.5); /* Fond semi-transparent pour effet d'overlay */
+  display: flex; /* Utilisation de flexbox pour centrer le contenu */
+  justify-content: center; /* Centrage horizontal de la modale */
+  align-items: center; /* Centrage vertical de la modale */
+  visibility: hidden; /* Par défaut, la modale est cachée */
+  opacity: 0; /* Totalement transparente au départ */
+  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out; /* Transition fluide sur l'apparition */
   /* -------------------------------------------------------------- */
   /*  Affichage de la modale lorsqu'elle est active                 */
   /* -------------------------------------------------------------- */
@@ -1376,16 +1416,16 @@ th, td {
   /* ==================================================================================== */
 }
 #password-modal.active {
-  visibility: visible; /* Rendre la modale visible */
-  opacity: 1; /* Rendre la modale totalement opaque */
+  visibility: visible; /* Rend la modale visible */
+  opacity: 1; /* Rend la modale opaque */
 }
 #password-modal .modal-content {
-  background: #fff; /* Fond blanc pour contraster avec le fond sombre */
-  padding: 20px; /* Ajout d'un espacement intérieur */
-  border-radius: 8px; /* Arrondi des coins pour un effet plus moderne */
+  background: #fff; /* Fond blanc pour contraster avec l'overlay */
+  padding: 20px; /* Espacement interne pour aérer le contenu */
+  border-radius: 8px; /* Arrondi des coins pour un design plus moderne */
   text-align: center; /* Alignement du texte au centre */
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); /* Effet d'ombre pour donner du relief */
-  width: 350px; /* Largeur fixe de la modale */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); /* Ombre portée pour un effet de profondeur */
+  width: 350px; /* Largeur fixe de la boîte de dialogue */
   /* -------------------------------------------------------------- */
   /*  Style du titre de la modale                                    */
   /* -------------------------------------------------------------- */
@@ -1399,17 +1439,19 @@ th, td {
 #password-modal .modal-content h2 {
   font-size: 20px; /* Définition de la taille de police */
   margin-bottom: 15px; /* Espacement sous le titre */
+  font-weight: bold; /* Texte en gras pour mise en avant */
 }
 #password-modal .modal-content .password-input {
-  width: 90%; /* Largeur du champ de saisie relative au conteneur */
-  padding: 8px; /* Espacement interne pour améliorer l'ergonomie */
+  width: 90%; /* Largeur relative au conteneur */
+  padding: 8px; /* Espacement interne pour faciliter la saisie */
   border: 1px solid #ccc; /* Bordure fine et grise pour démarquer le champ */
   border-radius: 4px; /* Coins légèrement arrondis */
   margin-bottom: 10px; /* Espacement sous le champ */
+  font-size: 16px; /* Taille de police */
 }
 #password-modal .modal-content .modal-buttons {
   display: flex; /* Utilisation de flexbox pour aligner les boutons */
-  justify-content: space-between; /* Espacement maximum entre les boutons */
+  justify-content: space-between; /* Espacement entre les boutons */
   margin-top: 10px; /* Ajout d'un espacement entre le champ de saisie et les boutons */
   /* -------------------------------------------------------------- */
   /*  Styles communs aux boutons                                    */
@@ -1422,19 +1464,28 @@ th, td {
   /* -------------------------------------------------------------- */
 }
 #password-modal .modal-content .modal-buttons button {
-  padding: 8px 15px; /* Ajout d'un padding pour améliorer la lisibilité */
+  padding: 10px 15px; /* Ajout de padding pour une meilleure ergonomie */
   border: none; /* Suppression des bordures */
-  cursor: pointer; /* Ajout d'un curseur pointeur pour l'interactivité */
-  border-radius: 4px; /* Coins arrondis pour un meilleur rendu */
-  font-weight: bold; /* Mise en valeur du texte */
+  cursor: pointer; /* Curseur pointeur pour l'interactivité */
+  border-radius: 4px; /* Coins arrondis pour un aspect plus doux */
+  font-weight: bold; /* Texte en gras */
+  font-size: 14px; /* Taille de police */
 }
 #password-modal .modal-content .modal-buttons .validate-btn {
-  background-color: #28a745; /* Couleur verte pour indiquer une action positive */
-  color: white; /* Texte blanc pour un meilleur contraste */
+  background-color: #28a745; /* Couleur verte pour action positive */
+  color: white; /* Texte blanc pour un bon contraste */
+  transition: background 0.3s ease-in-out; /* Transition fluide au survol */
+}
+#password-modal .modal-content .modal-buttons .validate-btn:hover {
+  background-color: #218838; /* Assombrissement au survol */
 }
 #password-modal .modal-content .modal-buttons .cancel-btn {
-  background-color: #dc3545; /* Couleur rouge pour indiquer une action d'annulation */
-  color: white; /* Texte blanc pour une meilleure lisibilité */
+  background-color: #dc3545; /* Couleur rouge pour indiquer une annulation */
+  color: white; /* Texte blanc */
+  transition: background 0.3s ease-in-out; /* Animation fluide au survol */
+}
+#password-modal .modal-content .modal-buttons .cancel-btn:hover {
+  background-color: #c82333; /* Assombrissement au survol */
 }
 
 /* Styles des modales utilisées dans l'application */
