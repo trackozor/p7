@@ -30,7 +30,7 @@ export function RecipeFactory(recipeData) {
                     </section>
 
                     <section class="recipe-card__ingredients-container">
-                        <h4 class="recipe-card__section">Ingrédients</h4>
+                        <h4 class="recipe-card__section__ingredients">Ingrédients</h4>
                         <ul class="recipe-card__ingredients">
                             ${this.generateIngredientsList()}
                         </ul>

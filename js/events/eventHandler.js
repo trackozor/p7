@@ -14,6 +14,53 @@ import { searchRecipesLoop } from "../components/search.js";
 import { getAllRecipes, fetchFilterOptions } from "../data/dataManager.js";
 import domSelectors from "../config/domSelectors.js";
 import { logEvent } from "../utils/utils.js";
+/* ==================================================================================== */
+/*  GESTION DES DROPDOWNS                                                              */
+/* ==================================================================================== */
+
+/**
+     * Ajoute les événements d'affichage et de fermeture des dropdowns.
+     *
+     * - Ouvre/ferme le dropdown au clic sur le bouton associé.
+     * - Ferme automatiquement le dropdown si l'utilisateur clique ailleurs.
+     * - Utilise la délégation d'événements pour optimiser la gestion des événements globaux.
+     *
+     * @param {HTMLElement} filterButton - Bouton permettant d'afficher le dropdown.
+     * @param {HTMLElement} dropdownContainer - Conteneur du menu déroulant.
+     */
+function setupDropdownEvents(filterButton, dropdownContainer) {
+    try {
+            if (!(filterButton instanceof HTMLElement) || !(dropdownContainer instanceof HTMLElement)) {
+                logEvent("error", "setupDropdownEvents : Paramètres invalides.", { filterButton, dropdownContainer });
+                return;
+            }
+
+            // Gestion de l'ouverture/fermeture du dropdown au clic sur le bouton
+            filterButton.addEventListener("click", (event) => {
+                event.stopPropagation(); // Empêche la fermeture immédiate
+                const isOpen = !dropdownContainer.classList.contains("hidden");
+                document.querySelectorAll(".filter-dropdown").forEach(drop => drop.classList.add("hidden"));
+                if (!isOpen) {
+                    dropdownContainer.classList.remove("hidden");
+                    logEvent("info", "setupDropdownEvents : Dropdown ouvert.");
+                } else {
+                    logEvent("info", "setupDropdownEvents : Dropdown fermé.");
+                }
+            });
+
+            // Gestion de la fermeture du dropdown si l'utilisateur clique en dehors
+            document.addEventListener("click", (event) => {
+                if (!filterButton.contains(event.target) && !dropdownContainer.contains(event.target) && !dropdownContainer.classList.contains("hidden")) {
+                    dropdownContainer.classList.add("hidden");
+                    logEvent("info", "setupDropdownEvents : Dropdown fermé en cliquant à l'extérieur.");
+                }
+            });
+
+            logEvent("success", "setupDropdownEvents : Événements du dropdown configurés.");
+    } catch (error) {
+        logEvent("error", "setupDropdownEvents : Erreur lors de la configuration des événements.", { error: error.message });
+    }
+}
 
 /* ================================================================================ 
     GESTION DE L'ÉVÉNEMENT DE RECHERCHE 
@@ -389,67 +436,6 @@ export function displayResults(results) {
     }
 }
 
-
-/*----------------------------------------------------------------
-/*   Création de la carte de recette
-/*--------------------------------------------------------------- */
-
-/**
- * Crée une carte de recette complète avec un design optimisé.
- *
- * - Affiche une image, un titre, une description et les ingrédients.
- * - Ajoute des classes CSS 
- * - Sécurise les données affichées avec `sanitizeText()`.
- *
- * @param {Object} recipe - Objet représentant une recette.
- * @returns {HTMLElement} Élément DOM complet représentant la carte de recette.
- */
-function createRecipeCard(recipe) {
-    // 1. Vérifie si `recipe` est un objet valide avant de générer la carte
-    if (!recipe || typeof recipe !== "object") {
-        logEvent("error", "createRecipeCard : Données de recette invalides.", { recipe });
-        return document.createElement("div"); // Évite les erreurs en retour d’un élément vide
-    }
-
-    // 2. Création de l'élément principal de la carte
-    const card = document.createElement("article");
-    card.classList.add("recipe-card");
-
-    // 3. Sécurisation des données affichées
-    const sanitizedTitle = sanitizeText(recipe.name);
-    const sanitizedDescription = sanitizeText(recipe.description);
-    const sanitizedTime = sanitizeText(recipe.time);
-    const sanitizedImage = sanitizeText(recipe.image);
-
-    // 4. Génération de la structure HTML complète de la carte
-    card.innerHTML = `
-        <div class="recipe-card__image">
-            <img src="${sanitizedImage}" alt="Photo de ${sanitizedTitle}" loading="lazy">
-            <span class="recipe-card__time">${sanitizedTime} min</span>
-        </div>
-        
-        <div class="recipe-card__content">
-            <h2 class="recipe-card__title">${sanitizedTitle}</h2>
-            <p class="recipe-card__description">${sanitizedDescription}</p>
-            
-            <ul class="recipe-card__ingredients">
-                ${recipe.ingredients.map(ingredient => `
-                    <li class="ingredient">
-                        <strong>${sanitizeText(ingredient.ingredient)}</strong>
-                        ${ingredient.quantity ? `: ${sanitizeText(ingredient.quantity)}` : ""}
-                        ${ingredient.unit ? sanitizeText(ingredient.unit) : ""}
-                    </li>
-                `).join("")}
-            </ul>
-        </div>
-    `;
-
-    return card;
-}
-
-
-
-
 /* ================================================================================ 
     GESTION DES FILTRES 
 ================================================================================ */
@@ -488,7 +474,7 @@ export async function handleFilterChange(event) {
         logEvent("info", `handleFilterChange : Filtre appliqué - ${filterType} = ${selectedValue}`);
 
         // 4. Récupère toutes les recettes pour appliquer un filtrage dynamique.
-        const recipes = await getAllRecipes();
+        const recipes =  getAllRecipes();
 
         // 5. Applique le filtre en fonction du type et de la valeur sélectionnée.
         const filteredRecipes = filterRecipesByType(recipes, filterType, selectedValue);
@@ -503,68 +489,6 @@ export async function handleFilterChange(event) {
         logEvent("error", "handleFilterChange : Erreur lors du filtrage.", { error: error.message });
     }
 }
-
-
-/*----------------------------------------------------------------
-/*   Filtrage des recettes par types
-/*----------------------------------------------------------------*/
-
-/**
- * Filtre les recettes selon un critère spécifique (ingrédient, appareil, ustensile).
- *
- * - Utilise une comparaison insensible à la casse et aux accents.
- * - Vérifie que le champ filtré est bien présent dans la recette.
- *
- * @param {Array} recipes - Liste complète des recettes.
- * @param {string} filterType - Type de filtre appliqué ("ingredient", "appliance", "ustensil").
- * @param {string} selectedValue - Valeur du filtre sélectionné.
- * @returns {Array} Recettes filtrées correspondant au critère.
- */
-function filterRecipesByType(recipes, filterType, selectedValue) {
-    try {
-        // 1. Vérifie que `recipes` est un tableau valide contenant au moins une recette.
-        if (!Array.isArray(recipes) || recipes.length === 0) {
-            logEvent("warning", "filterRecipesByType : Aucune recette à filtrer.");
-            return []; // Retourne un tableau vide si `recipes` est invalide.
-        }
-
-        // 2. Vérifie que `filterType` et `selectedValue` sont bien définis et de type string.
-        if (typeof filterType !== "string" || typeof selectedValue !== "string") {
-            logEvent("error", "filterRecipesByType : Paramètres invalides.", { filterType, selectedValue });
-            return [];
-        }
-
-        // 3. Normalise la valeur du filtre pour éviter les différences de casse et d’accents.
-        const normalizedValue = normalizeText(selectedValue);
-
-        // 4. Applique le filtrage selon le type spécifié.
-        return recipes.filter(recipe => {
-            // 4.1 Filtrage par ingrédient : vérifie si un des ingrédients contient la valeur recherchée.
-            if (filterType === "ingredient" && Array.isArray(recipe.ingredients)) {
-                return recipe.ingredients.some(ing => normalizeText(ing.ingredient).includes(normalizedValue));
-            }
-
-            // 4.2 Filtrage par appareil : compare l'appareil de la recette avec la valeur recherchée.
-            if (filterType === "appliance" && recipe.appliance) {
-                return normalizeText(recipe.appliance) === normalizedValue;
-            }
-
-            // 4.3 Filtrage par ustensile : vérifie si un des ustensiles contient la valeur recherchée.
-            if (filterType === "ustensil" && Array.isArray(recipe.ustensils)) {
-                return recipe.ustensils.some(ust => normalizeText(ust).includes(normalizedValue));
-            }
-
-            return false; // Aucune correspondance trouvée.
-        });
-
-    } catch (error) {
-        // 5. Capture et journalise toute erreur survenue pendant le filtrage.
-        logEvent("error", "filterRecipesByType : Erreur lors du filtrage des recettes.", { error: error.message });
-        return []; // Retourne un tableau vide en cas d'erreur pour éviter un crash.
-    }
-}
-
-
 
 /* ================================================================================ 
     MISE À JOUR DES FILTRES DANS LE DOM 

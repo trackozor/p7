@@ -12,7 +12,7 @@ import { dataManager } from "./data/dataManager.js";
 import { templateManager } from "./data/templateManager.js";
 import { initEventListeners } from "./events/eventListener.js";
 import BenchmarkDashboard from "./utils/benchmark-dashboard.js";
-import { filterManager } from "./components/filterManager.js";
+import { initFilters } from "./components/filterManager.js";
 
 /* ==================================================================================== */
 /*  I.  INITIALISATION GLOBALE DE L'APPLICATION                                          */
@@ -53,7 +53,7 @@ async function initApplication() {
          * Génération et application des filtres basés sur les recettes chargées.
          */
         logEvent("info", "initialisation des filtres");
-        await filterManager.initFilters();
+        await initFilters();
         logEvent("success", "filtres générés et appliqués");
 
         /** ==============================================================
@@ -87,7 +87,7 @@ async function initApplication() {
 }
 
 
-/* ====================================================================================
+/** ====================================================================================
  * II. DÉTECTION DU MODE BENCHMARK
  * ==================================================================================== */
 

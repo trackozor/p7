@@ -1,22 +1,18 @@
-/* ============================================================
-    Projet      : Les Petits Plats
-    Fichier     : _cards.scss
-    Auteur      : Trackozor
-    Date        : 10/02/2025
-    Version     : 1.0.0
-    Description : 
-        - Styles génériques pour l'affichage des cartes de recettes.
-        - Adaptabilité mobile-first avec support responsive.
-        - Réutilisation possible pour d'autres types de cartes.
-============================================================== */
+/* ================================================================================= */
+/*  Projet      : Les Petits Plats                                                  */
+/*  Fichier     : _cards.scss                                                       */
+/*  Auteur      : Trackozor                                                          */
+/*  Date        : 10/02/2025                                                         */
+/*  Version     : 1.1.0                                                              */
+/*  Description :                                                                    */
+/*      - Styles améliorés pour correspondre à la capture d'écran.                  */
+/*      - Ajustement des espacements et des tailles pour éviter les débordements.   */
+/*      - Gestion optimisée du responsive.                                          */
+/* ================================================================================= */
 
-/* ============================================================
-    I.  Styles généraux de la carte de recette
-============================================================== */
-
-/*-------------------------------------------------
-/* Conteneur principal de la carte.
-/*-------------------------------------------------*/
+/* ============================================================ */
+/*  I.  Conteneur principal de la carte                         */
+/* ============================================================ */
 
 .recipe-card {
     background: #fff;
@@ -26,208 +22,162 @@
     transition: transform var(--transition-default);
     display: flex;
     flex-direction: column;
-    height: 100%;
-    max-height: 100vh;
-    width: 80%;
-    margin: 5% auto;
+    width: 100%;
+    max-width: 300px;
+    margin:2% auto;
+    font-family: 'Arial', sans-serif;
+    height:20%;
+
+    &:hover {
+        transform: translateY(-5px);
+    }
 
     @include tablet {
-        width: 40vw;
+        max-width: 320px;
+        height:100vh;
+        max-height:600px;
     }
     @include desktop {
-        width: 25vw;
-    }
-    @include large-desktop {
-        width: 20vw;
+        max-width: 280px;
+        height:100vh;
     }
 }
 
-/* ============================================================
-    II.  Section image de la recette
-============================================================== */
-
-/*----------------------------------------------
- * Conteneur de l’image.
-/*----------------------------------------------*/
+/* ============================================================ */
+/*  II. Section image de la recette                            */
+/* ============================================================ */
 
 .recipe-card__image {
     position: relative;
     width: 100%;
-    height: clamp(8vh, 25vh, 35vh);
+    height: 180px;
     overflow: hidden;
-    border-top-left-radius: var(--border-radius-medium);
-    border-top-right-radius: var(--border-radius-medium);
     display: flex;
     align-items: center;
     justify-content: center;
-
     @include tablet {
-        height:38%;
+        max-height: 320px;
+    }
+    @include desktop {
+        height: 250px;
     }
 }
-
-/*-------------------------------------------
-/* Image de la recette.
-/*-------------------------------------------*/
 
 .recipe-card__img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Coupe l’image au bon format sans distorsion */
+    object-fit: cover;
     display: block;
+    @include tablet {
+        max-height:300px;
+    }
+    @include desktop {
+    height:250px;
+    }
 }
-
-/*-------------------------------------------
-/* Badge du temps de préparation.
-/*-------------------------------------------*/
 
 .recipe-card__time {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    background: var(--text-color-secondary, #FFD15B);
-    color: var(--text-color-primary, #000);
-    font-weight: var(--font-weight-bold);
-    padding: 0.4rem 0.8rem;
-    border-radius: 1.5rem;
-    font-size: clamp(0.75rem, 1.4vw, 0.875rem);
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    white-space: nowrap;
-    z-index: 10;
+    top: 8px;
+    right: 8px;
+    background: #FFD15B;
+    color: #000;
+    font-weight: bold;
+    font-size: 14px;
+    padding: 6px 10px;
+    border-radius: 10px;
+    text-transform: uppercase;
 }
 
-/* ============================================================
-    III.  Contenu textuel de la carte
-============================================================== */
-
-/*-------------------------------------------
-/* Conteneur du texte de la carte.
-/*-------------------------------------------*/
+/* ============================================================ */
+/*  III. Contenu textuel de la carte                           */
+/* ============================================================ */
 
 .recipe-card__content {
-    padding: 2%;
-    color: var(--text-color-primary);
+    padding: 16px;
     display: flex;
+    height:450px;
     flex-direction: column;
-    gap: 2%;
-    flex-grow: 1;
+    gap: 8px;
+    @include tablet {
+        height: 450px;
+    }
 }
 
-/* ------------------------------------------------------------ */
-/*     Titre de la recette                                      */
-/* ------------------------------------------------------------ */
-
-/* ------------------------------------------------
-/* En-tête contenant le titre.
-/*-------------------------------------------------*/
-
+/* === Titre === */
 .recipe-card__header {
-    margin-bottom: var(--spacing-small);
-    background-color: #fff;
+    margin-bottom: 10%;
+    height:2%;
+    background-color: white;;
 }
-
-/*---------------------------------------------
-/* Titre de la recette.
-/*---------------------------------------------*/
 
 .recipe-card__title {
-    font-size: clamp(1rem, 2vw, 1.5rem);
-    font-weight: 900;
-    background-color: #fff;
-    margin: 2%;
-    height:2%;
+    font-size: 18px;
+    font-weight: bold;
+    height:1%;
+    margin: 0;
+    color: #333;
 }
 
-/* ------------------------------------------------------------ */
-/*     Section "Recette" (description)                          */
-/* ------------------------------------------------------------ */
-
-/* --------------------------------------------
-/* Conteneur de la description de la recette.
-/* -------------------------------------------- */
-
+/* === Description de la recette === */
 .recipe-card__details {
-    margin-bottom: var(--spacing-small);
-    margin-left: 2%;
-    height:40%;
+    margin-bottom: 12px;
+    height:25%;
 }
-
-/*--------------------------------------------
-/* Titres des sections (Recette, Ingrédients).
-/*--------------------------------------------*/
 
 .recipe-card__section {
-    font-size: 0.8rem;
-    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: bold;
     color: #7A7A7A;
-    margin-bottom: 2%;
+    text-transform: uppercase;
+    margin-bottom: 3%;
 }
-
-/*-------------------------------------------
-/* Texte descriptif de la recette.
-/*-------------------------------------------*/
-
+.recipe-card__section__ingredients {
+    font-size: 14px;
+    font-weight: bold;
+    color: #7A7A7A;
+    text-transform: uppercase;
+    margin:6% 0;
+}
 .recipe-card__description {
-    font-size: 0.9rem;
-    color: var(--text-color-tertiary, #666);
-    line-height: 1rem;
+    font-size: 13px;
+    height:3px;
+    color: #555;
+    line-height: 1.4;
 }
 
-/* ============================================================
-    IV.  Liste des ingrédients
-============================================================== */
-
-/*-------------------------------------------*/
-/* Conteneur de la liste des ingrédients.
-/*-------------------------------------------*/
+/* ============================================================ */
+/*  IV. Liste des ingrédients                                  */
+/* ============================================================ */
 
 .recipe-card__ingredients-container {
-    margin: 5% 0;
+    margin-top: 10%;
 }
 
-/* -----------------------------------------*/
-/* Liste des ingrédients.
-/*-----------------------------------------*/
-
-.recipe-card__ingredients-container ul {
-    display: grid;
-    grid-template-columns: repeat(2, 50%);
+.recipe-card__ingredients {
     list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: auto;
 }
 
-/*---------------------------------------*/
-/* Élément individuel de la liste.
-/*---------------------------------------*/
-
-.recipe-card__ingredients-container li {
+.recipe-card__ingredient {
     display: flex;
     flex-direction: column;
-    list-style: none;
-    margin-bottom: 5%;
+    font-size: 13px;
+    color: #444;
+    padding: 6px 0;
 }
-
-/* ------------------------------------------------
-/* Nom de l’ingrédient.
-/* ------------------------------------------------*/
 
 .recipe-card__ingredient-name {
-    font-weight: 500;
+    font-weight: bold;
     text-transform: capitalize;
-    color: black;
-    font-size: 0.9rem;
-    margin-bottom: 2%;
 }
-
-/* ------------------------------------------------
-/* Quantité de l’ingrédient.
-/* ------------------------------------------------*/
 
 .recipe-card__ingredient-quantity {
-    font-size: var(--font-size-small);
-    color: var(--text-color-tertiary, #666);
-    font-weight: 300;
+    font-size: 12px;
+    color: #777;
+    margin-top:3%;
 }
-
