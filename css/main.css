@@ -639,6 +639,10 @@ a {
 /* =========================================================================== */
 /* STYLES PAR DÉFAUT                                                        */
 /* =========================================================================== */
+body {
+  background-color: #e5e5e5;
+}
+
 /* Supprime les soulignements des liens */
 a {
   text-decoration: none;
@@ -663,7 +667,7 @@ a:hover {
 /* =========================================================================== */
 /* Fond général du site */
 main {
-  background-color: var(#8d8b8b);
+  background-color: #e5e5e5;
 }
 
 /* Texte en gras */
@@ -777,7 +781,7 @@ header {
 }
 @media (min-width: 1440px) {
   .fond {
-    min-height: 450px; /* Augmente la hauteur minimale pour les grands écrans */
+    min-height: 400px; /* Augmente la hauteur minimale pour les grands écrans */
   }
 }
 
@@ -1025,6 +1029,11 @@ header {
   align-items: center;
   justify-content: center;
 }
+@media (min-width: 767px) {
+  .recipe-card__image {
+    height: 38%;
+  }
+}
 
 /*-------------------------------------------
 /* Image de la recette.
@@ -1091,6 +1100,7 @@ header {
   font-weight: 900;
   background-color: #fff;
   margin: 2%;
+  height: 2%;
 }
 
 /* ------------------------------------------------------------ */
@@ -1102,6 +1112,7 @@ header {
 .recipe-card__details {
   margin-bottom: var(--spacing-small);
   margin-left: 2%;
+  height: 40%;
 }
 
 /*--------------------------------------------
@@ -1187,9 +1198,10 @@ header {
 footer {
   text-align: center; /* Alignement du texte au centre */
   padding: 2rem; /* Espacement interne pour aérer le contenu */
-  background-color: #EDEDED; /* Couleur de fond gris clair */
-  color: white; /* Couleur du texte */
+  background-color: #E5e5e5; /* Couleur de fond gris clair */
+  color: black; /* Couleur du texte */
   font-size: 1.4rem; /* Taille de police */
+  margin-top: 1%;
 }
 
 /* Styles du pied de page */
@@ -1206,23 +1218,45 @@ footer {
 /*    Définition du conteneur principal des filtres                                   */
 /* ==================================================================================== */
 #filters {
-  width: 90%; /* Largeur ajustée pour s'intégrer harmonieusement à la page */
-  background: #fff; /* Couleur de fond blanche pour s'intégrer au design global */
+  width: 80%; /* Largeur ajustée pour s'intégrer harmonieusement à la page */
+  background: #e5e5e5; /* Couleur de fond blanche pour s'intégrer au design global */
   margin: 10% 0; /* Espacement vertical pour une séparation claire avec le contenu */
   display: flex; /* Utilisation de flexbox pour structurer les éléments */
   flex-direction: row; /* Disposition horizontale des filtres */
   align-items: center; /* Alignement vertical au centre */
-  justify-content: space-between; /* Répartition uniforme des éléments */
-  gap: 10%; /* Espacement entre les filtres pour une meilleure lisibilité */
+  justify-content: space-around; /* Répartition uniforme des éléments */
+  gap: 4%;
+}
+@media (min-width: 767px) {
+  #filters {
+    gap: 10%;
+    width: 40%;
+    padding-left: 4%;
+    margin-bottom: 5%;
+  }
+}
+@media (min-width: 1024px) {
+  #filters {
+    padding-top: 2%;
+    margin: 10% 0 5% 0;
+  }
+}
+@media (min-width: 1440px) {
+  #filters {
+    margin: 8% 0 3% 0;
+    padding-left: 2%;
+    gap: 0.5%;
+    width: 30%;
+  }
 }
 
 /* ==================================================================================== */
 /*    Conteneur des filtres - Structure et alignement                                */
 /* ==================================================================================== */
-.filter-container {
-  width: 90%; /* Largeur relative pour assurer un bon alignement */
+.filter-group {
+  width: 70%; /* Largeur relative pour assurer un bon alignement */
   display: flex; /* Utilisation de flexbox pour aligner les éléments */
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-around; /* Répartition équitable des éléments */
   margin: 2% auto; /* Centrage et espacement vertical */
   gap: 2%; /* Espacement entre les filtres */

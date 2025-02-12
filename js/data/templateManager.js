@@ -1,165 +1,111 @@
 /* ==================================================================================== */
 /*  FICHIER          : templateManager.js                                              */
 /*  AUTEUR           : Trackozor                                                       */
-/*  VERSION          : 1.1                                                             */
+/*  VERSION          : 1.3                                                             */
 /*  DATE DE CRÉATION : 08/02/2025                                                      */
-/*  DERNIÈRE MODIF.  : 09/02/2025                                                      */
+/*  DERNIÈRE MAJ     : 12/02/2025                                                      */
 /*  DESCRIPTION      : Gère l'affichage des recettes et optimise la gestion du DOM.    */
 /* ==================================================================================== */
-/*  AMÉLIORATIONS :                                                                */
-/*    Mise en cache des recettes déjà chargées                                     */
-/*    Ajout d'un mode "Grille / Liste" pour l'affichage                           */
-/*    Animation de chargement                                                     */
-/* ==================================================================================== */
 
-import { dataManager } from "./dataManager.js";
+import { dataManager } from "../data/dataManager.js";
+import { RecipeFactory } from "../components/recipeFactory.js";
 
 /* ================================================================================ 
-   🔹 CLASSE TemplateManager - Gestion des templates des recettes 
+    FONCTIONS UTILITAIRES (Déclarées en dehors de la classe)
 ================================================================================ */
-class TemplateManager {
-    constructor() {
-        this.cache = null; // Cache pour stocker les recettes après le premier chargement
-        this.viewMode = "grid"; // Par défaut, affichage en mode "Grille"
-    }
 
-    /* ================================================================================ 
-    GÉNÉRATION D'UNE CARTE DE RECETTE
-    ================================================================================ */
-    
-    /**
-     * Génère dynamiquement une carte HTML pour une recette.
-     * @param {Object} recipe - Objet contenant les détails de la recette.
-     * @returns {HTMLElement} - Élément `article` contenant la carte de recette.
-     */
-    generateRecipeCard(recipe) {
-    const { id, image, name, time, description, ingredients } = recipe;
-
-    // Création de l'élément article
-    const card = document.createElement("article");
-    card.classList.add("recipe-card", `view-${this.viewMode}`);
-    card.setAttribute("data-id", id);
-
-    // Construction du contenu HTML
-    card.innerHTML = `
-        <!-- Image de la recette -->
-        <figure class="recipe-card__image">
-            <img src="../assets/images/${image}" alt="${name}" class="recipe-card__img" loading="lazy">
-            <figcaption class="recipe-card__time">${time} min</figcaption>
-        </figure>
-        
-        <!-- Contenu textuel de la carte -->
-        <div class="recipe-card__content">
-            
-            <!-- Titre de la recette -->
-            <header class="recipe-card__header">
-                <h3 class="recipe-card__title">${name}</h3>
-            </header>
-
-            <!-- Description de la recette -->
-            <section class="recipe-card__details">
-                <h4 class="recipe-card__section">Recette</h4>
-                <p class="recipe-card__description">${description}</p>
-            </section>
-
-            <!-- Liste des ingrédients -->
-            <section class="recipe-card__ingredients-container">
-                <h4 class="recipe-card__section">Ingrédients</h4>
-                <ul class="recipe-card__ingredients">
-                    ${this.generateIngredientsList(ingredients)}
-                </ul>
-            </section>
-        </div>
-    `;
-
-    return card;
+/**
+ * Affiche un message de chargement dans un conteneur.
+ * @param {HTMLElement} container - Le conteneur où afficher le message.
+ */
+function showLoadingMessage(container) {
+    container.innerHTML = `<p class="loading">Chargement des recettes...</p>`;
 }
 
-    
+/**
+ * Affiche un message lorsque aucune recette n'est trouvée.
+ * @param {HTMLElement} container - Le conteneur où afficher le message.
+ */
+function showNoRecipesMessage(container) {
+    container.innerHTML = `<p class="no-recipes">Aucune recette trouvée.</p>`;
+}
 
-    /* ================================================================================ 
-    GÉNÉRATION DE LA LISTE DES INGRÉDIENTS
-    ================================================================================ */
+/**
+ * Génère et insère toutes les recettes dans un conteneur donné.
+ * @param {HTMLElement} container - Le conteneur où afficher les recettes.
+ * @param {Array} recipes - Liste des recettes à afficher.
+ */
+function renderRecipes(container, recipes) {
+    // Nettoyage du conteneur
+    container.innerHTML = "";
 
+    recipes.forEach((recipeData) => {
+        const recipe = RecipeFactory(recipeData);
+        container.appendChild(recipe.generateCard());
+    });
+
+    console.log(`${recipes.length} recettes affichées avec succès.`);
+}
+
+/**
+ * Change la classe du conteneur pour basculer entre Grille / Liste.
+ * @param {HTMLElement} container - Conteneur des recettes.
+ * @param {string} mode - Mode d'affichage ("grid" ou "list").
+ */
+function updateViewMode(container, mode) {
+    container.classList.toggle("list-view", mode === "list");
+    console.log(`Mode d'affichage changé : ${mode}`);
+}
+
+/* ================================================================================ 
+    CLASSE TemplateManager - Gère l'affichage des recettes
+================================================================================ */
+class TemplateManager {
     /**
-     * Génère la liste des ingrédients pour une recette.
-     * @param {Array<Object>} ingredients - Liste des ingrédients.
-     * @returns {string} - Chaîne HTML avec les ingrédients formatés.
+     * Initialise le TemplateManager avec un mode d'affichage par défaut.
      */
-    generateIngredientsList(ingredients) {
-        return ingredients
-            .map(
-                (ing) => `
-                <li class="recipe-card__ingredient">
-                    <span class="recipe-card__ingredient-name">${ing.ingredient}</span> 
-                    ${ing.quantity ? ` <span class="recipe-card__ingredient-quantity">${ing.quantity} ${ing.unit || ""}</span>` : ""}
-                </li>`
-            )
-            .join("");
+    constructor() {
+        this.viewMode = "grid"; // Mode par défaut (grille)
+        this.recipeContainer = document.querySelector("#recipes-list"); // Conteneur des recettes
     }
 
-    /* ================================================================================ 
-    AFFICHAGE DES RECETTES DANS LE DOM
-    ================================================================================ */
-
     /**
-     * Affiche toutes les recettes dans un conteneur spécifique.
-     * @param {string} containerSelector - Sélecteur CSS du conteneur.
+     * Affiche toutes les recettes disponibles dans le conteneur spécifié.
+     * @param {string} containerSelector - Sélecteur du conteneur où afficher les recettes.
+     * @returns {Promise<void>} - Aucune valeur retournée, mais met à jour le DOM.
      */
     async displayAllRecipes(containerSelector) {
         try {
             const container = document.querySelector(containerSelector);
             if (!container) {
-                console.error(`Conteneur ${containerSelector} introuvable.`);
+                throw new Error(`ERREUR : Le conteneur ${containerSelector} est introuvable.`);
+            }
+
+            showLoadingMessage(container); // Affichage du message de chargement
+
+            const recipes = await dataManager.getAllRecipes();
+
+            if (!recipes || recipes.length === 0) {
+                showNoRecipesMessage(container);
                 return;
             }
 
-            container.innerHTML = `<p class="loading">Chargement des recettes...</p>`; // Animation de chargement
-            
-            // Utilisation du cache si possible
-            if (!this.cache) {
-                this.cache = dataManager.getAllRecipes();
-            }
-
-            // Vérification si aucune recette trouvée
-            if (this.cache.length === 0) {
-                container.innerHTML = `<p class="no-recipes">Aucune recette trouvée.</p>`;
-                return;
-            }
-
-            // Nettoyage du conteneur après chargement
-            container.innerHTML = "";
-
-            this.cache.forEach((recipe) => {
-                const card = this.generateRecipeCard(recipe);
-                container.appendChild(card);
-            });
-
-            logEvent("SUCCESS", `Affichage de ${this.cache.length} recettes dans ${containerSelector}`);
+            renderRecipes(container, recipes); // Affichage des recettes
         } catch (error) {
-            logEvent("ERROR", "Erreur lors de l'affichage des recettes.", { error: error.message });
+            console.error("ERREUR - TemplateManager :", error.message);
         }
     }
 
-    /* ================================================================================ 
-    CHANGEMENT DE MODE (GRILLE / LISTE)
-    ================================================================================ */
-
     /**
-     * Bascule entre le mode "Grille" et "Liste" et met à jour l'affichage.
+     * Bascule entre le mode "Grille" et "Liste".
      */
     toggleViewMode() {
         this.viewMode = this.viewMode === "grid" ? "list" : "grid";
-        document.querySelectorAll(".recipe-card").forEach((card) => {
-            card.classList.toggle("view-list");
-            card.classList.toggle("view-grid");
-        });
-
-        logEvent("INFO", `Mode d'affichage changé : ${this.viewMode}`);
+        updateViewMode(this.recipeContainer, this.viewMode);
     }
 }
 
 /* ================================================================================ 
-    EXPORT DU MODULE `TemplateManager`
+    EXPORT DU MODULE 
 ================================================================================ */
 export const templateManager = new TemplateManager();

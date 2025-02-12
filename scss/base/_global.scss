@@ -45,7 +45,9 @@
 /* =========================================================================== */
 /* STYLES PAR DÉFAUT                                                        */
 /* =========================================================================== */
-
+body {
+  background-color: #e5e5e5;
+}
 /* Supprime les soulignements des liens */
 a {
   text-decoration: none;
@@ -71,7 +73,7 @@ a:hover {
 
 /* Fond général du site */
 main {
-  background-color: var( #8d8b8b);
+  background-color:  #e5e5e5;
 }
 
 /* Texte en gras */

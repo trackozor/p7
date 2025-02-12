@@ -1,557 +1,330 @@
+/* ====================================================================================
+/*  FICHIER          : benchmark-dashboard.js
+/*  AUTEUR           : Trackozor
+/*  VERSION          : 1.5
+/*  DATE DE CRÉATION : 11/02/2025
+/*  DERNIÈRE MODIF.  : 11/02/2025
+/*  DESCRIPTION      : Interface de Benchmark Live pour mesurer les performances.
+/*                     - Teste les temps d'exécution des recherches de recettes.
+/*                     - Affiche les résultats sous forme de tableau et graphique.
+/*                     - Permet l'export des données en JSON et CSV.
 /* ==================================================================================== */
-/*  FICHIER          : benchmark-dashboard.js                                          */
-/*  AUTEUR           : Trackozor                                                       */
-/*  VERSION          : 1.5                                                             */
-/*  DATE DE CRÉATION : 11/02/2025                                                      */
-/*  DERNIÈRE MODIF.  : 11/02/2025                                                      */
-/*  DESCRIPTION      : Interface de Benchmark Live pour mesurer les performances.      */
-/*                     - Teste les temps d'exécution des recherches de recettes.      */
-/*                     - Affiche les résultats sous forme de tableau et graphique.    */
-/*                     - Permet l'export des données en JSON et CSV.                   */
+
+/* ====================================================================================
+/*  SECTION 1 : IMPORTATIONS
 /* ==================================================================================== */
 
 import { benchmarkSearch } from "../benchmark/benchmark.js";
 import { searchRecipesLoop, searchRecipesFunctional } from "../components/search.js";
 import { logEvent } from "../utils/utils.js";
 
-/* ==================================================================================== */
-/*  Classe BenchmarkDashboard                                                           */
+/* ====================================================================================
+/*  SECTION 2 : GESTION DU BENCHMARK DASHBOARD
 /* ==================================================================================== */
 
 /**
- * Classe BenchmarkDashboard : Interface pour mesurer les performances des recherches.
- * - Permet l'exécution de benchmarks sur différentes méthodes de recherche.
- * - Affiche les résultats sous forme de tableau et graphique.
- * - Gère l'affichage, les événements et l'export des résultats.
+ * Initialise et gère le Benchmark Dashboard.
  */
-class BenchmarkDashboard {
-    /**
-     * Initialise le Dashboard et ses propriétés.
-     */
-    constructor() {
-        this.results = [];
-        this.chartInstance = null;
-        this.isVisible = false;
-        this.container = null;
-        this.initialize();
-    }
+export function BenchmarkDashboard() {
+    /* ====================================================================================
+    /*  2.1 INITIALISATION DES VARIABLES
+    /* ==================================================================================== */
+    let results = [];
+    let chartInstance = null;
+    let isVisible = false;
+    let container = null;
+
+    /* ====================================================================================
+    /*  2.2 INITIALISATION DU DASHBOARD
+    /* ==================================================================================== */
 
     /**
-     * Initialise l'interface et attache les événements.
+     * Initialise le Benchmark Dashboard.
+     *
+     * Cette fonction réalise plusieurs étapes essentielles :
+     * 1. **Création de l'interface** via `createUI()`.
+     * 2. **Vérification de l'existence du conteneur** avant de poursuivre.
+     * 3. **Stockage des références DOM** avec `cacheElements()`.
+     * 4. **Attachement des événements interactifs** via `bindEvents()`.
+     * 5. **Log des différentes étapes** pour le suivi du processus d'initialisation.
+     *
+     * En cas d'échec de création de l'UI, un log d'erreur est enregistré.
+     * En cas d'erreur inattendue, elle est capturée et journalisée.
+     *
+     * @function initialize
+     * @throws {Error} Capture les erreurs critiques et les enregistre avec `logEvent()`.
      */
-    initialize() {
+    function initialize() {
+        logEvent("info", "Initialisation du Benchmark Dashboard...");
+
         try {
-            this.container = createUI();
-            if (!this.container) {
+            // Étape 1 : Création de l'interface du Dashboard
+            container = createUI();
+            if (!container) {
                 logEvent("error", "Échec de l'initialisation du Benchmark Dashboard : UI non créée");
                 return;
             }
 
-            this.cacheElements();
-            bindEvents(this);
+            // Étape 2 : Stockage des références DOM
+            logEvent("info", "Stockage des références DOM...");
+            cacheElements();
+
+            // Étape 3 : Attachement des événements interactifs
+            logEvent("info", "Attachement des événements aux boutons...");
+            bindEvents();
+
+            // Fin de l'initialisation
             logEvent("success", "Benchmark Dashboard initialisé avec succès.");
         } catch (error) {
-            logEvent("error", "Erreur lors de l'initialisation du Benchmark Dashboard", { error: error.message });
+            logEvent("error", "Erreur critique lors de l'initialisation du Benchmark Dashboard", { message: error.message });
         }
     }
+
+
+    /* ====================================================================================
+    /*  2.3 STOCKAGE DES ÉLÉMENTS DU DOM
+    /* ==================================================================================== */
 
     /**
      * Stocke les références des éléments du DOM pour éviter des requêtes répétées.
+     *
+     * Cette fonction permet :
+     * 1. La récupération des éléments HTML clés du Benchmark Dashboard.
+     * 2. La vérification de la présence de chaque élément afin d'éviter les erreurs d'accès.
+     * 3. L'enregistrement des références dans des variables globales pour éviter les recherches DOM inutiles.
+     * 4. L'ajout de logs informatifs et d'erreurs pour suivre l'exécution du processus.
+     *
+     * Gestion des erreurs :
+     * - Si un ou plusieurs éléments sont introuvables, une erreur est enregistrée via `logEvent()`.
+     * - Si une exception survient, elle est capturée et journalisée.
+     *
+     * @function cacheElements
+     * @throws {Error} Capture les erreurs critiques et les enregistre avec `logEvent()`.
      */
-    cacheElements() {
-        try {
-            this.btnRun = document.getElementById("run-benchmark");
-            this.btnExportJson = document.getElementById("export-json");
-            this.btnExportCsv = document.getElementById("export-csv");
-            this.btnClose = document.getElementById("close-benchmark");
-            this.inputIterations = document.getElementById("iterations");
-            this.benchmarkChart = document.getElementById("benchmarkChart");
+    function cacheElements() {
+        logEvent("info", "Stockage des références DOM du Benchmark Dashboard...");
 
-            if (!this.btnRun || !this.btnExportJson || !this.btnExportCsv || !this.btnClose || !this.inputIterations || !this.benchmarkChart) {
-                logEvent("error", "Certains éléments du Benchmark Dashboard sont introuvables");
+        try {
+            // Récupération des éléments DOM
+            btnRun = document.getElementById("run-benchmark");
+            btnExportJson = document.getElementById("export-json");
+            btnExportCsv = document.getElementById("export-csv");
+            btnClose = document.getElementById("close-benchmark");
+            inputIterations = document.getElementById("iterations");
+            benchmarkChart = document.getElementById("benchmarkChart");
+
+            // Vérification de la présence des éléments
+            if (!btnRun || !btnExportJson || !btnExportCsv || !btnClose || !inputIterations || !benchmarkChart) {
+                logEvent("error", "Certains éléments du Benchmark Dashboard sont introuvables", {
+                    btnRun,
+                    btnExportJson,
+                    btnExportCsv,
+                    btnClose,
+                    inputIterations,
+                    benchmarkChart,
+                });
                 return;
             }
 
-            logEvent("info", "Références DOM du Benchmark Dashboard mises en cache.");
+            logEvent("success", "Références DOM du Benchmark Dashboard mises en cache avec succès.");
         } catch (error) {
-            logEvent("error", "Erreur lors du stockage des éléments DOM", { error: error.message });
+            logEvent("error", "Erreur lors du stockage des éléments DOM", { message: error.message });
         }
     }
 
+
+    /* ====================================================================================
+    /*  2.4 AFFICHAGE DU DASHBOARD
+    /* ==================================================================================== */
+
     /**
-     * Affiche ou masque le Dashboard.
-     * @param {boolean} show - Indique si le Dashboard doit être affiché.
+     * Contrôle l'affichage du Benchmark Dashboard en le rendant visible ou caché.
+     *
+     * Cette fonction permet :
+     * 1. De vérifier si l'interface du Dashboard (`container`) est disponible.
+     * 2. De basculer l'affichage en ajoutant ou supprimant la classe CSS `hidden`.
+     * 3. De mettre à jour l'état interne `isVisible` pour suivre l'état du Dashboard.
+     * 4. De journaliser chaque action pour un suivi clair via `logEvent()`.
+     *
+     * Gestion des erreurs :
+     * - Si `container` est inexistant, une erreur est enregistrée et la fonction s'arrête.
+     * - En cas d'exception, l'erreur est capturée et journalisée.
+     *
+     * @function toggleDashboard
+     * @param {boolean} [show=true] - Détermine si le Dashboard doit être affiché (`true`) ou masqué (`false`).
+     * @throws {Error} Capture les erreurs critiques et les enregistre avec `logEvent()`.
      */
-    toggleDashboard(show = true) {
+    function toggleDashboard(show = true) {
         try {
-            if (!this.container) {
+            // Vérifie si le conteneur du Dashboard est disponible
+            if (!container) {
                 logEvent("error", "Impossible de basculer l'affichage du Dashboard : UI non disponible");
                 return;
             }
 
-            this.isVisible = show;
-            this.container.classList.toggle("hidden", !show);
+            // Mise à jour de l'état d'affichage
+            isVisible = show;
+            container.classList.toggle("hidden", !show);
+
+            // Journalisation de l'action effectuée
             logEvent("info", show ? "Benchmark Dashboard affiché." : "Benchmark Dashboard caché.");
         } catch (error) {
-            logEvent("error", "Erreur lors du basculement de l'affichage du Dashboard", { error: error.message });
+            logEvent("error", "Erreur lors du basculement de l'affichage du Dashboard", { message: error.message });
         }
     }
 
+
+    /* ====================================================================================
+    /*  2.5 EXÉCUTION DES TESTS DE BENCHMARK
+    /* ==================================================================================== */
+
     /**
-     * Exécute les tests de benchmark.
+     * Exécute les tests de performance du Benchmark Dashboard.
+     *
+     * Cette fonction réalise plusieurs opérations :
+     * 1. Vérifie la présence du champ `inputIterations` permettant de spécifier le nombre d'itérations.
+     * 2. Récupère et valide le nombre d'itérations entré par l'utilisateur.
+     * 3. Lance des benchmarks sur deux approches de recherche :
+     *    - `searchRecipesLoop` : Implémentation basée sur une boucle.
+     *    - `searchRecipesFunctional` : Implémentation basée sur une approche fonctionnelle.
+     * 4. Met à jour l'affichage des résultats sous forme de tableau et de graphique.
+     * 5. Gère les erreurs potentielles en journalisant les messages appropriés.
+     *
+     * Gestion des erreurs :
+     * - Si `inputIterations` est absent, l'exécution est interrompue et une erreur est loggée.
+     * - Si l'entrée utilisateur est invalide (`NaN` ou ≤ 0), la valeur est corrigée à `10` et un avertissement est loggé.
+     * - Si les benchmarks ne renvoient aucun résultat, une erreur est enregistrée.
+     * - Toute exception est capturée et journalisée avec son message.
+     *
+     * @async
+     * @function runTests
+     * @throws {Error} Capture les erreurs critiques et les enregistre via `logEvent()`.
      */
-    async runTests() {
+    async function runTests() {
         try {
-            if (!this.inputIterations) {
+            // Vérifie si le champ d'entrée des itérations est présent
+            if (!inputIterations) {
                 logEvent("error", "Impossible d'exécuter le benchmark : champ 'iterations' introuvable");
                 return;
             }
 
-            const iterations = parseInt(this.inputIterations.value, 10);
-
-            // Validation des itérations
+            // Récupération et validation du nombre d'itérations
+            const iterations = parseInt(inputIterations.value, 10);
             if (isNaN(iterations) || iterations <= 0) {
                 logEvent("warning", "Nombre d'itérations invalide : valeur corrigée à 10");
-                this.inputIterations.value = 10;
+                inputIterations.value = 10;
                 return;
             }
 
+            // Lancement des benchmarks avec le nombre d'itérations spécifié
             logEvent("info", `Exécution du benchmark avec ${iterations} itérations...`);
 
-            this.results = [
+            results = [
                 benchmarkSearch("Loop", () => searchRecipesLoop("poulet"), iterations),
                 benchmarkSearch("Functional", () => searchRecipesFunctional("poulet"), iterations),
             ];
 
-            if (!this.results || this.results.length === 0) {
+            // Vérification des résultats obtenus
+            if (!results || results.length === 0) {
                 logEvent("error", "Aucun résultat obtenu après l'exécution du benchmark");
                 return;
             }
 
-            updateTable(this.results);
-            updateChart(this.benchmarkChart, this.results);
+            // Mise à jour de l'affichage avec les résultats obtenus
+            updateTable(results);
+            updateChart(benchmarkChart, results);
             logEvent("success", "Benchmark terminé avec succès.");
         } catch (error) {
-            logEvent("error", "Erreur lors de l'exécution du benchmark", { error: error.message });
+            logEvent("error", "Erreur lors de l'exécution du benchmark", { message: error.message });
         }
     }
+
+
+    // Initialise le dashboard immédiatement après déclaration
+    initialize();
+
+    // Retourne les fonctions accessibles publiquement
+    return {
+        showDashboard: () => toggleDashboard(true),
+        hideDashboard: () => toggleDashboard(false),
+        runTests,
+        trackElement: () => { /* future feature */ }
+    };
 }
 
-
+/* ====================================================================================
+/*  SECTION 3 : EXPORT DES RÉSULTATS
 /* ==================================================================================== */
-/*  Fonctions Utilitaires                                                               */
-/* ==================================================================================== */
-
-/*----------------------------------------------------------------
-/*   Création de l'interface du Dashboard
-/*----------------------------------------------------------------*/
-
-/**
- * Crée et insère l'interface HTML du Benchmark Dashboard dans le DOM.
- *
- * - Vérifie si un Dashboard existe déjà pour éviter les doublons.
- * - Vérifie la disponibilité de `document.body` avant d'ajouter l'élément.
- * - Génère une structure claire et accessible via `getDashboardTemplate()`.
- *
- * @returns {HTMLElement|null} Élément DOM du dashboard ou `null` en cas d'échec.
- */
-function createUI() {
-    try {
-        // Vérifie si un dashboard existe déjà pour éviter les doublons.
-        if (document.getElementById("benchmark-dashboard")) {
-            logEvent("warning", "Tentative de création d'un Dashboard déjà existant");
-            return document.getElementById("benchmark-dashboard");
-        }
-
-        // Vérifie que `document.body` est bien accessible
-        if (!document.body) {
-            logEvent("error", "Échec de la création du Dashboard : document.body non disponible");
-            throw new Error("document.body non disponible");
-        }
-
-        // Création du conteneur principal
-        const container = document.createElement("div");
-        container.id = "benchmark-dashboard";
-        container.classList.add("hidden"); // Caché par défaut
-
-        // Injection du template HTML
-        container.innerHTML = getDashboardTemplate();
-        document.body.appendChild(container);
-
-        logEvent("success", "Benchmark Dashboard créé avec succès");
-        return container;
-    } catch (error) {
-        logEvent("error", "Échec de la création du Benchmark Dashboard", { error: error.message });
-        return null;
-    }
-}
-
-/*----------------------------------------------------------------
-/*   Association des événements
-/*----------------------------------------------------------------*/
-
-/**
- * Associe les événements aux éléments du Benchmark Dashboard.
- *
- * - Vérifie la présence des éléments avant d'attacher les événements.
- * - Ajoute les événements pour exécuter les tests et exporter les résultats.
- * - Gère les erreurs avec `logEvent()` pour assurer un suivi clair.
- *
- * @param {BenchmarkDashboard} dashboard - Instance du dashboard.
- */
-function bindEvents(dashboard) {
-    try {
-        if (!dashboard || !dashboard.btnRun || !dashboard.btnExportJson || !dashboard.btnExportCsv || !dashboard.btnClose) {
-            logEvent("error", "bindEvents : Un ou plusieurs éléments du Dashboard sont manquants.", { dashboard });
-            return;
-        }
-
-        // Écouteur pour exécuter les tests du benchmark
-        try {
-            dashboard.btnRun.addEventListener("click", () => dashboard.runTests());
-            logEvent("info", "Écouteur attaché : Exécution du benchmark.");
-        } catch (error) {
-            logEvent("error", "Erreur lors de l'ajout de l'écouteur du bouton Run.", { error: error.message });
-        }
-
-        // Écouteur pour exporter les résultats en JSON
-        try {
-            dashboard.btnExportJson.addEventListener("click", () => exportResults("json", dashboard.results));
-            logEvent("info", "Écouteur attaché : Export JSON.");
-        } catch (error) {
-            logEvent("error", "Erreur lors de l'ajout de l'écouteur du bouton Export JSON.", { error: error.message });
-        }
-
-        // Écouteur pour exporter les résultats en CSV
-        try {
-            dashboard.btnExportCsv.addEventListener("click", () => exportResults("csv", dashboard.results));
-            logEvent("info", "Écouteur attaché : Export CSV.");
-        } catch (error) {
-            logEvent("error", "Erreur lors de l'ajout de l'écouteur du bouton Export CSV.", { error: error.message });
-        }
-
-        // Écouteur pour fermer le Benchmark Dashboard
-        try {
-            dashboard.btnClose.addEventListener("click", () => dashboard.toggleDashboard(false));
-            logEvent("info", "Écouteur attaché : Fermeture du Benchmark Dashboard.");
-        } catch (error) {
-            logEvent("error", "Erreur lors de l'ajout de l'écouteur du bouton Close.", { error: error.message });
-        }
-
-        logEvent("success", "Tous les événements du Benchmark Dashboard ont été attachés avec succès.");
-    } catch (error) {
-        logEvent("error", "Erreur critique lors de l'ajout des événements du Benchmark.", { error: error.message });
-    }
-}
-
-/*----------------------------------------------------------------
-/*   Génération template HTML du Dashboard
-/*----------------------------------------------------------------*/
-
-/**
- * Génère le template HTML du Benchmark Dashboard.
- *
- * - Ajoute des attributs d'accessibilité (`aria-label`, `role`).
- * - Structure claire pour améliorer la maintenabilité.
- * - Inclut des `id` explicites pour faciliter le ciblage CSS et JS.
- *
- * @returns {string} - HTML du Benchmark Dashboard.
- */
-function getDashboardTemplate() {
-    return `
-        <div class="benchmark-header" role="banner">
-            <h2 id="benchmark-title">Benchmark Live Dashboard</h2>
-            <button id="close-benchmark" title="Fermer le Dashboard" aria-label="Fermer le Benchmark Dashboard">
-                Fermer
-            </button>
-        </div>
-
-        <div class="benchmark-config" role="form">
-            <label for="iterations">Nombre d'itérations :</label>
-            <input 
-                type="number" 
-                id="iterations" 
-                value="10" 
-                min="1" 
-                aria-describedby="iterations-description"
-                aria-label="Saisissez le nombre d'itérations pour le benchmark"
-            >
-            <p id="iterations-description" class="sr-only">
-                Ce champ permet de définir le nombre d'exécutions pour tester les performances.
-            </p>
-            <button id="run-benchmark" title="Lancer le test de performance" aria-label="Exécuter le benchmark">
-                Lancer
-            </button>
-        </div>
-
-        <div class="benchmark-chart-container" role="region" aria-labelledby="chart-title">
-            <h3 id="chart-title">Graphique des performances</h3>
-            <canvas id="benchmarkChart"></canvas>
-        </div>
-
-        <table id="benchmarkTable" role="table" aria-describedby="benchmark-table-description">
-            <caption id="benchmark-table-description">
-                Résultats des tests de performance des différentes méthodes de recherche.
-            </caption>
-            <thead>
-                <tr>
-                    <th scope="col">Fonction</th>
-                    <th scope="col">Moyenne (ms)</th>
-                    <th scope="col">Min (ms)</th>
-                    <th scope="col">Max (ms)</th>
-                    <th scope="col">Itérations</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-
-        <div class="benchmark-actions" role="complementary">
-            <button id="export-json" title="Exporter en JSON" aria-label="Exporter les résultats au format JSON">
-                Export JSON
-            </button>
-            <button id="export-csv" title="Exporter en CSV" aria-label="Exporter les résultats au format CSV">
-                Export CSV
-            </button>
-        </div>
-    `;
-}
-
-/*----------------------------------------------------------------
-/*   Mise à jour du tableau des résultats
-/*----------------------------------------------------------------*/
-
-/** ---------------------------------------------------
- * Met à jour le tableau des résultats du benchmark.
- * -----------------------------------------------------
- * 
- * - Vérifie la validité des données avant l'affichage.
- * - Insère un message "Aucune donnée disponible" si aucun résultat.
- * - Gère les erreurs de manière robuste avec `logEvent()`.
- *
- * @param {Array} results - Liste des résultats du benchmark.
- */
-function updateTable(results) {
-    try {
-        const tbody = document.querySelector("#benchmarkTable tbody");
-
-        // Vérifie si le tableau est présent dans le DOM
-        if (!tbody) {
-            logEvent("error", "Élément tbody du tableau des résultats introuvable.");
-            return;
-        }
-
-        // Vérifie si `results` est un tableau valide
-        if (!Array.isArray(results)) {
-            logEvent("error", "Type de données invalide pour updateTable. Un tableau est attendu.", { results });
-            return;
-        }
-
-        // Vérifie si le tableau est vide
-        if (results.length === 0) {
-            logEvent("warning", "Aucun résultat à afficher dans le tableau.");
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="5" style="text-align:center; font-style:italic;">
-                        Aucune donnée disponible
-                    </td>
-                </tr>
-            `;
-            return;
-        }
-
-        // Génération des lignes du tableau avec validation des valeurs
-        tbody.innerHTML = results.map(result => `
-            <tr>
-                <td>${sanitizeText(result.label)}</td>
-                <td>${formatTime(result.avgTime)}</td>
-                <td>${formatTime(result.minTime)}</td>
-                <td>${formatTime(result.maxTime)}</td>
-                <td>${sanitizeText(result.iterations)}</td>
-            </tr>
-        `).join("");
-
-        logEvent("success", `Tableau des résultats mis à jour (${results.length} entrées).`);
-    } catch (error) {
-        logEvent("error", "Erreur lors de la mise à jour du tableau", { error: error.message });
-    }
-}
-
-/*----------------------------------------------------------------
-/*   Nettoyage texte
-/*----------------------------------------------------------------*/
-/**
- * Nettoie un texte pour éviter les erreurs d'affichage et prévenir les attaques XSS.
- *
- * - Vérifie si le texte est de type `string` ou `number`, sinon retourne `"N/A"`.
- * - Supprime les espaces inutiles et protège les caractères spéciaux.
- * - Empêche l'injection de code HTML (`<script>`, `&`, `"`, etc.).
- *
- * @param {any} text - Texte à nettoyer.
- * @returns {string} Texte sécurisé et propre.
- */
-function sanitizeText(text) {
-    try {
-        // Vérifie si le texte est une chaîne de caractères ou un nombre
-        if (typeof text === "string") {
-            return text
-                .trim() // Supprime les espaces inutiles
-                .replace(/</g, "&lt;") // Protège les balises `<`
-                .replace(/>/g, "&gt;") // Protège les balises `>`
-                .replace(/"/g, "&quot;") // Protège les guillemets `"`
-                .replace(/&/g, "&amp;"); // Protège le caractère `&`
-        } 
-        
-        if (typeof text === "number") {
-            return text.toString(); // Convertit les nombres en chaîne de caractères
-        }
-
-        logEvent("warning", "Valeur de texte invalide détectée lors du nettoyage", { text });
-        return "N/A";
-    } catch (error) {
-        logEvent("error", "Erreur lors du nettoyage du texte", { error: error.message });
-        return "N/A";
-    }
-}
-
-
-/*----------------------------------------------------------------
-/*   Formatage du temps
-/*----------------------------------------------------------------*/
-
-/**
- * Formate le temps pour l'affichage dans le tableau avec gestion des unités.
- *
- * - Remplace les valeurs invalides (`NaN`, `null`, `undefined`) par `"N/A"`.
- * - Convertit automatiquement les valeurs supérieures à 1000 ms en secondes (`s`).
- * - Corrige les valeurs négatives en `0.00 ms` pour éviter des incohérences.
- *
- * @param {any} time - Valeur du temps en millisecondes.
- * @returns {string} Temps formaté avec unité (`ms` ou `s`).
- */
-function formatTime(time) {
-    try {
-        // Vérifie si la valeur est invalide
-        if (isNaN(time) || time === null || time === undefined) {
-            logEvent("warning", "Valeur de temps invalide reçue pour formatage", { time });
-            return "N/A";
-        }
-
-        let parsedTime = parseFloat(time);
-
-        // Correction des valeurs négatives
-        if (parsedTime < 0) {
-            logEvent("warning", `Valeur de temps négative détectée (${parsedTime} ms). Corrigée à 0.00 ms.`);
-            parsedTime = 0;
-        }
-
-        // Conversion en secondes si le temps dépasse 1000 ms
-        if (parsedTime >= 1000) {
-            return `${(parsedTime / 1000).toFixed(2)} s`;
-        }
-
-        return `${parsedTime.toFixed(2)} ms`;
-    } catch (error) {
-        logEvent("error", "Erreur lors du formatage du temps", { error: error.message });
-        return "N/A";
-    }
-}
-
-
-
-/*----------------------------------------------------------------
-/*   Mise à jour Benchmark des performances
-/*----------------------------------------------------------------*/
-
-/**
- * Met à jour le graphique des performances du benchmark.
- *
- * - Vérifie si `chartElement` est bien un élément `canvas`.
- * - Vérifie si `results` est un tableau valide et contient des données.
- * - Supprime l'ancien graphique avant d'en générer un nouveau.
- * - Assure que les valeurs de `data` sont valides avant l'affichage.
- *
- * @param {HTMLElement} chartElement - Élément `canvas` du graphique.
- * @param {Array} results - Liste des résultats du benchmark.
- */
-function updateChart(chartElement, results) {
-    try {
-        // Vérifie si chartElement est valide et bien un élément canvas
-        if (!(chartElement instanceof HTMLCanvasElement)) {
-            logEvent("error", "updateChart : L'élément fourni n'est pas un canvas valide.");
-            return;
-        }
-
-        const ctx = chartElement.getContext("2d");
-
-        // Vérifie si `results` est un tableau et qu'il contient des données
-        if (!Array.isArray(results) || results.length === 0) {
-            logEvent("warning", "updateChart : Aucun résultat à afficher dans le graphique.");
-            ctx.clearRect(0, 0, chartElement.width, chartElement.height);
-            return;
-        }
-
-        // Vérification et extraction des données
-        const labels = results.map(r => sanitizeText(r.label));
-        const avgTimes = results.map(r => validateNumericValue(r.avgTime));
-
-        // Vérifie s'il y a des valeurs valides à afficher
-        if (avgTimes.every(time => time === null)) {
-            logEvent("warning", "updateChart : Toutes les valeurs du benchmark sont invalides.");
-            return;
-        }
-
-        // Détruit l'ancien graphique avant de générer un nouveau
-        if (chartElement.chartInstance) {
-            chartElement.chartInstance.destroy();
-        }
-
-        // Génération du nouveau graphique
-        chartElement.chartInstance = new Chart(ctx, {
-            type: "bar",
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: "Temps moyen (ms)",
-                    data: avgTimes,
-                    backgroundColor: ["#FF6384", "#36A2EB"]
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: { y: { beginAtZero: true } }
-            }
-        });
-
-        logEvent("success", "Graphique mis à jour avec succès.");
-    } catch (error) {
-        logEvent("error", "Erreur lors de la mise à jour du graphique", { error: error.message });
-    }
-}
-/*----------------------------------------------------------------
-/*   Export des résultats
-/*----------------------------------------------------------------*/
 
 /**
  * Exporte les résultats sous format JSON ou CSV.
  * @param {string} format - Format d'export ("json" ou "csv").
  * @param {Array} results - Liste des résultats du benchmark.
  */
+/**
+ * Exporte les résultats du benchmark sous format JSON ou CSV et initie le téléchargement du fichier.
+ *
+ * Cette fonction prend en charge deux formats d'exportation :
+ * - **JSON** : Les données sont formatées en JSON avec une indentation de 2 espaces pour une meilleure lisibilité.
+ * - **CSV** : Les résultats sont convertis en une chaîne de caractères où chaque ligne représente une entrée du benchmark.
+ *
+ * Fonctionnement :
+ * 1. Vérifie si le format spécifié est valide ("json" ou "csv"), sinon une erreur est journalisée.
+ * 2. Convertit les données `results` dans le format spécifié.
+ * 3. Crée un objet `Blob` contenant les données et génère une URL de téléchargement.
+ * 4. Simule un clic sur un élément `<a>` pour déclencher le téléchargement automatique du fichier.
+ * 5. Capture les erreurs potentielles et les journalise.
+ *
+ * Restrictions :
+ * - Le format doit être `"json"` ou `"csv"`, sinon une erreur est enregistrée.
+ * - `results` doit être un tableau valide, sinon une erreur est journalisée.
+ *
+ * @function exportResults
+ * @param {string} format - Format d'exportation, doit être "json" ou "csv".
+ * @param {Array} results - Tableau contenant les résultats du benchmark.
+ * @throws {Error} Capture les erreurs critiques et les enregistre via `logEvent()`.
+ */
 function exportResults(format, results) {
     try {
+        // Vérification du format
+        if (!["json", "csv"].includes(format)) {
+            logEvent("error", `Format d'export invalide : "${format}". Formats acceptés : json, csv.`);
+            return;
+        }
+
+        // Vérification des résultats
+        if (!Array.isArray(results) || results.length === 0) {
+            logEvent("error", "Aucune donnée disponible pour l'export.");
+            return;
+        }
+
+        // Conversion des données dans le format sélectionné
         const dataStr = format === "json"
             ? JSON.stringify(results, null, 2)
             : results.map(r => `${r.label},${r.avgTime},${r.minTime},${r.maxTime},${r.iterations}`).join("\n");
 
+        // Création d'un Blob et génération d'une URL pour le téléchargement
         const blob = new Blob([dataStr], { type: format === "json" ? "application/json" : "text/csv" });
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = `benchmark_results.${format}`;
-        a.click();
+        const url = URL.createObjectURL(blob);
 
+        // Création et simulation du clic sur un élément <a> pour télécharger le fichier
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `benchmark_results.${format}`;
+        document.body.appendChild(a); // Nécessaire pour certains navigateurs
+        a.click();
+        document.body.removeChild(a); // Nettoyage après téléchargement
+
+        // Journalisation de l'export réussi
         logEvent("success", `Export des résultats en ${format.toUpperCase()} effectué.`);
     } catch (error) {
-        logEvent("error", `Erreur lors de l'export en ${format.toUpperCase()}`, { error: error.message });
+        logEvent("error", `Erreur lors de l'export en ${format.toUpperCase()}`, { message: error.message });
     }
 }
+
+
+/* ====================================================================================
+/*  EXPORT FINAL
+/* ==================================================================================== */
 
 export default BenchmarkDashboard;

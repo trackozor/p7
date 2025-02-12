@@ -68,6 +68,272 @@ export async function handleSearch() {
     }
 }
 
+/*================================================================
+ *    Gestion des événements pour la modale du mot de passe
+/*===============================================================*/
+
+/**
+ * Attache les événements de validation et d'annulation à la modale.
+ *
+ * - Vérifie la présence des éléments avant d'attacher les événements.
+ * - Associe la validation au bouton de confirmation et à la touche "Enter".
+ * - Ajoute un mécanisme de nettoyage des événements lors de la fermeture de la modale.
+ *
+ * @param {HTMLElement} passwordInput - Champ de saisie du mot de passe.
+ * @param {HTMLElement} validateBtn - Bouton de validation.
+ * @param {HTMLElement} cancelBtn - Bouton d'annulation.
+ * @param {function} callback - Fonction exécutée après validation du mot de passe.
+ * @param {HTMLElement} modal - Élément DOM contenant la modale.
+ */
+export function attachModalEvents(passwordInput, validateBtn, cancelBtn, callback, modal) {
+    try {
+        // Vérifie la présence des éléments requis avant d'attacher les événements
+        if (!passwordInput || !validateBtn || !cancelBtn || !modal) {
+            logEvent("error", "attachModalEvents : Un ou plusieurs éléments sont manquants.", {
+                passwordInput,
+                validateBtn,
+                cancelBtn,
+                modal
+            });
+            return;
+        }
+
+        // Ajout des écouteurs d'événements
+        validateBtn.addEventListener("click", () => handleValidation(passwordInput, callback, modal));
+        cancelBtn.addEventListener("click", () => handleClose(modal));
+        passwordInput.addEventListener("keydown", (event) => handleEnterKey(event, passwordInput, callback, modal));
+
+        // Ajoute une méthode pour nettoyer les événements à la fermeture
+        modal.cleanup = () => detachModalEvents(passwordInput, validateBtn, cancelBtn, modal);
+
+        logEvent("success", "Écouteurs attachés à la modale avec succès.");
+    } catch (error) {
+        logEvent("error", "Erreur lors de l'attachement des événements à la modale.", { error: error.message });
+    }
+}
+
+// ==========================================================
+// Gestion de la Validation du Mot de Passe
+// ==========================================================
+
+/**
+ * Vérifie le mot de passe et exécute le callback si valide.
+ *
+ * - Vérifie que `passwordInput` est un champ de saisie valide.
+ * - Vérifie que `callback` est bien une fonction exécutable.
+ * - Vérifie que `modal` est un élément HTML valide.
+ * - Appelle `verifyPassword` pour exécuter la validation.
+ * - Capture et logue les erreurs en cas de problème.
+ *
+ * @param {HTMLInputElement} passwordInput - Champ de saisie du mot de passe.
+ * @param {function} callback - Fonction exécutée après validation.
+ * @param {HTMLElement} modal - Élément DOM de la modale.
+ * @throws {Error} Si l'un des paramètres est invalide.
+ */
+export function handleValidation(passwordInput, callback, modal) {
+    try {
+        // Vérifie que `passwordInput` est bien un élément `<input>` HTML
+        if (!(passwordInput instanceof HTMLInputElement)) {
+            logEvent("error", "handleValidation : Champ de saisie du mot de passe invalide.");
+            throw new Error("Le champ de saisie du mot de passe est invalide ou inexistant.");
+        }
+
+        // Vérifie que `callback` est bien une fonction exécutable
+        if (typeof callback !== "function") {
+            logEvent("error", "handleValidation : Callback invalide ou non fourni.");
+            throw new Error("Un callback valide est requis pour la validation du mot de passe.");
+        }
+
+        // Vérifie que `modal` est bien un élément HTML valide
+        if (!(modal instanceof HTMLElement)) {
+            logEvent("error", "handleValidation : Élément modal invalide.");
+            throw new Error("L'élément modal fourni est invalide.");
+        }
+
+        // Exécute la validation du mot de passe avec `verifyPassword`
+        verifyPassword(passwordInput.value, callback, modal);
+
+    } catch (error) {
+        // Capture l'erreur et l'enregistre pour le suivi
+        logEvent("critical", "Erreur critique dans handleValidation", { message: error.message });
+
+        // Relance l'exception pour permettre un traitement en amont si nécessaire
+        throw error;
+    }
+}
+
+
+// ==========================================================
+// Gestion de la Fermeture de la Modale
+// ==========================================================
+
+/**
+ * Ferme la modale après vérification de sa validité.
+ *
+ * - Vérifie que `modal` est bien un élément HTML valide.
+ * - Appelle la fonction `closeModal` pour fermer proprement la modale.
+ * - Capture et logue les erreurs si l'élément est invalide.
+ *
+ * @param {HTMLElement} modal - Élément DOM de la modale.
+ * @throws {Error} Si l'élément modal est invalide ou inexistant.
+ */
+export function handleClose(modal) {
+    try {
+        // Vérifie que `modal` est bien un élément HTML valide avant d'exécuter la fermeture
+        if (!(modal instanceof HTMLElement)) {
+            logEvent("error", "handleClose : Élément modal invalide ou non fourni.");
+            throw new Error("L'élément modal fourni est invalide ou inexistant.");
+        }
+
+        // Appelle `closeModal` pour gérer la fermeture proprement
+        closeModal(modal);
+
+    } catch (error) {
+        // Capture l'erreur et l'enregistre pour le suivi
+        logEvent("critical", "Erreur critique dans handleClose", { message: error.message });
+
+        // Relance l'exception pour permettre un traitement en amont si nécessaire
+        throw error;
+    }
+}
+
+// ==========================================================
+// Gestion de la Validation par la Touche "Enter"
+// ==========================================================
+
+/**
+ * Détecte l'appui sur la touche "Enter" et déclenche la validation du mot de passe.
+ *
+ * - Vérifie si la touche pressée est "Enter".
+ * - Exécute la fonction de validation si la condition est remplie.
+ * - Gère les erreurs en cas de paramètres invalides.
+ *
+ * @param {KeyboardEvent} event - Événement de clavier.
+ * @param {HTMLInputElement} passwordInput - Champ de saisie du mot de passe.
+ * @param {function} callback - Fonction exécutée après validation.
+ * @param {HTMLElement} modal - Élément DOM de la modale.
+ * @throws {Error} Si l'un des paramètres est invalide.
+ */
+export function handleEnterKey(event, passwordInput, callback, modal) {
+    try {
+        // Vérifie la validité des paramètres avant toute exécution
+        validateEnterKeyParameters(event, passwordInput, callback, modal);
+
+        // Vérifie si la touche pressée est bien "Enter"
+        if (event.key === "Enter") {
+            // Exécute la validation du mot de passe
+            handleValidation(passwordInput, callback, modal);
+        }
+    } catch (error) {
+        // Capture l'erreur et l'enregistre pour le suivi
+        logEvent("critical", "Erreur critique dans handleEnterKey", { message: error.message });
+
+        // Relance l'exception pour permettre un traitement en amont si nécessaire
+        throw error;
+    }
+}
+
+
+// ==========================================================
+// Validation des Paramètres de handleEnterKey
+// ==========================================================
+
+/**
+ * Vérifie la validité des paramètres fournis à `handleEnterKey`.
+ *
+ * - Vérifie que l'événement est bien un `KeyboardEvent`.
+ * - Vérifie que `passwordInput` est un champ de saisie valide.
+ * - Vérifie que `callback` est une fonction.
+ * - Vérifie que `modal` est un élément HTML valide.
+ * - Enregistre une erreur et lève une exception en cas de non-conformité.
+ *
+ * @param {KeyboardEvent} event - Événement de clavier.
+ * @param {HTMLInputElement} passwordInput - Champ de saisie du mot de passe.
+ * @param {function} callback - Fonction exécutée après validation.
+ * @param {HTMLElement} modal - Élément DOM de la modale.
+ * @throws {Error} Si l'un des paramètres est invalide.
+ */
+export function validateEnterKeyParameters(event, passwordInput, callback, modal) {
+    // Vérifie que `event` est un événement de clavier valide
+    if (!(event instanceof KeyboardEvent)) {
+        logEvent("error", "validateEnterKeyParameters : Événement clavier invalide.");
+        throw new Error("L'événement fourni doit être un `KeyboardEvent`.");
+    }
+
+    // Vérifie que `passwordInput` est un champ de saisie HTML valide
+    if (!(passwordInput instanceof HTMLInputElement)) {
+        logEvent("error", "validateEnterKeyParameters : Champ de saisie du mot de passe invalide.");
+        throw new Error("Le champ de saisie du mot de passe est invalide ou inexistant.");
+    }
+
+    // Vérifie que `callback` est bien une fonction exécutable
+    if (typeof callback !== "function") {
+        logEvent("error", "validateEnterKeyParameters : Callback invalide ou non fourni.");
+        throw new Error("Un callback valide est requis pour la validation du mot de passe.");
+    }
+
+    // Vérifie que `modal` est bien un élément HTML valide
+    if (!(modal instanceof HTMLElement)) {
+        logEvent("error", "validateEnterKeyParameters : Élément modal invalide.");
+        throw new Error("L'élément modal fourni est invalide.");
+    }
+}
+
+
+
+/**==================================================================
+/*  Nettoyage des Événements de la Modale 
+/*==================================================================
+/*
+/*  Cette fonction détache proprement tous les événements liés à la modale.
+/*  Elle est utilisée avant la suppression pour éviter les fuites mémoire.
+/*  Vérifie si un gestionnaire de nettoyage existe avant d'exécuter la suppression.
+/*
+/*-------------------------------------------------------------------*/
+
+/**
+ * Détache les événements de la modale pour éviter les fuites mémoire.
+ *
+ * - Vérifie si un gestionnaire de nettoyage (`cleanup`) est défini.
+ * - Exécute le gestionnaire pour retirer les écouteurs d'événements.
+ * - Ajoute un log en cas d'absence de gestionnaire pour le suivi.
+ */
+export function detachModalEvents(passwordInput, validateBtn, cancelBtn, modal) {
+    try {
+        // Vérifie que tous les éléments requis sont des objets DOM valides
+        if (!(passwordInput instanceof HTMLInputElement)) {
+            logEvent("error", "detachModalEvents : Champ de saisie du mot de passe invalide.");
+            throw new Error("Le champ de saisie du mot de passe est invalide ou inexistant.");
+        }
+
+        if (!(validateBtn instanceof HTMLElement)) {
+            logEvent("error", "detachModalEvents : Bouton de validation invalide.");
+            throw new Error("Le bouton de validation est invalide ou inexistant.");
+        }
+
+        if (!(cancelBtn instanceof HTMLElement)) {
+            logEvent("error", "detachModalEvents : Bouton d'annulation invalide.");
+            throw new Error("Le bouton d'annulation est invalide ou inexistant.");
+        }
+
+        if (!(modal instanceof HTMLElement)) {
+            logEvent("error", "detachModalEvents : Élément modal invalide.");
+            throw new Error("L'élément modal fourni est invalide.");
+        }
+
+        // Suppression des écouteurs d'événements attachés
+        validateBtn.removeEventListener("click", handleValidation);
+        cancelBtn.removeEventListener("click", handleClose);
+        passwordInput.removeEventListener("keydown", handleEnterKey);
+
+        logEvent("info", "Événements de la modale détachés avec succès.");
+
+    } catch (error) {
+        // Capture et log l'erreur pour faciliter le débogage
+        logEvent("critical", "Erreur critique lors du détachement des événements de la modale", { message: error.message });
+        throw error;
+    }
+}
 
 
 /* ================================================================================ 

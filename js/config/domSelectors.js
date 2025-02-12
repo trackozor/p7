@@ -248,7 +248,7 @@ export function getCurrentPage() {
 
 export function getIndexSelectors() {
     return {
-        /** 🏠 Contient les éléments principaux de la page */
+        /**  Contient les éléments principaux de la page */
         indexPage: {
             body: document.body,
             header: safeQuerySelector("header"),
@@ -256,26 +256,26 @@ export function getIndexSelectors() {
             footer: safeQuerySelector("footer"),
         },
 
-        /** 🎨 Contient les éléments liés au branding */
+        /**  Contient les éléments liés au branding */
         branding: {
             logo: safeQuerySelector(".logo"),
             backgroundImage: safeQuerySelector(".fond", true), // Optionnel
         },
 
-        /** 🔎 Contient les éléments liés à la barre de recherche */
+        /**  Contient les éléments liés à la barre de recherche */
         search: {
             form: safeQuerySelector(".search-bar"),
             input: safeQuerySelector("#search"),
             button: safeQuerySelector("#search-btn"),
         },
 
-        /** 🎚️ Contient les éléments liés aux filtres dynamiques */
+        /**  Contient les éléments liés aux filtres dynamiques */
         filters: {
             section: safeQuerySelector("#filters"), // Section principale
             
         },
 
-        /** 🍽️ Conteneur des recettes */
+        /** Conteneur des recettes */
         recipes: {
             recipeCards: () => safeQuerySelectorAll(".recipe-card"),
         },
@@ -290,21 +290,6 @@ export function getIndexSelectors() {
  * ---------------------------------------------------------------------------------------------------
  *  Parcourt un objet contenant des sélecteurs DOM pour vérifier leur présence et signaler ceux manquants.
  * ---------------------------------------------------------------------------------------------------
- * 
- * ## **Pourquoi utiliser cette fonction ?**
- * - **Détecte automatiquement les sélecteurs non trouvés** pour éviter des erreurs à l’exécution.
- * - **Facilite le débogage** en générant une liste de tous les éléments absents.
- * - **Assure la fiabilité du code** en empêchant l’utilisation de sélecteurs invalides.
- * 
- * ## **Quand utiliser cette fonction ?**
- * - **À l'initialisation des sélecteurs** pour vérifier qu’ils sont bien récupérés.
- * - **Après une modification du DOM** pour s’assurer qu’aucun élément n’a été supprimé ou mal nommé.
- * - **Dans un environnement de développement** pour alerter en cas d’oubli d’un élément HTML.
- * 
- * ## **Bénéfices :**
- * - **Fiabilise la gestion des sélecteurs** en alertant sur les manques.
- * - **Évite les erreurs cachées** qui pourraient provoquer des bugs à l’exécution.
- * - **Facilite la maintenance du projet** en listant précisément les sélecteurs absents.
  * 
  * @function recursiveCheck
  * @param {Object} obj - Objet contenant les sélecteurs à vérifier (ex: `getIndexSelectors()`).
@@ -342,26 +327,10 @@ export function recursiveCheck(obj, parentKey = "", missingSelectors = []) {
 /*==============================================*/
 /*    Vérification Globale des Sélecteurs       */
 /*==============================================*/
-
-/** ## DESCRIPTION ##
+/** 
  * ---------------------------------------------------------------------------------------------------
  *  Vérifie la présence de tous les sélecteurs nécessaires au bon fonctionnement d’une page donnée.
  * ---------------------------------------------------------------------------------------------------
- * 
- * ## **Pourquoi utiliser cette fonction ?**
- * - **Détecte automatiquement les éléments DOM manquants** pour éviter des erreurs d’exécution.
- * - **Assure l'intégrité des sélecteurs** en vérifiant qu’ils existent bien dans le document.
- * - **Facilite le débogage et la maintenance** en générant une liste claire des sélecteurs absents.
- * 
- * ## **Quand utiliser cette fonction ?**
- * - **Lors de l'initialisation de la page** pour s’assurer que tous les sélecteurs requis sont disponibles.
- * - **Avant toute manipulation dynamique du DOM** pour éviter des erreurs d’accès à des éléments inexistants.
- * - **Dans un test d'intégration** pour valider que l'interface utilisateur respecte la structure prévue.
- * 
- * ## **Bénéfices :**
- * - **Fiabilise l'application** en évitant l'utilisation de références nulles.
- * - **Aide à la résolution rapide des problèmes** en fournissant une liste détaillée des sélecteurs manquants.
- * - **Facilite l’évolution du projet** en maintenant un contrôle sur la structure du DOM.
  * 
  * @function checkSelectors
  * @param {Object} selectors - Objet contenant les sélecteurs DOM à vérifier (ex: `getIndexSelectors()`).
@@ -378,44 +347,17 @@ export function checkSelectors(selectors) {
     return recursiveCheck(selectors);
 }
 
-
 /*==============================================*/
 /*          Chargement Dynamique des Sélecteurs */
 /*==============================================*/
-
-/** ## DESCRIPTION ##
+/**
  * ---------------------------------------------------------------------------------------------------
  *  Charge dynamiquement les sélecteurs nécessaires en fonction de la page détectée.
  * ---------------------------------------------------------------------------------------------------
  * 
- * ## **Pourquoi utiliser cette fonction ?**
- * - **Évite les sélections inutiles** en ne chargeant que les sélecteurs pertinents pour la page active.
- * - **Améliore la maintenabilité** en centralisant la gestion des sélecteurs par page.
- * - **Assure la fiabilité de l'application** en détectant les sélecteurs manquants et en journalisant les erreurs.
- * 
- * ## **Quand utiliser cette fonction ?**
- * - **À l'initialisation de l'application** pour récupérer les sélecteurs avant toute manipulation du DOM.
- * - **Lors d’un changement de page dynamique** pour mettre à jour les sélecteurs sans recharger le site.
- * - **Dans un environnement de test** pour vérifier la structure DOM en fonction des pages.
- * 
- * ## **Bénéfices :**
- * - **Optimisation des performances** en réduisant les requêtes inutiles au DOM.
- * - **Meilleure gestion des erreurs** en loguant les sélecteurs absents.
- * - **Code plus modulaire et évolutif** en permettant d’ajouter facilement d'autres pages.
- * 
  * @function loadSelectorsForCurrentPage
  * @returns {Object} Un objet contenant les sélecteurs DOM propres à la page actuelle.
  * 
- * @example
- *  Récupérer les sélecteurs pour la page active :
- * const selectors = loadSelectorsForCurrentPage();
- * console.log("Sélecteurs chargés :", selectors);
- * 
- *  Exemple d'utilisation dans une initialisation :
- * document.addEventListener("DOMContentLoaded", () => {
- *    const selectors = loadSelectorsForCurrentPage();
- *    initializeUI(selectors);
- * });
  */
 export function loadSelectorsForCurrentPage() {
     const currentPage = getCurrentPage();
@@ -436,30 +378,13 @@ export function loadSelectorsForCurrentPage() {
     return selectors;
 }
 
-
 /*==============================================*/
 /*        Rafraîchissement des Sélecteurs       */
 /*==============================================*/
-
-/** ## DESCRIPTION ##
+/** 
  * ---------------------------------------------------------------------------------------------------
  *  Réinitialise dynamiquement les sélecteurs DOM pour garantir leur validité et éviter les erreurs.
  * ---------------------------------------------------------------------------------------------------
- *
- * ## **Pourquoi rafraîchir les sélecteurs ?**
- * - **Évite l'utilisation de références obsolètes** suite à des modifications du DOM.
- * - **Garantit la stabilité** des interactions utilisateur en s’assurant que les sélections sont valides.
- * - **Facilite la gestion des mises à jour dynamiques** de contenu (ex: filtres, chargement asynchrone).
- *
- * ## **Quand utiliser cette fonction ?**
- * - **Après une mise à jour du DOM** (ex: AJAX, changement d’état, animations).
- * - **Avant toute manipulation de l’UI** nécessitant des interactions avec des éléments DOM.
- * - **Lorsqu’un problème d’affichage** est détecté à cause de sélecteurs cassés.
- *
- * ## **Bénéfices :**
- * - **Optimise la stabilité** en purgeant et rechargeant les sélecteurs.
- * - **Réduit les risques d’erreurs** en évitant l’accès à des éléments supprimés.
- * - **Améliore la performance** en évitant des requêtes répétées inutiles.
  *
  * @function refreshSelectors
  * @returns {void} Ne retourne rien mais met à jour les sélecteurs en arrière-plan.
@@ -484,29 +409,13 @@ export function refreshSelectors() {
     logEvent("success", "Sélecteurs DOM mis à jour avec succès.");
 }
 
-
 /*==============================================*/
 /*        Initialisation des Sélecteurs         */
 /*==============================================*/
-
-/** ## DESCRIPTION ##
+/**
  * ---------------------------------------------------------------------------------------------------
  *  Initialise les sélecteurs DOM après le chargement complet de la page et empêche une double exécution.
  * ---------------------------------------------------------------------------------------------------
- *
- * ## **Pourquoi initialiser les sélecteurs au chargement du DOM ?**
- * - **Assure que tous les éléments sont disponibles** avant de les manipuler.
- * - **Évite des erreurs de sélection** causées par des éléments non encore rendus.
- * - **Garantit une initialisation unique** pour prévenir les surcharges mémoire et comportements imprévisibles.
- *
- * ## **Quand cette fonction est-elle exécutée ?**
- * - **Automatiquement après le chargement complet du DOM** (`DOMContentLoaded`).
- * - **Uniquement si elle n'a pas déjà été exécutée**, grâce à un verrou global (`window.domSelectorsLoaded`).
- *
- * ## **Bénéfices :**
- * - **Optimise les performances** en évitant les exécutions redondantes.
- * - **Fiabilise les sélections DOM** en s'assurant que les éléments existent bien avant l'accès.
- * - **Facilite la maintenance** en centralisant l'initialisation des sélecteurs.
  *
  * @function initializeDomSelectors
  * @returns {void} Ne retourne rien mais charge les sélecteurs DOM de manière sécurisée.
@@ -540,30 +449,14 @@ function initializeDomSelectors() {
 // Exécute automatiquement après le chargement complet du DOM
 document.addEventListener("DOMContentLoaded", initializeDomSelectors);
 
-
 /*==============================================*/
 /*   Observation des Changements du DOM        */
 /*==============================================*/
 
-/** ## DESCRIPTION ##
+/** 
  * ---------------------------------------------------------------------------------------------------
  *  Observe en temps réel les modifications du DOM et met à jour dynamiquement les sélecteurs.
  * ---------------------------------------------------------------------------------------------------
- *
- * ## **Pourquoi observer les changements du DOM ?**
- * - **Gère les ajouts/suppressions dynamiques** d'éléments sans besoin de recharger la page.
- * - **Évite les erreurs de sélection** en maintenant les sélecteurs toujours à jour.
- * - **Améliore l'expérience utilisateur** en assurant une réactivité optimale des composants interactifs.
- *
- * ## **Quand cette fonction est-elle exécutée ?**
- * - **Après le chargement du DOM** (`DOMContentLoaded`).
- * - **À chaque modification structurelle** détectée dans le `document.body`.
- * - **Uniquement si une modification pertinente est détectée**, grâce à un timer `setTimeout()`.
- *
- * ## **Bénéfices :**
- * - **Optimise les performances** en limitant les rafraîchissements inutiles.
- * - **Fiabilise les interactions dynamiques** en maintenant à jour les références DOM.
- * - **Prévient les conflits d’éléments** lors d’injections ou suppressions dynamiques.
  *
  * @function observeDomChanges
  * @returns {void} Ne retourne rien, mais active un `MutationObserver` sur le `document.body`.
@@ -573,7 +466,6 @@ document.addEventListener("DOMContentLoaded", initializeDomSelectors);
  * document.addEventListener("DOMContentLoaded", observeDomChanges);
  *
  *  Déclenchement automatique en cas de changement dans le DOM :
- * // Exemple d’ajout dynamique d’un élément
  * const newElement = document.createElement("div");
  * document.body.appendChild(newElement); // Déclenche l’observation et rafraîchit les sélecteurs
  */
@@ -601,25 +493,10 @@ document.addEventListener("DOMContentLoaded", observeDomChanges);
 /*       Export des Fonctions & Sélecteurs      */
 /*==============================================*/
 
-/** ## DESCRIPTION ##
+/** 
  * ---------------------------------------------------------------------------------------------------
  *  Regroupe et expose les fonctions essentielles de gestion des sélecteurs DOM pour toute l’application.
  * ---------------------------------------------------------------------------------------------------
- *
- * ## **Pourquoi centraliser ces exports ?**
- * - **Facilite l’importation et l’accès** aux fonctions de manipulation DOM.
- * - **Évite la duplication du code** en regroupant les méthodes communes.
- * - **Assure une meilleure maintenabilité** en unifiant les points d’accès aux sélecteurs et méthodes.
- *
- * ## **Contenu des exports :**
- * - `safeQuerySelector` : Récupération sécurisée d’un élément DOM avec cache.
- * - `getCurrentPage` : Détection automatique de la page active selon l'URL.
- * - `refreshSelectors` : Mise à jour dynamique des sélecteurs après une modification du DOM.
- *
- * ## **Bénéfices :**
- * - **Modularité** : Permet un import ciblé des fonctionnalités selon les besoins.
- * - **Performance** : Optimise les appels aux sélecteurs avec mise en cache.
- * - **Clarté** : Facilite la lisibilité et la gestion du code.
  *
  * @constant {Object} domSelectors - Regroupe les fonctions clés pour la gestion des sélecteurs DOM.
  * @property {Function} safeQuerySelector - Sélection sécurisée d'un élément DOM avec cache.
