@@ -29,7 +29,7 @@ import { handleSearch, handleFilterChange } from "./eventHandler.js";
  */
 export function initEventListeners() {
     try {
-        const selectors = domSelectors();
+        const selectors = domSelectors;
 
         logEvent("info", "Initialisation des écouteurs d'événements...");
 
@@ -37,7 +37,7 @@ export function initEventListeners() {
         attachSearchListeners(selectors.search);
 
         // Ajout des écouteurs pour les filtres
-        attachFilterListeners(selectors.filterDropdowns);
+        attachFilterListeners(selectors.filters);
 
         logEvent("success", "Tous les écouteurs d'événements ont été attachés avec succès.");
     } catch (error) {
@@ -56,22 +56,52 @@ export function initEventListeners() {
  *
  * @param {Object} searchSelectors - Sélecteurs DOM de la barre de recherche.
  */
-function attachSearchListeners(searchSelectors) {
+export function attachSearchListeners(searchSelectors) {
     try {
-        if (!searchSelectors || !searchSelectors.input || !searchSelectors.form) {
-            logEvent("error", "Impossible de trouver les éléments de recherche.", { searchSelectors });
+        // Vérification des sélecteurs
+        if (!searchSelectors) {
+            logEvent("error", "attachSearchListeners : Aucun sélecteur fourni.");
             return;
         }
 
-        searchSelectors.input.addEventListener("input", handleSearch);
-        searchSelectors.form.addEventListener("submit", (event) => {
+        const { form, input, button } = searchSelectors;
+
+        if (!form || !input || !button) {
+            logEvent("error", "attachSearchListeners : Élément(s) de la recherche manquant(s).", { form, input, button });
+            return;
+        }
+
+        // Écouteur sur la saisie utilisateur
+        input.addEventListener("input", handleSearch);
+
+        // Empêche le rechargement de la page lors de la soumission du formulaire
+        form.addEventListener("submit", (event) => {
             event.preventDefault();
             handleSearch();
         });
 
-        logEvent("success", "Écouteurs attachés à la barre de recherche.");
+        // Écouteur sur le bouton de recherche
+        button.addEventListener("submit", (event) => {
+            event.preventDefault(); // Empêche l'action par défaut du bouton
+            try {
+                const query = input.value.trim();
+                
+                // Mode "benchmark"
+                if (query === "/benchmark" || query === "!benchmark") {
+                    logEvent("info", "Commande Benchmark détectée. Affichage de la modale.");
+                    requestAdminAccess();
+                } else {
+                    logEvent("info", `Recherche normale déclenchée : ${query}`);
+                    triggerNormalSearch(query);
+                }
+            } catch (error) {
+                logEvent("error", "Erreur lors de la détection du mode Benchmark.", { error: error.message });
+            }
+        });
+
+        logEvent("success", "attachSearchListeners : Écouteurs attachés à la barre de recherche.");
     } catch (error) {
-        logEvent("error", "Erreur lors de l'ajout des écouteurs à la barre de recherche.", { error: error.message });
+        logEvent("error", "attachSearchListeners : Erreur lors de l'ajout des écouteurs.", { error: error.message });
     }
 }
 
@@ -82,41 +112,95 @@ function attachSearchListeners(searchSelectors) {
 /**
  * Ajoute les écouteurs pour les filtres de sélection.
  *
- * - Attache l'événement `change` aux filtres disponibles.
+ * - Attache un événement `click` pour ouvrir/fermer le dropdown.
  * - Vérifie l'existence de chaque filtre avant d'ajouter un écouteur.
  *
  * @param {Object} filterSelectors - Sélecteurs DOM des filtres.
  */
-function attachFilterListeners(filterSelectors) {
+export function attachFilterListeners(filters) {
     try {
-        if (!filterSelectors) {
-            logEvent("error", "Impossible de trouver les filtres de sélection.", { filterSelectors });
+        // Vérification des sélecteurs
+        if (!filters) {
+            logEvent("error", "attachFilterListeners : Aucun sélecteur de filtre fourni.");
             return;
         }
 
-        const { ingredientDropdown, applianceDropdown, ustensilDropdown } = filterSelectors;
+        const { ingredients, appliances, utensils } = filters;
 
-        if (ingredientDropdown) {
-            ingredientDropdown.addEventListener("change", handleFilterChange);
-            logEvent("info", "Écouteur attaché au filtre des ingrédients.");
-        } else {
-            logEvent("warning", "Filtre des ingrédients introuvable, écouteur non ajouté.");
+        if (!ingredients || !appliances || !utensils) {
+            logEvent("error", "attachFilterListeners : Certains filtres sont manquants.", { ingredients, appliances, utensils });
+            return;
         }
 
-        if (applianceDropdown) {
-            applianceDropdown.addEventListener("change", handleFilterChange);
-            logEvent("info", "Écouteur attaché au filtre des appareils.");
-        } else {
-            logEvent("warning", "Filtre des appareils introuvable, écouteur non ajouté.");
+        // Ajout des événements d'ouverture/fermeture pour chaque dropdown
+        if (ingredients.button && ingredients.dropdown) {
+            ingredients.button.addEventListener("click", () => toggleDropdown(ingredients.dropdown));
+            logEvent("info", "Écouteur attaché au bouton des ingrédients.");
         }
 
-        if (ustensilDropdown) {
-            ustensilDropdown.addEventListener("change", handleFilterChange);
-            logEvent("info", "Écouteur attaché au filtre des ustensiles.");
-        } else {
-            logEvent("warning", "Filtre des ustensiles introuvable, écouteur non ajouté.");
+        if (appliances.button && appliances.dropdown) {
+            appliances.button.addEventListener("click", () => toggleDropdown(appliances.dropdown));
+            logEvent("info", "Écouteur attaché au bouton des appareils.");
         }
+
+        if (utensils.button && utensils.dropdown) {
+            utensils.button.addEventListener("click", () => toggleDropdown(utensils.dropdown));
+            logEvent("info", "Écouteur attaché au bouton des ustensiles.");
+        }
+
+        // Ajout des événements de sélection dans les listes de filtres
+        if (ingredients.list) {
+            ingredients.list.addEventListener("click", handleFilterChange);
+            logEvent("info", "Écouteur attaché à la liste des ingrédients.");
+        }
+
+        if (appliances.list) {
+            appliances.list.addEventListener("click", handleFilterChange);
+            logEvent("info", "Écouteur attaché à la liste des appareils.");
+        }
+
+        if (utensils.list) {
+            utensils.list.addEventListener("click", handleFilterChange);
+            logEvent("info", "Écouteur attaché à la liste des ustensiles.");
+        }
+
+        logEvent("success", "attachFilterListeners : Écouteurs attachés aux filtres.");
     } catch (error) {
-        logEvent("error", "Erreur lors de l'ajout des écouteurs aux filtres.", { error: error.message });
+        logEvent("error", "attachFilterListeners : Erreur lors de l'ajout des écouteurs.", { error: error.message });
+    }
+}
+
+/*----------------------------------------------------------------
+/*   Toggle Dropdown
+/*----------------------------------------------------------------*/
+
+/**
+ * Affiche ou masque un dropdown.
+ *
+ * - Ferme tous les autres dropdowns avant d'afficher celui sélectionné.
+ * - Ajoute ou retire la classe `hidden` pour basculer l'affichage.
+ *
+ * @param {HTMLElement} dropdown - Le dropdown à afficher ou masquer.
+ */
+function toggleDropdown(dropdown) {
+    try {
+        if (!dropdown) {
+            logEvent("error", "toggleDropdown : Aucun dropdown fourni.");
+            return;
+        }
+
+        // Masque tous les dropdowns ouverts
+        document.querySelectorAll(".filter-dropdown").forEach(drop => {
+            if (drop !== dropdown) {
+                drop.classList.add("hidden");
+            }
+        });
+
+        // Bascule l'affichage du dropdown sélectionné
+        dropdown.classList.toggle("hidden");
+
+        logEvent("info", `toggleDropdown : Affichage du dropdown ${dropdown.dataset.filter}.`);
+    } catch (error) {
+        logEvent("error", "toggleDropdown : Erreur lors de l'affichage du dropdown.", { error: error.message });
     }
 }

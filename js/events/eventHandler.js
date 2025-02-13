@@ -10,10 +10,15 @@
 /*                     - Mise à jour automatique des filtres dans l'interface.         */
 /* ==================================================================================== */
 
-import { searchRecipesLoop } from "../components/search.js";
+import { searchRecipesLoop } from "../components/search/search.js";
 import { getAllRecipes, fetchFilterOptions } from "../data/dataManager.js";
 import domSelectors from "../config/domSelectors.js";
 import { logEvent } from "../utils/utils.js";
+import {requestAdminAccess} from "../main.js";
+import { waitForElement } from "../utils/utils.js";
+import { RecipeFactory } from "../components/factory/recipeFactory.js";
+
+
 /* ==================================================================================== */
 /*  GESTION DES DROPDOWNS                                                              */
 /* ==================================================================================== */
@@ -28,7 +33,7 @@ import { logEvent } from "../utils/utils.js";
      * @param {HTMLElement} filterButton - Bouton permettant d'afficher le dropdown.
      * @param {HTMLElement} dropdownContainer - Conteneur du menu déroulant.
      */
-function setupDropdownEvents(filterButton, dropdownContainer) {
+export function setupDropdownEvents(filterButton, dropdownContainer) {
     try {
             if (!(filterButton instanceof HTMLElement) || !(dropdownContainer instanceof HTMLElement)) {
                 logEvent("error", "setupDropdownEvents : Paramètres invalides.", { filterButton, dropdownContainer });
@@ -76,41 +81,61 @@ function setupDropdownEvents(filterButton, dropdownContainer) {
  */
 export async function handleSearch() {
     try {
-        // 1. Vérifie que l'objet `domSelectors` et `searchInput` existent avant d'exécuter la recherche.
-        if (!domSelectors || !domSelectors.searchInput) {
+        // Vérifie que `domSelectors.search` est défini et contient `input`
+        if (!domSelectors || !domSelectors.search || !domSelectors.search.input) {
             logEvent("error", "handleSearch : Élément input de recherche introuvable.");
-            return; // Stoppe l'exécution si l'élément est manquant.
+            return;
         }
 
-        // 2. Récupère et nettoie la saisie de l'utilisateur (trim enlève les espaces inutiles).
-        const query = domSelectors.searchInput.value.trim();
+        // Récupère l'élément de saisie correctement
+        const searchInput = domSelectors.search.input; 
+        try {
+            const query = searchInput.value.trim();
 
-        // 3. Vérifie que l'utilisateur a saisi au moins 3 caractères avant de lancer la recherche.
+            if (query === "/benchmark" || query === "!benchmark") {
+                logEvent("info", "Commande Benchmark détectée. Affichage de la modale.");
+                requestAdminAccess();
+            } else {
+                logEvent("info", `Recherche normale déclenchée : ${query}`);
+                triggerNormalSearch(query);
+            }
+        } catch (error) {
+            logEvent("error", "Erreur lors de la détection du mode Benchmark", { error: error.message });
+        }
+        // Vérifie que l'élément input existe réellement dans le DOM
+        if (!searchInput) {
+            logEvent("error", "handleSearch : Élément input non trouvé dans le DOM.");
+            return;
+        }
+
+        // Récupère la valeur et la nettoie (trim enlève les espaces inutiles)
+        const query = searchInput.value.trim();
+
+        // Vérifie que l'utilisateur a saisi au moins 3 caractères
         if (query.length < 3) {
             logEvent("info", "handleSearch : Recherche ignorée (moins de 3 caractères).");
-            return; // Évite les requêtes inutiles si la saisie est trop courte.
+            return; 
         }
 
-        // 4. Affiche un message indiquant que la recherche est en cours.
+        // Log que la recherche commence
         logEvent("info", `handleSearch : Recherche en cours pour "${query}"...`);
 
-        // 5. Appelle la fonction `searchRecipesLoop()` pour récupérer les résultats en fonction du texte saisi.
+        // Récupère les résultats de la recherche
         const results = await searchRecipesLoop(query);
 
-        // 6. Vérifie que les résultats obtenus sont bien un tableau avant de les afficher.
+        // Vérifie que les résultats sont bien un tableau
         if (!Array.isArray(results)) {
             logEvent("error", "handleSearch : Résultat de recherche invalide.", { results });
-            return; // Stoppe l'exécution si les résultats ne sont pas valides.
+            return; 
         }
 
-        // 7. Met à jour l'affichage avec les résultats obtenus.
-        displayResults(results);
+        // Affiche les résultats trouvés
+        search(results);
 
-        // 8. Affiche un message de succès avec le nombre de résultats trouvés.
+        // Log du succès avec le nombre de résultats
         logEvent("success", `handleSearch : ${results.length} résultats trouvés.`);
 
     } catch (error) {
-        // Capture et journalise toute erreur survenue lors de la recherche.
         logEvent("error", "handleSearch : Erreur lors de la recherche.", { error: error.message });
     }
 }
@@ -397,44 +422,44 @@ export function detachModalEvents(passwordInput, validateBtn, cancelBtn, modal) 
  *
  * @param {Array} results - Liste des recettes filtrées.
  */
-export function displayResults(results) {
+export async function displayResults(results) {
     try {
-        // 1. Vérifie que l'objet `domSelectors` et `recipesContainer` existent avant de modifier le DOM.
-        if (!domSelectors || !domSelectors.recipesContainer) {
-            logEvent("error", "displayResults : Conteneur des recettes introuvable.");
-            return; // Stoppe l'exécution si l'élément est manquant.
+        // Attendre que le conteneur soit disponible dans le DOM
+        const recipesContainer = await waitForElement("#recipes-container");
+
+        if (!recipesContainer) {
+            logEvent("error", "displayResult : Conteneur des recettes introuvable.");
+            return; // Stoppe l'exécution si l'élément est manquant
         }
 
-        // 2. Nettoie le conteneur avant d'ajouter les nouveaux résultats.
-        domSelectors.recipesContainer.innerHTML = "";
+        // Nettoyage du conteneur avant d'afficher les nouveaux résultats
+        recipesContainer.innerHTML = "";
 
-        // 3. Vérifie si la liste des résultats est vide ou invalide.
+        // Si aucun résultat, afficher un message
         if (!Array.isArray(results) || results.length === 0) {
-            domSelectors.recipesContainer.innerHTML = `<p class="no-results">Aucune recette trouvée.</p>`;
-            logEvent("warning", "displayResults : Aucun résultat pour cette recherche.");
-            return; // Stoppe l'affichage si aucun résultat.
+            recipesContainer.innerHTML = `<p class="no-results">Aucune recette trouvée.</p>`;
+            logEvent("warning", "displayResults : Aucun résultat trouvé.");
+            return;
         }
 
-        logEvent("info", `displayResults : Génération de ${results.length} cartes de recettes.`);
+        logEvent("info", `displayResults : Affichage de ${results.length} recettes.`);
 
-        // 4. Crée un `DocumentFragment` pour optimiser l'ajout des éléments au DOM.
+        // Utilisation d'un DocumentFragment pour optimiser l'ajout des éléments
         const fragment = document.createDocumentFragment();
 
-        // 5. Génère les cartes des recettes et les ajoute au fragment.
         results.forEach((recipe) => {
-            const card = createRecipeCard(recipe);
+            const card = RecipeFactory(recipe);
             fragment.appendChild(card);
         });
 
-        // 6. Ajoute toutes les cartes en une seule opération pour éviter les ralentissements.
-        domSelectors.recipesContainer.appendChild(fragment);
+        recipesContainer.appendChild(fragment);
 
         logEvent("success", `displayResults : ${results.length} recettes affichées.`);
     } catch (error) {
-        // 7. Capture et journalise toute erreur survenue lors de l'affichage des résultats.
         logEvent("error", "displayResults : Erreur lors de l'affichage des résultats.", { error: error.message });
     }
 }
+
 
 /* ================================================================================ 
     GESTION DES FILTRES 

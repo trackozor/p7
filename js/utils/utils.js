@@ -23,6 +23,7 @@ import {
 } from "../config/constants.js";
 
 
+
 /* =============================================================================
 /*                 SECTION 1 : FONCTIONS DE LOG
 /* ============================================================================= */
@@ -236,4 +237,34 @@ export function removeClass(element, className) {
         return false; // Retourne `false` en cas d'erreur
     }
 }
+/**
+ * Attend qu'un élément spécifique apparaisse dans le DOM.
+ * @param {string} selector - Le sélecteur CSS de l'élément à attendre.
+ * @param {number} timeout - Temps maximal en millisecondes (par défaut : 5000ms).
+ * @returns {Promise<Element>} - Une promesse qui résout l'élément DOM ou rejette si non trouvé.
+ */
+export function waitForElement(selector, timeout = 5000) {
+    return new Promise((resolve, reject) => {
+        const element = document.querySelector(selector);
+        if (element) {
+            return resolve(element);
+        }
+
+        const observer = new MutationObserver(() => {
+            const element = document.querySelector(selector);
+            if (element) {
+                observer.disconnect();
+                resolve(element);
+            }
+        });
+
+        observer.observe(document.body, { childList: true, subtree: true });
+
+        setTimeout(() => {
+            observer.disconnect();
+            reject(new Error(`waitForElement : L'élément "${selector}" n'a pas été trouvé dans le DOM après ${timeout}ms.`));
+        }, timeout);
+    });
+}
+
 

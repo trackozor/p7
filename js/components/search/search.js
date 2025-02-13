@@ -10,9 +10,9 @@
 /*                     - Mise à jour dynamique des options disponibles.               */
 /* ==================================================================================== */
 
-import { logEvent } from "../utils/utils.js";
-import { getAllRecipes } from "../data/dataManager.js";
-import { normalizeText } from "../utils/normalize.js";
+import { logEvent } from "../../utils/utils.js";
+import { getAllRecipes } from "../../data/dataManager.js";
+import { normalizeText } from "../../utils/normalize.js";
 
 /* ====================================================================================
     STOCKAGE DES FILTRES SÉLECTIONNÉS
@@ -136,7 +136,7 @@ export async function searchRecipesFunctional(query) {
  * @param {string} query - Texte recherché par l'utilisateur.
  * @returns {boolean} `true` si la recherche doit être exécutée, sinon `false`.
  */
-function isValidSearch(query) {
+export function isValidSearch(query) {
     try {
         // 1. Vérification de la présence des filtres actifs
         const hasActiveFilters = selectedFilters.ingredients.size > 0 ||

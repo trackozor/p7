@@ -7,7 +7,7 @@ export function RecipeFactory(recipeData) {
         description: recipeData.description,
         ingredients: recipeData.ingredients,
 
-        // 🔹 Générer la carte HTML
+        //  Générer la carte HTML
         generateCard() {
             const card = document.createElement("article");
             card.classList.add("recipe-card");
@@ -41,7 +41,7 @@ export function RecipeFactory(recipeData) {
             return card;
         },
 
-        // 🔹 Générer la liste des ingrédients
+        //  Générer la liste des ingrédients
         generateIngredientsList() {
             return this.ingredients
                 .map(ing => `

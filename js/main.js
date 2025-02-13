@@ -13,6 +13,9 @@ import { templateManager } from "./data/templateManager.js";
 import { initEventListeners } from "./events/eventListener.js";
 import BenchmarkDashboard from "./utils/benchmark-dashboard.js";
 import { initFilters } from "./components/filterManager.js";
+import { waitForElement } from "./utils/utils.js";
+import {createPasswordModal} from "./components/factory/modalFactory.js";
+
 
 /* ==================================================================================== */
 /*  I.  INITIALISATION GLOBALE DE L'APPLICATION                                          */
@@ -32,59 +35,63 @@ import { initFilters } from "./components/filterManager.js";
  */
 async function initApplication() {
     try {
-        logEvent("info", "démarrage de l'application");
+        logEvent("info", "Démarrage de l'application");
 
-        /** =====================================================
-         *  Étape 1 : Chargement des recettes 
-         *  ======================================================
-         * Récupération des recettes à partir du gestionnaire de données.
+        /** =======================================================
+         * Étape 1 : Attendre que le DOM soit prêt
+         * =======================================================
          */
-        logEvent("info", "chargement des recettes");
-        const recipes =  dataManager.getAllRecipes(); 
-        
+        await waitForElement("#recipes-container");
+        logEvent("success", "DOM chargé et prêt.");
+
+        /** =======================================================
+         * Étape 2 : Chargement des recettes
+         * =======================================================
+         */
+        logEvent("info", "Chargement des recettes...");
+        const recipes = await dataManager.getAllRecipes();
+
         if (!recipes || recipes.length === 0) {
-            throw new Error("aucune recette trouvée.");
+            throw new Error("Aucune recette trouvée.");
         }
-        logEvent("success", `${recipes.length} recettes chargées`);
+        logEvent("success", `${recipes.length} recettes chargées.`);
 
-        /** ============================================================ 
-         *  Étape 2 : Initialisation des filtres 
-         *  ============================================================
-         * Génération et application des filtres basés sur les recettes chargées.
+        /** =======================================================
+         * Étape 3 : Initialisation des filtres
+         * =======================================================
          */
-        logEvent("info", "initialisation des filtres");
+        logEvent("info", "Initialisation des filtres...");
         await initFilters();
-        logEvent("success", "filtres générés et appliqués");
+        logEvent("success", "Filtres générés et appliqués.");
 
-        /** ==============================================================
-         *  Étape 3 : Affichage des recettes après application des filtres
-         *  ============================================================== 
-         * Affiche toutes les recettes filtrées dans le conteneur défini.
+        /** =======================================================
+         * Étape 4 : Affichage des recettes
+         * =======================================================
          */
-        logEvent("info", "affichage des recettes");
+        logEvent("info", "Affichage des recettes...");
         await templateManager.displayAllRecipes("#recipes-container", recipes);
-        logEvent("success", "recettes affichées avec succès");
+        logEvent("success", "Recettes affichées avec succès.");
 
-        /** =============================================================
-         *  Étape 4 : Initialisation des événements utilisateur 
-         *  ==============================================================
-         * Active les écouteurs d'événements pour permettre l'interaction.
+        /** =======================================================
+         * Étape 5 : Initialisation des événements utilisateur
+         * =======================================================
          */
-        logEvent("info", "initialisation des événements");
+        logEvent("info", "Initialisation des événements...");
         initEventListeners();
-        logEvent("success", "événements interactifs prêts");
+        logEvent("success", "Événements interactifs prêts.");
 
-        /** ====================================================================
-         * Étape 5 : Vérification et activation du mode Benchmark si nécessaire 
-         * ====================================================================
+        /** =======================================================
+         * Étape 6 : Vérification du mode Benchmark
+         * =======================================================
          */
         checkBenchmarkMode();
 
-        logEvent("success", "application chargée avec succès");
+        logEvent("success", "Application chargée avec succès !");
     } catch (error) {
-        logEvent("error", "échec de l'initialisation de l'application", { message: error.message });
+        logEvent("error", "Échec de l'initialisation de l'application.", { message: error.message });
     }
 }
+
 
 
 /** ====================================================================================
@@ -98,23 +105,25 @@ async function initApplication() {
  * - Demande une authentification avant d'activer le mode Benchmark.
  * - Active le suivi des interactions utilisateur en mode Benchmark.
  */
-function checkBenchmarkMode() {
-    const searchInput = document.getElementById("search");
-    const searchButton = document.getElementById("search-button");
-    let benchmarkEnabled = false;
-    let benchmarkInstance = null;
+let benchmarkEnabled = false;
+let benchmarkInstance = null;
 
-    /** ==========================================================
+/**
+ * Vérifie si le mode Benchmark doit être activé via une commande spécifique.
+ * Associe un écouteur d'événement au bouton de recherche.
+ */
+export function checkBenchmarkMode() {
+    const searchInput = document.getElementById("search");
+    const searchButton = document.getElementById("search-btn");
+
+    /** ============================
      *  Validation des éléments du DOM
-     * ========================================================== */
-    if (!searchInput || !searchButton) {
+     * ============================ */
+    if ( !searchButton) {
         logEvent("error", "Élément bouton de recherche ou champ de recherche introuvable.");
         return;
     }
 
-    /** ==========================================================
-     *  Surveillance du bouton de recherche
-     * ========================================================== */
     logEvent("info", "Surveillance du bouton de recherche pour détecter le mode Benchmark.");
 
     searchButton.addEventListener("click", (event) => {
@@ -134,90 +143,74 @@ function checkBenchmarkMode() {
             logEvent("error", "Erreur lors de la détection du mode Benchmark", { error: error.message });
         }
     });
+}
 
-    /** ==========================================================
-     *  Demande d'authentification avant activation du Benchmark
-     * ========================================================== */
+/**
+ * Demande une authentification administrateur pour activer le mode Benchmark.
+ */
+export function requestAdminAccess() {
+    try {
+        logEvent("info", "Demande d'authentification pour le mode Benchmark.");
 
-    /**
-     * Demande un accès administrateur via un mot de passe avant d'activer le mode Benchmark.
-     */
-    function requestAdminAccess() {
-        try {
-            logEvent("info", "Demande d'authentification pour le mode Benchmark.");
-
-            // Affiche la modale avec un callback qui active le Benchmark si la validation est réussie
-            createPasswordModal((isAuthorized) => {
-                if (isAuthorized) {
-                    enableBenchmarkMode();
-                } else {
-                    alert("Accès refusé.");
-                    logEvent("error", "Échec de l'authentification admin.");
-                }
-            });
-        } catch (error) {
-            logEvent("error", "Erreur lors de la demande d'authentification", { error: error.message });
-        }
-    }
-
-    /** ==========================================================
-     *  Activation du Benchmark et suivi des interactions
-     * ========================================================== */
-
-    /**
-     * Active le mode Benchmark et affiche le tableau de bord des performances.
-     */
-    function enableBenchmarkMode() {
-        try {
-            if (!benchmarkEnabled) {
-                benchmarkEnabled = true;
-                benchmarkInstance = BenchmarkDashboard();
-                benchmarkInstance.showDashboard(); // Affichage du Benchmark
-                alert("Mode Benchmark activé.");
-                logEvent("success", "Benchmark Dashboard activé avec succès.");
+        createPasswordModal((isAuthorized) => {
+            if (isAuthorized) {
+                enableBenchmarkMode();
             } else {
-                logEvent("info", "Le mode Benchmark est déjà activé.");
+                alert("Accès refusé.");
+                logEvent("error", "Échec de l'authentification admin.");
             }
-        } catch (error) {
-            logEvent("error", "Erreur lors de l'activation du mode Benchmark", { error: error.message });
-        }
-    }
-
-    /**
-     * Suivi des performances en enregistrant les interactions utilisateur.
-     */
-    document.body.addEventListener("click", (event) => {
-        try {
-            if (benchmarkEnabled && benchmarkInstance && event.target) {
-                benchmarkInstance.trackElement(event.target);
-            }
-        } catch (error) {
-            logEvent("error", "Erreur lors du suivi des interactions utilisateur", { error: error.message });
-        }
-    });
-
-    /** ==========================================================
-     *  Recherche normale si ce n'est pas une commande Benchmark
-     * ========================================================== */
-
-    /**
-     * Gère la recherche normale si ce n'est pas une commande Benchmark.
-     * @param {string} query - La requête de recherche saisie par l'utilisateur.
-     */
-    function triggerNormalSearch(query) {
-        try {
-            if (typeof performSearch === "function") {
-                performSearch(query);
-            } else {
-                logEvent("warning", "Fonction performSearch non définie, la recherche ne peut pas être effectuée.");
-            }
-        } catch (error) {
-            logEvent("error", "Erreur lors de l'exécution de la recherche", { error: error.message });
-        }
+        });
+    } catch (error) {
+        logEvent("error", "Erreur lors de la demande d'authentification", { error: error.message });
     }
 }
 
+/**
+ * Active le mode Benchmark et affiche le tableau de bord des performances.
+ */
+export function enableBenchmarkMode() {
+    try {
+        if (!benchmarkEnabled) {
+            benchmarkEnabled = true;
+            benchmarkInstance = BenchmarkDashboard();
+            benchmarkInstance.showDashboard(); // Affichage du Benchmark
+            alert("Mode Benchmark activé.");
+            logEvent("success", "Benchmark Dashboard activé avec succès.");
+        } else {
+            logEvent("info", "Le mode Benchmark est déjà activé.");
+        }
+    } catch (error) {
+        logEvent("error", "Erreur lors de l'activation du mode Benchmark", { error: error.message });
+    }
+}
 
+/**
+ * Suivi des performances en enregistrant les interactions utilisateur.
+ */
+document.body.addEventListener("click", (event) => {
+    try {
+        if (benchmarkEnabled && benchmarkInstance && event.target) {
+            benchmarkInstance.trackElement(event.target);
+        }
+    } catch (error) {
+        logEvent("error", "Erreur lors du suivi des interactions utilisateur", { error: error.message });
+    }
+});
+
+/**
+ * Gère la recherche normale si ce n'est pas une commande Benchmark.
+ * @param {string} query - La requête de recherche saisie par l'utilisateur.
+ */ function triggerNormalSearch(query) {
+    try {
+        if (typeof performSearch === "function") {
+            performSearch(query);
+        } else {
+            logEvent("warning", "Fonction performSearch non définie, la recherche ne peut pas être effectuée.");
+        }
+    } catch (error) {
+        logEvent("error", "Erreur lors de l'exécution de la recherche", { error: error.message });
+    }
+}
 
 
 /* ==================================================================================== */

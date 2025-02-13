@@ -8,7 +8,7 @@
 /* ==================================================================================== */
 
 import { dataManager } from "../data/dataManager.js";
-import { RecipeFactory } from "../components/recipeFactory.js";
+import { RecipeFactory } from "../components/factory/recipeFactory.js";
 
 /* ================================================================================ 
     FONCTIONS UTILITAIRES (Déclarées en dehors de la classe)

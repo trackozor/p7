@@ -71,6 +71,7 @@
  * relatives aux sélections DOM.
  */
 import { logEvent } from "../utils/utils.js";
+import {createFilterSection} from "../components/factory/dropdownFactory.js";
 
 /*==============================================*/
 /*         Cache et Sélection Sécurisée         */
@@ -248,40 +249,69 @@ export function getCurrentPage() {
 
 export function getIndexSelectors() {
     return {
-        /**  Contient les éléments principaux de la page */
-        indexPage: {
+        /* ============================== */
+        /* Structure Principale        */
+        /* ============================== */
+        layout: {
             body: document.body,
             header: safeQuerySelector("header"),
             main: safeQuerySelector("main"),
             footer: safeQuerySelector("footer"),
         },
 
-        /**  Contient les éléments liés au branding */
-        branding: {
-            logo: safeQuerySelector(".logo"),
-            backgroundImage: safeQuerySelector(".fond", true), // Optionnel
-        },
-
-        /**  Contient les éléments liés à la barre de recherche */
+        /* ============================== */
+        /* Barre de Recherche          */
+        /* ============================== */
         search: {
             form: safeQuerySelector(".search-bar"),
             input: safeQuerySelector("#search"),
             button: safeQuerySelector("#search-btn"),
         },
 
-        /**  Contient les éléments liés aux filtres dynamiques */
+        /* ============================== */
+        /* Filtres Dynamiques          */
+        /* ============================== */
         filters: {
-            section: safeQuerySelector("#filters"), // Section principale
-            
+            container: safeQuerySelector("#filters"),
+            ingredients: () => safeQuerySelector('#ingredient-list') || waitForElement('[data-filter="ingredients"]'),
+            appliances: () => safeQuerySelector('[data-filter="appliances"]') || waitForElement('[data-filter="appliances"]'),
+            utensils: () => safeQuerySelector('[data-filter="utensils"]') || waitForElement('[data-filter="utensils"]'),
         },
 
-        /** Conteneur des recettes */
+        /* ============================== */
+        /* Recettes                    */
+        /* ============================== */
         recipes: {
-            recipeCards: () => safeQuerySelectorAll(".recipe-card"),
+            recipeCards: () => safeQuerySelector(".recipe-card", true),
+        },
+
+        /* ============================== */
+        /* Compteur de Recettes        */
+        /* ============================== */
+        recipeCount: {
+            container: safeQuerySelector("#recipe-count-container"),
         },
     };
 }
 
+/**
+ * Attend qu'un élément apparaisse dans le DOM avant de le récupérer.
+ *
+ * @param {string} selector - Sélecteur CSS de l'élément à attendre.
+ * @returns {Promise<Element>} Élément DOM une fois disponible.
+ */
+export function waitForElement(selector) {
+    return new Promise((resolve) => {
+        const observer = new MutationObserver(() => {
+            const element = document.querySelector(selector);
+            if (element) {
+                observer.disconnect();
+                resolve(element);
+            }
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+    });
+}
 /*==============================================*/
 /*    Vérification de la Présence des Éléments  */
 /*==============================================*/

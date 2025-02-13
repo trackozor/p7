@@ -15,7 +15,7 @@
 /* ==================================================================================== */
 
 import { benchmarkSearch } from "../benchmark/benchmark.js";
-import { searchRecipesLoop, searchRecipesFunctional } from "../components/search.js";
+import { searchRecipesLoop, searchRecipesFunctional } from "../components/search/search.js";
 import { logEvent } from "../utils/utils.js";
 
 /* ====================================================================================
