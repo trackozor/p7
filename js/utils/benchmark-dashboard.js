@@ -15,8 +15,9 @@
 /* ==================================================================================== */
 
 import { benchmarkSearch } from "../benchmark/benchmark.js";
-import { searchRecipesLoop, searchRecipesFunctional } from "../components/search/search.js";
-import { logEvent } from "../utils/utils.js";
+import { searchRecipesLoopNative } from "../components/search/searchloopNative.js";
+import { searchRecipesFunctional } from "../components/search/searchFunctional.js";
+import { logEvent } from "./utils.js";
 
 /* ====================================================================================
 /*  SECTION 2 : GESTION DU BENCHMARK DASHBOARD
@@ -220,7 +221,7 @@ export function BenchmarkDashboard() {
             logEvent("info", `Exécution du benchmark avec ${iterations} itérations...`);
 
             results = [
-                benchmarkSearch("Loop", () => searchRecipesLoop("poulet"), iterations),
+                benchmarkSearch("Loop", () => searchRecipesLoopNative("poulet"), iterations),
                 benchmarkSearch("Functional", () => searchRecipesFunctional("poulet"), iterations),
             ];
 

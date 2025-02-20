@@ -12,7 +12,7 @@
 /*  - Gère les erreurs avec `logEvent()` pour assurer un suivi clair.                  */
 /* ==================================================================================== */
 
-import { logEvent } from "../utils/utils.js";
+import { logEvent, debounce } from "../utils/utils.js";
 import domSelectors from "../config/domSelectors.js";
 import { handleSearch, handleFilterChange } from "./eventHandler.js";
 
@@ -71,11 +71,11 @@ export function attachSearchListeners(searchSelectors) {
             return;
         }
 
-        // Écouteur sur la saisie utilisateur
-        input.addEventListener("input", handleSearch);
+        // Attache l'événement uniquement sur l'input
+        input.addEventListener("input", debounce(handleSearch, 300)); 
 
         // Empêche le rechargement de la page lors de la soumission du formulaire
-        form.addEventListener("submit", (event) => {
+        form.addEventListener("submit", event => {
             event.preventDefault();
             handleSearch();
         });

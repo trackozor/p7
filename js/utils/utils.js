@@ -95,41 +95,41 @@ export const isLogEnabled = (level) => {
  */
 export function logEvent (type, message, data = {}) {
   // === Validation du type de log ===
-  if (!type || typeof type !== "string") {
-      console.error("logEvent : Type de log invalide ou non défini.", { type });
-      return; // Stoppe l'exécution si le type est invalide
-  }
+    if (!type || typeof type !== "string") {
+        console.error("logEvent : Type de log invalide ou non défini.", { type });
+        return; // Stoppe l'exécution si le type est invalide
+    }
 
-  // === Génération d'un horodatage formaté ===
-  const timestamp = new Date().toLocaleTimeString();
+    // === Génération d'un horodatage formaté ===
+    const timestamp = new Date().toLocaleTimeString();
 
-  // === Construction du préfixe standardisé pour les logs ===
-  const prefix = `[Les-Petits-Plats][${timestamp}]`;
+    // === Construction du préfixe standardisé pour les logs ===
+    const prefix = `[Les-Petits-Plats][${timestamp}]`;
 
-  // === Sélection des icônes en fonction du type de log ===
-  const icon = CONFIGLOG.LOG_ICONS?.[type] || CONFIGLOG.LOG_ICONS?.default || "🔵";
+    // === Sélection des icônes en fonction du type de log ===
+    const icon = CONFIGLOG.LOG_ICONS?.[type] || CONFIGLOG.LOG_ICONS?.default || "🔵";
 
-  // === Sélection du style CSS pour afficher le log coloré ===
-  const style = CONFIGLOG.LOG_STYLES?.[type] || CONFIGLOG.LOG_STYLES?.default || "color: black;";
+    // === Sélection du style CSS pour afficher le log coloré ===
+    const style = CONFIGLOG.LOG_STYLES?.[type] || CONFIGLOG.LOG_STYLES?.default || "color: black;";
 
-  // === Construction du message final formaté ===
-  const fullMessage = `${icon} ${prefix} ${type.toUpperCase()}: ${message}`;
+    // === Construction du message final formaté ===
+    const fullMessage = `${icon} ${prefix} ${type.toUpperCase()}: ${message}`;
 
-  try {
-      // === Vérification et affichage du log dans la console ===
-      if (console[type] && typeof console[type] === "function") {
-          console[type](`%c${fullMessage}`, style, data); // Affichage stylisé
-      } else {
-          console.log(`%c${fullMessage}`, style, data); // Affichage par défaut si `console[type]` n'existe pas
-      }
-  } catch (error) {
-      // === Gestion des erreurs en cas de problème avec la console ===
-      console.error(
-          "%cErreur dans logEvent :",
-          CONFIGLOG.LOG_STYLES?.error || "color: red;",
-          error
-      );
-  }
+    try {
+        // === Vérification et affichage du log dans la console ===
+        if (console[type] && typeof console[type] === "function") {
+            console[type](`%c${fullMessage}`, style, data); // Affichage stylisé
+        } else {
+            console.log(`%c${fullMessage}`, style, data); // Affichage par défaut si `console[type]` n'existe pas
+        }
+    } catch (error) {
+        // === Gestion des erreurs en cas de problème avec la console ===
+        console.error(
+            "%cErreur dans logEvent :",
+            CONFIGLOG.LOG_STYLES?.error || "color: red;",
+            error
+        );
+    }
 };
 
 
@@ -243,7 +243,7 @@ export function removeClass(element, className) {
  * @param {number} timeout - Temps maximal en millisecondes (par défaut : 5000ms).
  * @returns {Promise<Element>} - Une promesse qui résout l'élément DOM ou rejette si non trouvé.
  */
-export function waitForElement(selector, timeout = 5000) {
+export function waitForElement(selector, timeout = 1000) {
     return new Promise((resolve, reject) => {
         const element = document.querySelector(selector);
         if (element) {
@@ -267,4 +267,39 @@ export function waitForElement(selector, timeout = 5000) {
     });
 }
 
+/**
+ * Fonction debounce pour limiter l'exécution d'une fonction lorsqu'elle est appelée fréquemment.
+ * 
+ * - Empêche l’exécution immédiate à chaque frappe.
+ * - N'exécute la fonction qu'après un temps d'inactivité défini.
+ *
+ * @param {Function} func - Fonction à exécuter après le délai.
+ * @param {number} delay - Temps en millisecondes avant l'exécution (ex : 300ms).
+ * @returns {Function} Fonction enveloppée avec debounce.
+ */
+export function debounce(func, delay = 300) {
+    let timeout;
+    
+    return (...args) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func(...args), delay);
+    };
+}
 
+export function sanitizeText(text) {
+    if (typeof text !== "string") {
+      return "";
+    }
+    
+    return text.replace(/[&<>"'/]/g, (char) => {
+        const charMap = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#039;",
+            "/": "&#x2F;"
+        };
+        return charMap[char] || char;
+    });
+}

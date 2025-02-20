@@ -10,13 +10,15 @@
 /*                     - Mise à jour automatique des filtres dans l'interface.         */
 /* ==================================================================================== */
 
-import { searchRecipesLoop } from "../components/search/search.js";
+import { searchRecipesLoopNative } from "../components/search/searchloopNative.js";
 import { getAllRecipes, fetchFilterOptions } from "../data/dataManager.js";
 import domSelectors from "../config/domSelectors.js";
 import { logEvent } from "../utils/utils.js";
 import {requestAdminAccess} from "../main.js";
 import { waitForElement } from "../utils/utils.js";
 import { RecipeFactory } from "../components/factory/recipeFactory.js";
+import { searchRecipesFunctional } from "../components/search/searchFunctional.js";
+import {sanitizeText } from "../utils/utils.js";
 
 
 /* ==================================================================================== */
@@ -121,7 +123,7 @@ export async function handleSearch() {
         logEvent("info", `handleSearch : Recherche en cours pour "${query}"...`);
 
         // Récupère les résultats de la recherche
-        const results = await searchRecipesLoop(query);
+        const results = await searchRecipesLoopNative(query);
 
         // Vérifie que les résultats sont bien un tableau
         if (!Array.isArray(results)) {
@@ -597,58 +599,44 @@ export async function populateFilters() {
  * @param {string} listId - ID du `<ul>` correspondant.
  * @param {Array} options - Liste des options à insérer.
  */
-function updateFilterList(listId, options) {
+export function updateFilterList(listId, options) {
     try {
-        // 1. Vérifie que `listId` est bien une chaîne de caractères valide.
+        // 1. Vérification de la validité de `listId`
         if (!listId || typeof listId !== "string") {
             logEvent("error", "updateFilterList : ID de liste invalide.", { listId });
-            return; // Stoppe l'exécution si l'ID est incorrect.
+            return;
         }
 
-        // 2. Vérifie que `options` est un tableau non vide avant d’aller plus loin.
+        // 2. Vérification de la validité des options
         if (!Array.isArray(options) || options.length === 0) {
             logEvent("warning", `updateFilterList : Aucune option fournie pour ${listId}.`);
-            return; // Évite d’effacer une liste existante pour rien.
+            return;
         }
 
-        // 3. Sélectionne l'élément DOM correspondant à l’ID fourni.
+        // 3. Sélection de l'élément DOM correspondant
         const listElement = document.getElementById(listId);
         if (!listElement) {
             logEvent("error", `updateFilterList : Élément DOM introuvable (${listId}).`);
-            return; // Stoppe l'exécution si l’élément n’existe pas.
+            return;
         }
 
-        // 4. Nettoie le contenu existant de la liste pour éviter les doublons.
+        // 4. Nettoie la liste existante
         listElement.innerHTML = "";
 
-        // 5. Utilise un `DocumentFragment` pour améliorer la performance lors de l'ajout d'éléments.
+        // 5. Utilisation d'un `DocumentFragment` pour éviter de trop manipuler le DOM
         const fragment = document.createDocumentFragment();
 
-        // 6. Boucle sur chaque option pour créer un élément `<li>`.
-        options.forEach(option => {
-            const li = document.createElement("li");
-            li.textContent = sanitizeText(option); // Sécurise le texte contre les injections.
-            li.classList.add("filter-option");
-            li.setAttribute("tabindex", "0"); // Permet la navigation clavier.
+        
 
-            // 7. Ajoute un écouteur d'événements pour journaliser les sélections.
-            li.addEventListener("click", () => logEvent("info", `Filtre sélectionné : ${option}`));
-
-            // 8. Ajoute l'élément `<li>` au `DocumentFragment`.
-            fragment.appendChild(li);
-        });
-
-        // 9. Ajoute tous les éléments optimisés dans le DOM en une seule opération.
-        listElement.appendChild(fragment);
-
-        // 10. Journalise le succès de l'opération avec le nombre d'éléments ajoutés.
+        // 8. Journalise le succès
         logEvent("success", `updateFilterList : Liste ${listId} mise à jour avec ${options.length} éléments.`);
 
     } catch (error) {
-        // 11. Capture et journalise toute erreur lors de la mise à jour des filtres.
         logEvent("error", "updateFilterList : Erreur lors de la mise à jour des filtres.", { error: error.message });
     }
 }
+
+
 
 
 /* ================================================================================ 

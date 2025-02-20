@@ -83,19 +83,17 @@ export async function initFilters() {
 
 function generateFilterData() {
     try {
-        // Étape 1 : Initialisation des ensembles pour stocker les valeurs uniques
+        logEvent("info", "🔄 Début de la génération des filtres...");
+
         const ingredientsSet = new Set();
         const appliancesSet = new Set();
         const utensilsSet = new Set();
 
-        // Étape 2 : Vérification des recettes avant de procéder
         if (!Array.isArray(allRecipes) || allRecipes.length === 0) {
             throw new Error("Aucune recette disponible pour générer les filtres.");
         }
 
-        // Étape 3 : Extraction et normalisation des valeurs uniques
         allRecipes.forEach(recipe => {
-            // Ajout des ingrédients uniques
             if (Array.isArray(recipe.ingredients)) {
                 recipe.ingredients.forEach(ing => {
                     if (ing.ingredient) {
@@ -103,13 +101,9 @@ function generateFilterData() {
                     }
                 });
             }
-
-            // Ajout des appareils uniques
             if (recipe.appliance) {
                 appliancesSet.add(normalizeText(recipe.appliance));
             }
-
-            // Ajout des ustensiles uniques
             if (Array.isArray(recipe.ustensils)) {
                 recipe.ustensils.forEach(ust => {
                     if (ust) {
@@ -119,18 +113,23 @@ function generateFilterData() {
             }
         });
 
-        // Étape 4 : Création des sections de filtres dans l'UI
-        createFilterSection("#filters", "Ingrédients", "ingredients", ingredientsSet);
-        createFilterSection("#filters", "Appareils", "appliances", appliancesSet);
-        createFilterSection("#filters", "Ustensiles", "utensils", utensilsSet);
+        console.log("✅ Filtres générés :", {
+            ingredients: [...ingredientsSet],
+            appliances: [...appliancesSet],
+            utensils: [...utensilsSet]
+        });
 
-        // Étape 5 : Log de la réussite de la génération des filtres
-        logEvent("success", "generateFilterData : Filtres générés avec succès.");
+         createFilterSection("#filters", "Ingrédients", "ingredients", ingredientsSet);
+         createFilterSection("#filters", "Appareils", "appliances", appliancesSet);
+         createFilterSection("#filters", "Ustensiles", "utensils", utensilsSet);
+
+        logEvent("success", "✅ generateFilterData : Filtres générés avec succès.");
 
     } catch (error) {
-        logEvent("error", "generateFilterData : Erreur lors de la génération des filtres.", { error: error.message });
+        logEvent("error", "❌ generateFilterData : Erreur lors de la génération des filtres.", { error: error.message });
     }
 }
+
 /* ==================================================================================== */
 /*  FILTRAGE DYNAMIQUE                                                                  */
 /* ==================================================================================== */
@@ -373,4 +372,36 @@ export function applyFilters() {
     }
 }
 
+export function updateFilters(results) {
+    try {
+        if (!Array.isArray(results)) {
+            logEvent("error", "updateFilters : Résultats invalides fournis.", { results });
+            return;
+        }
+
+        logEvent("info", `updateFilters : Mise à jour des filtres avec ${results.length} recettes.`);
+
+        const updatedFilters = {
+            ingredients: new Set(),
+            ustensils: new Set(),
+            appliances: new Set()
+        };
+
+        results.forEach(recipe => {
+            recipe.ingredients?.forEach(ing => updatedFilters.ingredients.add(normalizeText(ing.ingredient)));
+            recipe.ustensils?.forEach(ust => updatedFilters.ustensils.add(normalizeText(ust)));
+            if (recipe.appliance) {
+              updatedFilters.appliances.add(normalizeText(recipe.appliance));
+            }
+        });
+
+        selectedFilters.ingredients = new Set([...selectedFilters.ingredients].filter(tag => updatedFilters.ingredients.has(tag)));
+        selectedFilters.ustensils = new Set([...selectedFilters.ustensils].filter(tag => updatedFilters.ustensils.has(tag)));
+        selectedFilters.appliances = new Set([...selectedFilters.appliances].filter(tag => updatedFilters.appliances.has(tag)));
+
+        logEvent("success", `updateFilters : Filtres mis à jour.`);
+    } catch (error) {
+        logEvent("error", "updateFilters : Erreur lors de la mise à jour des filtres.", { error: error.message });
+    }
+}
 

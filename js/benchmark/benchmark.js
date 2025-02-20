@@ -1,5 +1,5 @@
 
-import { searchRecipesFunctional, searchRecipesLoop  } from "../components/search/search.js";
+import { searchRecipesFunctional } from "../components/search/searchFunctional.js";
 import { logEvent } from "../utils/utils.js";
 
 export function benchmarkSearch(query) {

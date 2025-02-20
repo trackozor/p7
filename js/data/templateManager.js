@@ -36,18 +36,19 @@ function showNoRecipesMessage(container) {
  * @param {Array} recipes - Liste des recettes à afficher.
  */
 function renderRecipes(container, recipes) {
-    // Nettoyage du conteneur
-    container.innerHTML = "";
+    const fragment = document.createDocumentFragment();
 
-    recipes.forEach((recipeData) => {
+    recipes.forEach(recipeData => {
         const recipe = RecipeFactory(recipeData);
-        container.appendChild(recipe.generateCard());
+        fragment.appendChild(recipe.generateCard());
     });
 
-    console.log(`${recipes.length} recettes affichées avec succès.`);
+    container.innerHTML = ""; // Efface uniquement après construction du fragment
+    container.appendChild(fragment);
 }
 
 /**
+ * 
  * Change la classe du conteneur pour basculer entre Grille / Liste.
  * @param {HTMLElement} container - Conteneur des recettes.
  * @param {string} mode - Mode d'affichage ("grid" ou "list").

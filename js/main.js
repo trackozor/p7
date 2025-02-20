@@ -7,13 +7,12 @@
 /*  DESCRIPTION      : Orchestration des recettes, filtres et Benchmark Dashboard.      */
 /* ==================================================================================== */
 
-import { logEvent } from "./utils/utils.js";
+import {  logEvent, waitForElement, debounce } from "./utils/utils.js";
 import { dataManager } from "./data/dataManager.js";
 import { templateManager } from "./data/templateManager.js";
 import { initEventListeners } from "./events/eventListener.js";
 import BenchmarkDashboard from "./utils/benchmark-dashboard.js";
 import { initFilters } from "./components/filterManager.js";
-import { waitForElement } from "./utils/utils.js";
 import {createPasswordModal} from "./components/factory/modalFactory.js";
 
 
@@ -33,7 +32,7 @@ import {createPasswordModal} from "./components/factory/modalFactory.js";
  * @function initApplication
  * @throws {Error} Si aucune recette n'est trouvée ou si une étape échoue.
  */
-async function initApplication() {
+export async function initApplication() {
     try {
         logEvent("info", "Démarrage de l'application");
 
@@ -200,7 +199,8 @@ document.body.addEventListener("click", (event) => {
 /**
  * Gère la recherche normale si ce n'est pas une commande Benchmark.
  * @param {string} query - La requête de recherche saisie par l'utilisateur.
- */ function triggerNormalSearch(query) {
+ */ 
+export function triggerNormalSearch(query) {
     try {
         if (typeof performSearch === "function") {
             performSearch(query);
