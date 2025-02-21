@@ -44,6 +44,7 @@ export function initEventListeners() {
         logEvent("error", "Erreur critique lors de l'initialisation des événements.", { error: error.message });
     }
 }
+
 /*----------------------------------------------------------------
 /*   Barre de recherche
 /*----------------------------------------------------------------*/

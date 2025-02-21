@@ -16,6 +16,7 @@ import { displayResults } from "../events/eventHandler.js";
 
 
 
+
 let selectedFilters = {
     searchKeyword: "",
     ingredients: new Set(),
@@ -55,9 +56,11 @@ export async function initFilters() {
         // Étape 4 : Génération des données pour les filtres
         await generateFilterData(); // Assure que les filtres sont bien générés avant d'afficher
 
-        // Étape 5 : Mise à jour de l'affichage des résultats et filtres
+        //  Étape 5 : Attendre que le DOM soit prêt avant d'afficher les résultats
+        await waitForElement("#recipe-container");
+
+        // Étape 6 : Mise à jour de l'affichage des résultats et filtres
         displayResults(allRecipes);
-        
 
         logEvent("success", "initFilters : Filtres et affichage mis à jour avec succès.");
         
@@ -65,8 +68,6 @@ export async function initFilters() {
         logEvent("error", "initFilters : Échec de l'initialisation des filtres.", { error: error.message });
     }
 }
-
-
 
 /* ==================================================================================== */
 /*  GÉNÉRATION DES FILTRES                                                             */
@@ -80,7 +81,6 @@ export async function initFilters() {
      * - Applique une normalisation (`normalizeText()`) pour éviter les doublons liés à la casse ou aux accents.
      * - Crée dynamiquement les sections de filtres correspondantes dans l'UI.
      */
-
 function generateFilterData() {
     try {
         logEvent("info", "Début de la génération des filtres...");
@@ -249,9 +249,9 @@ function updateRecipeCount(containerSelector) {
     logEvent("INFO", `updateRecipeCount : ${visibleRecipes} recettes affichées.`);
 }
 
-/*----------------------------------------------------------------
+/*========================================================================================*/
 /*   Filtrage des recettes par types
-/*----------------------------------------------------------------*/
+/*=======================================================================================*/
 
 /**
  * Filtre les recettes selon un critère spécifique (ingrédient, appareil, ustensile).
@@ -372,15 +372,35 @@ export function applyFilters() {
     }
 }
 
+/* ======================================================================================= */
+/*  updateFilters                                                                          */
+/* ======================================================================================= */
+
+/**
+ * Met à jour dynamiquement les filtres en fonction des résultats affichés.
+ *
+ * - Conserve les filtres sélectionnés si encore valides.
+ * - Supprime les filtres obsolètes qui ne correspondent plus aux résultats.
+ * - Ajoute un `logEvent()` détaillé pour suivre chaque mise à jour.
+ *
+ * @param {Array} results - Liste des recettes filtrées.
+ */
 export function updateFilters(results) {
     try {
-        if (!Array.isArray(results)) {
-            logEvent("error", "updateFilters : Résultats invalides fournis.", { results });
+        if (!Array.isArray(results) || results.length === 0) {
+            logEvent("warning", "updateFilters : Aucun résultat valide, aucun filtre à mettre à jour.");
             return;
         }
 
         logEvent("info", `updateFilters : Mise à jour des filtres avec ${results.length} recettes.`);
 
+        // Vérification de `selectedFilters`
+        if (typeof selectedFilters === "undefined") {
+            logEvent("error", "updateFilters : `selectedFilters` non défini !");
+            return;
+        }
+
+        // Nouveaux ensembles de filtres extraits des résultats
         let updatedFilters = {
             ingredients: new Set(),
             ustensils: new Set(),
@@ -395,30 +415,31 @@ export function updateFilters(results) {
             }
         });
 
-        // Assure que `selectedFilters` contient bien des `Set()`
-        if (!(selectedFilters.ingredients instanceof Set)) {
-            selectedFilters.ingredients = new Set();
-        }
-        if (!(selectedFilters.utensils instanceof Set)) {
-            selectedFilters.ustensils = new Set();
-        }
-        if (!(selectedFilters.appliances instanceof Set)) {
-            selectedFilters.appliances = new Set();
-        }
+        // Initialisation correcte de `selectedFilters` si vide
+        selectedFilters.ingredients ??= new Set();
+        selectedFilters.ustensils ??= new Set();
+        selectedFilters.appliances ??= new Set();
 
-        // Met à jour les filtres sélectionnés en s'assurant qu'ils sont bien définis
-        selectedFilters.ingredients = new Set(
-            Array.from(selectedFilters.ingredients).filter(tag => updatedFilters.ingredients.has(tag))
-        );
-        selectedFilters.ustensils = new Set(
-            Array.from(selectedFilters.ustensils).filter(tag => updatedFilters.ustensils.has(tag))
-        );
-        selectedFilters.appliances = new Set(
-            Array.from(selectedFilters.appliances).filter(tag => updatedFilters.appliances.has(tag))
-        );
+        // Mise à jour des filtres existants en supprimant uniquement les valeurs obsolètes
+        selectedFilters.ingredients.forEach(tag => {
+            if (!updatedFilters.ingredients.has(tag)) {
+                selectedFilters.ingredients.delete(tag);
+            }
+        });
 
+        selectedFilters.ustensils.forEach(tag => {
+            if (!updatedFilters.ustensils.has(tag)) {
+                selectedFilters.ustensils.delete(tag);
+            }
+        });
 
-        logEvent("success", `updateFilters : Filtres mis à jour.`);
+        selectedFilters.appliances.forEach(tag => {
+            if (!updatedFilters.appliances.has(tag)) {
+                selectedFilters.appliances.delete(tag);
+            }
+        });
+
+        logEvent("success", "updateFilters : Filtres mis à jour avec succès.");
     } catch (error) {
         logEvent("error", "updateFilters : Erreur lors de la mise à jour des filtres.", { error: error.message });
     }

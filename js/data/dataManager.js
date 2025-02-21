@@ -5,7 +5,7 @@
 /*  DESCRIPTION      : Gère la récupération et la recherche de recettes avec cache.    */
 /* ==================================================================================== */
 
-import { recipe } from "../data/recipe1.js"; // Import direct des recettes JS
+import { recipe } from "../data/recipe.js"; // Import direct des recettes JS
 import { logEvent } from "../utils/utils.js"; // Gestion des logs
 
 class DataManager {

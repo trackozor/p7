@@ -30,6 +30,7 @@ function showNoRecipesMessage(container) {
     container.innerHTML = `<p class="no-recipes">Aucune recette trouvée.</p>`;
 }
 
+
 /**
  * Génère et insère toutes les recettes dans un conteneur donné.
  * @param {HTMLElement} container - Le conteneur où afficher les recettes.
@@ -39,13 +40,31 @@ function renderRecipes(container, recipes) {
     const fragment = document.createDocumentFragment();
 
     recipes.forEach(recipeData => {
-        const recipe = RecipeFactory(recipeData);
-        fragment.appendChild(recipe.generateCard());
+        try {
+            const recipe = RecipeFactory(recipeData);
+
+            if (!recipe || typeof recipe.generateCard !== "function") {
+                console.error("❌ ERREUR : RecipeFactory a retourné une valeur invalide.", recipeData);
+                return;
+            }
+
+            const recipeCard = recipe.generateCard();
+
+            if (!(recipeCard instanceof HTMLElement)) {
+                console.error("❌ ERREUR : generateCard() n'a pas retourné un élément valide.", recipeData);
+                return;
+            }
+
+            fragment.appendChild(recipeCard);
+        } catch (error) {
+            console.error("❌ ERREUR lors de la génération de la recette :", error.message, recipeData);
+        }
     });
 
     container.innerHTML = ""; // Efface uniquement après construction du fragment
     container.appendChild(fragment);
 }
+
 
 /**
  * 
@@ -75,6 +94,7 @@ class TemplateManager {
      * @param {string} containerSelector - Sélecteur du conteneur où afficher les recettes.
      * @returns {Promise<void>} - Aucune valeur retournée, mais met à jour le DOM.
      */
+
     async displayAllRecipes(containerSelector) {
         try {
             const container = document.querySelector(containerSelector);
@@ -86,20 +106,25 @@ class TemplateManager {
 
             const recipes = await dataManager.getAllRecipes();
 
-            if (!recipes || recipes.length === 0) {
+            if (!Array.isArray(recipes)) {
+                console.error("❌ ERREUR : getAllRecipes() n'a pas retourné un tableau.", recipes);
+                showNoRecipesMessage(container);
+                return;
+            }
+
+            if (recipes.length === 0) {
                 showNoRecipesMessage(container);
                 return;
             }
 
             renderRecipes(container, recipes); // Affichage des recettes
         } catch (error) {
-            console.error("ERREUR - TemplateManager :", error.message);
+            console.error("❌ ERREUR - TemplateManager :", error.message);
         }
     }
-
     /**
-     * Bascule entre le mode "Grille" et "Liste".
-     */
+         * Bascule entre le mode "Grille" et "Liste".
+         */
     toggleViewMode() {
         this.viewMode = this.viewMode === "grid" ? "list" : "grid";
         updateViewMode(this.recipeContainer, this.viewMode);

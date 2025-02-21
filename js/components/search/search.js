@@ -13,11 +13,15 @@
 import { searchRecipesFunctional } from "./searchFunctional.js";
 import { debounce, logEvent } from "../../utils/utils.js";
 
-// Mode de recherche actif : soit "native" (boucles) soit "functional" (filter)
-let searchMode = "functional"; // Par défaut, on utilise la version fonctionnelle
+/*------------------------------------------------------------------*/
+/*   Mode de recherche                                             */
+/*------------------------------------------------------------------*/
+
+// Mode actif : "native" (boucles) ou "functional" (filter)
+let searchMode = "functional"; // Par défaut, version fonctionnelle
 
 /**
- * Exécute la bonne version de l'algorithme de recherche selon le mode choisi.
+ * Exécute la version appropriée de l'algorithme de recherche selon le mode choisi.
  *
  * @param {string} query - Texte recherché.
  * @returns {Promise<Array>} Liste des recettes correspondant aux critères.
@@ -37,17 +41,32 @@ export async function executeSearch(query) {
  *
  * @param {string} mode - "native" ou "functional".
  */
-export function SearchMode(mode) {
+export function setSearchMode(mode) {
     if (mode === "native" || mode === "functional") {
         searchMode = mode;
         logEvent("success", `Mode de recherche changé : ${mode}`);
     } else {
-        logEvent("error", "Mode de recherche invalide, utilisez 'native' ou 'functional'.");
+        logEvent("error", "setSearchMode : Mode invalide, utilisez 'native' ou 'functional'.");
     }
 }
 
-// Ajout du debounce sur l’input de recherche
-document.querySelector("#search").addEventListener("input", debounce(() => {
-    const query = document.querySelector("#search").value;
-    executeSearch(query).then(displayResults);
-}, 300));
+/*------------------------------------------------------------------*/
+/*   Écouteur sur la barre de recherche                            */
+/*------------------------------------------------------------------*/
+
+// Sélection de l'élément de recherche
+const searchInput = document.querySelector("#search");
+
+if (searchInput) {
+    searchInput.addEventListener("input", debounce(() => {
+        const query = searchInput.value.trim();
+        
+        if (query.length > 1) { // Évite d'exécuter la recherche sur un seul caractère
+            executeSearch(query).then(displayResults);
+        }
+    }, 300));
+
+    logEvent("success", "Écouteur ajouté à l'input de recherche.");
+} else {
+    logEvent("error", "Impossible d'attacher un écouteur : #search introuvable.");
+}

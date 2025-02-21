@@ -14,7 +14,7 @@ import { searchRecipesLoopNative } from "../components/search/searchloopnative.j
 import { getAllRecipes, fetchFilterOptions } from "../data/dataManager.js";
 import domSelectors from "../config/domSelectors.js";
 import { logEvent } from "../utils/utils.js";
-import {requestAdminAccess} from "../main.js";
+import {requestAdminAccess, triggerNormalSearch} from "../main.js";
 import { waitForElement } from "../utils/utils.js";
 import { RecipeFactory } from "../components/factory/recipeFactory.js";
 import { searchRecipesFunctional } from "../components/search/searchFunctional.js";
@@ -231,15 +231,15 @@ export function attachModalEvents(passwordInput, validateBtn, cancelBtn, modal) 
  */
 function handleValidation(passwordInput, modal) {
     const enteredPassword = passwordInput.value.trim();
-    logEvent("info", `🔑 Mot de passe saisi : ${enteredPassword}`);
+    logEvent("info", ` Mot de passe saisi : ${enteredPassword}`);
 
-    if (enteredPassword === "admin123") { // 🔐 Remplace ici par ton mot de passe réel
-        logEvent("success", "✅ Mot de passe correct, accès autorisé.");
+    if (enteredPassword === "admin123") { //  Remplace ici par ton mot de passe réel
+        logEvent("success", " Mot de passe correct, accès autorisé.");
         alert("Accès autorisé !");
         handleClose(modal);
-        enableBenchmarkMode(); // 🚀 Active le mode Benchmark si nécessaire
+        enableBenchmarkMode(); //  Active le mode Benchmark si nécessaire
     } else {
-        logEvent("error", "❌ Mot de passe incorrect.");
+        logEvent("error", " Mot de passe incorrect.");
         alert("Mot de passe incorrect. Réessayez.");
         passwordInput.value = "";
         passwordInput.focus();
@@ -274,7 +274,7 @@ function handleClose(modal) {
 
         setTimeout(() => {
             modal.remove();
-            logEvent("success", "🎯 Modale supprimée du DOM.");
+            logEvent("success", " Modale supprimée du DOM.");
         }, 300);
     }
 }
@@ -306,7 +306,7 @@ function handleClose(modal) {
  */
 function handleEnterKey(event, passwordInput, modal) {
     if (event.key === "Enter") {
-        logEvent("info", "🔄 Validation du mot de passe via la touche Entrée.");
+        logEvent("info", " Validation du mot de passe via la touche Entrée.");
         handleValidation(passwordInput, modal);
     }
 }
@@ -424,39 +424,63 @@ export function detachModalEvents(passwordInput, validateBtn, cancelBtn, modal) 
  *
  * @param {Array} results - Liste des recettes filtrées.
  */
-export async function displayResults(results) {
-    try {
-        // Attendre que le conteneur soit disponible dans le DOM
-        const recipesContainer = await waitForElement("#recipes-container");
+/* ==================================================================================== */
+/*  MODIFICATION DE `displayResults()` AVEC FILTRES EN CACHE ET LISTE SCROLLABLE      */
+/* ==================================================================================== */
 
-        if (!recipesContainer) {
-            logEvent("error", "displayResult : Conteneur des recettes introuvable.");
-            return; // Stoppe l'exécution si l'élément est manquant
+let cachedFilters = {
+    ingredients: [],
+    appliances: [],
+    utensils: []
+};
+
+/**
+ * Met à jour et affiche les résultats de recherche ainsi que les filtres.
+ * 
+ * - Génère une liste complète des filtres dès le chargement et la stocke en cache.
+ * - Affiche uniquement un nombre limité d'options dans les filtres (scrollable).
+ * - Ajoute une option "Voir plus / Voir moins" pour dérouler toute la liste.
+ *
+ * @param {Array} recipes - Liste des recettes filtrées.
+ */
+export async function displayResults(recipes) {
+    try {
+        let resultsContainer = document.querySelector("#recipe-container");
+
+        if (!resultsContainer) {
+            logEvent("warning", "displayResults : Attente du conteneur des recettes...");
+            resultsContainer = await waitForElement("#recipe-container");
         }
 
-        // Nettoyage du conteneur avant d'afficher les nouveaux résultats
-        recipesContainer.innerHTML = "";
-
-        // Si aucun résultat, afficher un message
-        if (!Array.isArray(results) || results.length === 0) {
-            recipesContainer.innerHTML = `<p class="no-results">Aucune recette trouvée.</p>`;
-            logEvent("warning", "displayResults : Aucun résultat trouvé.");
+        if (!resultsContainer) {
+            logEvent("error", "displayResults : Conteneur DOM introuvable.");
             return;
         }
 
-        logEvent("info", `displayResults : Affichage de ${results.length} recettes.`);
+        resultsContainer.innerHTML = ""; // Nettoyage des résultats
 
-        // Utilisation d'un DocumentFragment pour optimiser l'ajout des éléments
+        if (!Array.isArray(recipes) || recipes.length === 0) {
+            logEvent("warning", "displayResults : Aucune recette trouvée.");
+            resultsContainer.innerHTML = `<p class="no-results">Aucune recette ne correspond à votre recherche.</p>`;
+            return;
+        }
+
+        logEvent("info", `displayResults : Affichage de ${recipes.length} recettes.`);
+
         const fragment = document.createDocumentFragment();
 
-        results.forEach((recipe) => {
-            const card = RecipeFactory(recipe);
-            fragment.appendChild(card);
+        recipes.forEach(recipe => {
+            const recipeCard = createRecipeCard(recipe);
+            if (!(recipeCard instanceof HTMLElement)) {
+                logEvent("error", `displayResults : Élément invalide pour la recette ${recipe.name}.`);
+                return;
+            }
+            fragment.appendChild(recipeCard);
         });
 
-        recipesContainer.appendChild(fragment);
+        resultsContainer.appendChild(fragment);
 
-        logEvent("success", `displayResults : ${results.length} recettes affichées.`);
+        logEvent("success", `displayResults : ${recipes.length} recettes affichées.`);
     } catch (error) {
         logEvent("error", "displayResults : Erreur lors de l'affichage des résultats.", { error: error.message });
     }
@@ -531,55 +555,35 @@ export async function handleFilterChange(event) {
  * - Met à jour les listes des filtres dans le DOM.
  * - Vérifie si chaque catégorie contient des données avant de les afficher.
  */
-export async function populateFilters() {
+
+
+export async function populateFilters(filters) {
     try {
-        // 1. Journalise le début du chargement des filtres.
         logEvent("info", "populateFilters : Chargement des options de filtre...");
 
-        // 2. Récupère les options de filtre disponibles (ingrédients, ustensiles, appareils).
-        const filters = await fetchFilterOptions();
-
-        // 3. Vérifie que `filters` est bien un objet contenant des données exploitables.
+        //  Vérification et initialisation si `filters` est `undefined`
         if (!filters || typeof filters !== "object") {
             logEvent("error", "populateFilters : Données de filtre invalides ou absentes.", { filters });
-            return; // Stoppe l'exécution si les données ne sont pas valides.
+            return;
         }
 
-        // 4. Initialisation d'un compteur pour suivre le nombre de listes mises à jour.
-        let updatedLists = 0;
+        //  Attendre que les éléments DOM soient bien présents
+        await waitForElement("#ingredient-list");
+        await waitForElement("#appliance-list");
+        await waitForElement("#utensil-list");
 
-        // 5. Vérifie et met à jour la liste des ingrédients si des données sont disponibles.
-        if (Array.isArray(filters.ingredients) && filters.ingredients.length > 0) {
-            updateFilterList("ingredient-list", filters.ingredients);
-            updatedLists++; // Incrémente le compteur.
-        } else {
-            logEvent("warning", "populateFilters : Aucun ingrédient disponible pour les filtres.");
-        }
+        // Vérification que chaque catégorie contient bien un tableau
+        filters.ingredients = Array.isArray(filters.ingredients) ? filters.ingredients : [];
+        filters.appliances = Array.isArray(filters.appliances) ? filters.appliances : [];
+        filters.utensils = Array.isArray(filters.utensils) ? filters.utensils : [];
 
-        // 6. Vérifie et met à jour la liste des ustensiles si des données sont disponibles.
-        if (Array.isArray(filters.ustensils) && filters.ustensils.length > 0) {
-            updateFilterList("ustensil-list", filters.ustensils);
-            updatedLists++; // Incrémente le compteur.
-        } else {
-            logEvent("warning", "populateFilters : Aucun ustensile disponible pour les filtres.");
-        }
+        //  Mise à jour des listes avec un affichage limité
+        updateFilterList("ingredient-list", filters.ingredients, 10);
+        updateFilterList("appliance-list", filters.appliances, 5);
+        updateFilterList("utensil-list", filters.utensils, 5);
 
-        // 7. Vérifie et met à jour la liste des appareils si des données sont disponibles.
-        if (Array.isArray(filters.appliances) && filters.appliances.length > 0) {
-            updateFilterList("appliance-list", filters.appliances);
-            updatedLists++; // Incrémente le compteur.
-        } else {
-            logEvent("warning", "populateFilters : Aucun appareil disponible pour les filtres.");
-        }
-
-        // 8. Vérifie si au moins une liste de filtres a été mise à jour.
-        if (updatedLists > 0) {
-            logEvent("success", `populateFilters : Filtres mis à jour (${updatedLists} catégories).`);
-        } else {
-            logEvent("warning", "populateFilters : Aucun filtre disponible.");
-        }
+        logEvent("success", "populateFilters : Filtres mis à jour avec succès.");
     } catch (error) {
-        // 9. Capture et journalise toute erreur survenue lors du chargement des filtres.
         logEvent("error", "populateFilters : Erreur lors du chargement des filtres.", { error: error.message });
     }
 }
@@ -589,55 +593,112 @@ export async function populateFilters() {
 /*----------------------------------------------------------------*/
 
 /**
- * Met à jour dynamiquement une liste de filtres dans le DOM.
+ * Met à jour dynamiquement une liste de filtres avec un affichage limité et un défilement.
  *
- * - Vide la liste avant d'ajouter les nouvelles options.
- * - Utilise un `DocumentFragment` pour optimiser les performances.
- * - Applique une validation stricte pour éviter toute erreur.
- * - Ajoute un `logEvent()` détaillé pour suivre chaque étape.
+ * - Vérifie si l'élément existe avant d'attendre (`waitForElement`).
+ * - Affiche seulement un nombre limité d'options (scrollable).
+ * - Ajoute un bouton "Voir plus / Voir moins" pour étendre la liste.
  *
- * @param {string} listId - ID du `<ul>` correspondant.
- * @param {Array} options - Liste des options à insérer.
+ * @param {string} listId - ID du `<ul>` où insérer les options.
+ * @param {Array} options - Liste complète des options à insérer.
+ * @param {number} maxVisible - Nombre d'éléments visibles avant le "Voir plus".
  */
-export function updateFilterList(listId, options) {
+export async function updateFilterList(listId, options, maxVisible = 10) {
     try {
-        // 1. Vérification de la validité de `listId`
-        if (!listId || typeof listId !== "string") {
-            logEvent("error", "updateFilterList : ID de liste invalide.", { listId });
-            return;
+        let listElement;
+
+        // Récupération sécurisée via `domSelectors`
+        if (listId === "ingredient-list") {
+            listElement = domSelectors.filters.ingredients();
+        } else if (listId === "appliance-list") {
+            listElement = domSelectors.filters.appliances();
+        } else if (listId === "ustensil-list") {
+            listElement = domSelectors.filters.utensils();
         }
 
-        // 2. Vérification de la validité des options
-        if (!Array.isArray(options) || options.length === 0) {
-            logEvent("warning", `updateFilterList : Aucune option fournie pour ${listId}.`);
-            return;
+        // Attente si l'élément n'est pas encore disponible
+        if (!listElement) {
+            listElement = await waitForElement(`#${listId}`);
         }
 
-        // 3. Sélection de l'élément DOM correspondant
-        const listElement = document.getElementById(listId);
         if (!listElement) {
             logEvent("error", `updateFilterList : Élément DOM introuvable (${listId}).`);
             return;
         }
 
-        // 4. Nettoie la liste existante
-        listElement.innerHTML = "";
+        listElement.innerHTML = ""; // Nettoyage de la liste existante
 
-        // 5. Utilisation d'un `DocumentFragment` pour éviter de trop manipuler le DOM
+        if (!Array.isArray(options) || options.length === 0) {
+            logEvent("warning", `updateFilterList : Aucune option pour ${listId}.`);
+            return;
+        }
+
+        logEvent("info", `updateFilterList : Mise à jour de ${listId} avec ${options.length} options.`);
+
+        // ================================
+        // Création du conteneur avec défilement
+        // ================================
+        const listContainer = document.createElement("div");
+        listContainer.classList.add("filter-list-container");
+        listContainer.style.maxHeight = "200px"; // Hauteur max avec scroll
+        listContainer.style.overflowY = "auto";
+
         const fragment = document.createDocumentFragment();
 
-        
+        // Ajout des options visibles
+        options.slice(0, maxVisible).forEach(option => {
+            const li = document.createElement("li");
+            li.textContent = option;
+            li.classList.add("filter-item");
+            fragment.appendChild(li);
+        });
 
-        // 8. Journalise le succès
+        listContainer.appendChild(fragment);
+        listElement.appendChild(listContainer);
+
+        // ================================
+        // Gestion du bouton "Voir plus / Voir moins"
+        // ================================
+        if (options.length > maxVisible) {
+            const toggleButton = document.createElement("button");
+            toggleButton.classList.add("toggle-filter-btn");
+            toggleButton.textContent = "Voir plus";
+
+            let isExpanded = false;
+
+            toggleButton.addEventListener("click", () => {
+                isExpanded = !isExpanded;
+                listContainer.innerHTML = ""; // Nettoyage
+
+                if (isExpanded) {
+                    options.forEach(option => {
+                        const li = document.createElement("li");
+                        li.textContent = option;
+                        li.classList.add("filter-item");
+                        listContainer.appendChild(li);
+                    });
+                    listContainer.style.maxHeight = "none"; // Affichage total
+                    toggleButton.textContent = "Voir moins";
+                } else {
+                    options.slice(0, maxVisible).forEach(option => {
+                        const li = document.createElement("li");
+                        li.textContent = option;
+                        li.classList.add("filter-item");
+                        listContainer.appendChild(li);
+                    });
+                    listContainer.style.maxHeight = "200px"; // Remet le scroll
+                    toggleButton.textContent = "Voir plus";
+                }
+            });
+
+            listElement.appendChild(toggleButton);
+        }
+
         logEvent("success", `updateFilterList : Liste ${listId} mise à jour avec ${options.length} éléments.`);
-
     } catch (error) {
         logEvent("error", "updateFilterList : Erreur lors de la mise à jour des filtres.", { error: error.message });
     }
 }
-
-
-
 
 /* ================================================================================ 
     LANCEMENT AU CHARGEMENT DU DOM 

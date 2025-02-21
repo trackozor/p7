@@ -203,20 +203,14 @@ export function safeQuerySelectorAll(selector) {
  * @function getCurrentPage
  * @returns {string} Le nom de la page détectée parmi les valeurs suivantes :
  *   - `"index"` : Page d’accueil.
- *   - `"photographer"` : Page dédiée à un photographe spécifique.
+ *   - `"recipe"` : Page dédiée à une recette spécifique.
  *   - `"unknown"` : Aucune correspondance trouvée.
- * 
- * @example
- *  Appliquer un comportement spécifique selon la page :
- * const currentPage = getCurrentPage();
- * if (currentPage === "index") loadHomepageFeatures();
- * if (currentPage === "photographer") setupPhotographerProfile();
  * 
  */
 export function getCurrentPage() {
     const url = window.location.pathname.toLowerCase();
-    if (url.includes("photographer")) {
-        return "photographer";
+    if (url.includes("recipe")) {
+        return "recipe";
     }
     if (url.includes("index") || url === "/") {
         return "index";

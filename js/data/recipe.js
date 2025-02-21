@@ -1,522 +1,249 @@
-export const recipe =[
+export const recipe = [
     {
         "id": 1,
         "image": "Recette01.webp",
-        "name" : "Limonade de Coco",
-        "servings" : 1,
+        "name": "Limonade de Coco",
+        "servings": 1,
         "ingredients": [
-            {
-                "ingredient" : "Lait de coco",
-                "quantity" : 400,
-                "unit" : "ml"
-            },
-            {
-                "ingredient" : "Jus de citron",
-                "quantity" : 2
-            },
-            {
-                "ingredient" : "Crème de coco",
-                "quantity" : 2,
-                "unit" : "cuillères à soupe"
-            },
-            {
-                "ingredient" : "Sucre",
-                "quantity" : 30,
-                "unit" : "grammes"
-            },
-            {
-                "ingredient": "Glaçons"
-            }
+            { "ingredient": "Lait de coco", "quantity": 400, "unit": "ml" },
+            { "ingredient": "Jus de citron", "quantity": 2 },
+            { "ingredient": "Crème de coco", "quantity": 2, "unit": "cuillères à soupe" },
+            { "ingredient": "Sucre", "quantity": 30, "unit": "grammes" },
+            { "ingredient": "Glaçons" }
         ],
         "time": 10,
-        "description": "Mettre les glaçons à votre goût dans le blender, ajouter le lait, la crème de coco, le jus de 2 citrons et le sucre. Mixer jusqu'à avoir la consistence désirée",
+        "description": "Mettre les glaçons dans un blender, ajouter le lait de coco, la crème de coco, le jus de citron et le sucre. Mixer jusqu'à obtenir la consistance désirée.",
         "appliance": "Blender",
-        "ustensils": ["cuillère à Soupe", "verres", "presse citron" ]
+        "ustensils": ["cuillère à soupe", "verres", "presse-citron"]
     },
     {
         "id": 2,
         "image": "Recette02.webp",
-        "name" : "Poisson Cru à la tahitienne",
+        "name": "Poisson Cru à la Tahitienne",
         "servings": 2,
         "ingredients": [
-            {
-                "ingredient" : "Thon Rouge (ou blanc)",
-                "quantity" : 200,
-                "unit" : "grammes"
-            },
-            {
-                "ingredient" : "Concombre",
-                "quantity" : 1
-            },
-            {
-                "ingredient" : "Tomate",
-                "quantity" : 2
-            },
-            {
-                "ingredient" : "Carotte",
-                "quantity" : 1
-            },
-            {
-                "ingredient" : "Citron Vert",
-                "quantity" : 5
-            },
-            {
-                "ingredient" : "Lait de Coco",
-                "quantity" : 100,
-                "unit" : "ml"
-            }
+            { "ingredient": "Thon rouge (ou blanc)", "quantity": 200, "unit": "grammes" },
+            { "ingredient": "Concombre", "quantity": 1 },
+            { "ingredient": "Tomate", "quantity": 2 },
+            { "ingredient": "Carotte", "quantity": 1 },
+            { "ingredient": "Citron vert", "quantity": 5 },
+            { "ingredient": "Lait de coco", "quantity": 100, "unit": "ml" }
         ],
         "time": 60,
-        "description": "Découper le thon en dés, mettre dans un plat et recouvrir de jus de citron vert (mieux vaut prendre un plat large et peu profond). Laisser reposer au réfrigérateur au moins 2 heures. (Si possible faites-le le soir pour le lendemain. Après avoir laissé mariner le poisson, coupez le concombre en fines rondelles sans la peau et les tomates en prenant soin de retirer les pépins. Rayer la carotte. Ajouter les légumes au poissons avec le citron cette fois ci dans un Saladier. Ajouter le lait de coco. Pour ajouter un peu plus de saveur vous pouvez ajouter 1 à 2 cuillères à soupe de Crème de coco",
+        "description": "Découper le thon en dés et le recouvrir de jus de citron vert dans un plat large. Laisser mariner au réfrigérateur pendant au moins 2 heures. Couper le concombre en fines rondelles, retirer les pépins des tomates et râper la carotte. Mélanger les légumes et le poisson dans un saladier, ajouter le lait de coco.",
         "appliance": "Saladier",
-        "ustensils": ["presse citron"]
-    },{
+        "ustensils": ["presse-citron", "couteau"]
+    },
+    {
         "id": 3,
         "image": "Recette03.webp",
-        "name": "Poulet coco réunionnais",
+        "name": "Poulet Coco Réunionnais",
         "servings": 4,
         "ingredients": [
-            {
-                "ingredient": "Poulet",
-                "quantity" : 1          
-            },
-            {
-                "ingredient": "Lait de coco",
-                "quantity" : 400,
-                "unit" : "ml"
-            },
-            {
-                "ingredient": "Coulis de tomate",
-                "quantity" : 25,
-                "unit" : "cl"
-            },
-            {
-                "ingredient": "Oignon",
-                "quantity" : 1
-            },
-            {
-                "ingredient": "Poivron rouge",
-                "quantity": 1
-            },
-            {
-                "ingredient": "Huile d'olive",
-                "quantity": 1,
-                "unit": "cuillères à soupe"
-            }
+            { "ingredient": "Poulet", "quantity": 1 },
+            { "ingredient": "Lait de coco", "quantity": 400, "unit": "ml" },
+            { "ingredient": "Coulis de tomate", "quantity": 25, "unit": "cl" },
+            { "ingredient": "Oignon", "quantity": 1 },
+            { "ingredient": "Poivron rouge", "quantity": 1 },
+            { "ingredient": "Huile d'olive", "quantity": 1, "unit": "cuillère à soupe" }
         ],
         "time": 80,
-        "description": "Découper le poulet en morceaux, les faire dorer dans une cocotte avec de l'huile d'olive. Salez et poivrez. Une fois doré, laisser cuire en ajoutant de l'eau. Au bout de 30 minutes, ajouter le coulis de tomate, le lait de coco ainsi que le poivron et l'oignon découpés en morceaux. Laisser cuisiner 30 minutes de plus. Servir avec du riz",
+        "description": "Découper le poulet en morceaux et le faire dorer dans une cocotte avec l'huile d'olive. Saler et poivrer. Ajouter de l'eau et laisser mijoter 30 minutes. Ajouter ensuite le coulis de tomate, le lait de coco, le poivron et l'oignon découpés. Laisser cuire encore 30 minutes. Servir avec du riz.",
         "appliance": "Cocotte",
         "ustensils": ["couteau"]
-    },{
+    },
+    {
         "id": 4,
         "image": "Recette04.webp",
-        "name": "Salade de riz",
+        "name": "Salade de Riz",
         "servings": 4,
-        "ingredients":[
-            {
-                "ingredient": "Riz blanc",
-                "quantity": 500,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Thon en miettes",
-                "quantity": 200,
-                "unit": "grammes"
-            },{
-                "ingredient": "Tomate",
-                "quantity": 2
-            },
-            {
-                "ingredient": "Oeuf dur",
-                "quantity": 2
-            },
-            {
-                "ingredient": "Maïs",
-                "quantity": 300,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Vinaigrette",
-                "quantity": 5,
-                "unit": "cl"
-            }
+        "ingredients": [
+            { "ingredient": "Riz blanc", "quantity": 500, "unit": "grammes" },
+            { "ingredient": "Thon en miettes", "quantity": 200, "unit": "grammes" },
+            { "ingredient": "Tomate", "quantity": 2 },
+            { "ingredient": "Oeuf dur", "quantity": 2 },
+            { "ingredient": "Maïs", "quantity": 300, "unit": "grammes" },
+            { "ingredient": "Vinaigrette", "quantity": 5, "unit": "cl" }
         ],
         "time": 50,
-        "description": "Faire cuire le riz. Une fois le riz cuit, le laisser refroidir. Couper les oeufs dur en quarts ou en lamelle au choix, coupez le tomates en dés, ajouter au riz les oeufs, les tomates, le poisson, le maïs et la vinaigrette. Ajouter au gout de chacun des corniches, olives etc..",
+        "description": "Faire cuire le riz et le laisser refroidir. Couper les œufs durs en morceaux, ainsi que les tomates en dés. Mélanger avec le riz, le thon, le maïs et la vinaigrette. Ajouter des cornichons ou des olives selon les goûts.",
         "appliance": "Cuiseur de riz",
         "ustensils": ["saladier", "passoire"]
     },
     {
         "id": 5,
         "image": "Recette05.webp",
-        "name": "Tarte au thon",
+        "name": "Tarte au Thon",
         "servings": 4,
-        "ingredients":[
-           {
-               "ingredient": "Pâte feuilletée",
-               "quantity": 1 
-           },
-           {
-               "ingredient": "Thon en miettes",
-               "quantity": 130,
-               "unit": "grammes"
-           },
-           {
-                "ingredient": "Tomate",
-                "quantity": 2
-           },
-           {
-               "ingredient": "Crème fraîche",
-               "quantity": 2,
-               "unit": "cuillères à soupe"
-           },
-           {
-               "ingredient": "gruyère râpé",
-               "quantity": 100,
-               "unit": "grammes"
-           },
-           {
-                "ingredient": "Moutarde de Dijon",
-                "quantity": 1,
-                "unite": "cuillères à soupe"
-           }
+        "ingredients": [
+            { "ingredient": "Pâte feuilletée", "quantity": 1 },
+            { "ingredient": "Thon en miettes", "quantity": 130, "unit": "grammes" },
+            { "ingredient": "Tomate", "quantity": 2 },
+            { "ingredient": "Crème fraîche", "quantity": 2, "unit": "cuillères à soupe" },
+            { "ingredient": "Gruyère râpé", "quantity": 100, "unit": "grammes" },
+            { "ingredient": "Moutarde de Dijon", "quantity": 1, "unit": "cuillère à soupe" }
         ],
         "time": 45,
-        "description": "Étaler la pâte feuilleté aux dimensions du moule, étaler la moutarde sur la pâte feuilleté, ajouter le thon. Découper les tomates en rondelles et les poser sur le poisson, ajouter un peu de crème fraîche sur toute la tarte et recouvrez de gruyère râpé. Cuire au four 30 minutes",
-        "appliance":"Four",
+        "description": "Étaler la pâte feuilletée dans un moule, tartiner de moutarde. Ajouter le thon, puis disposer les tomates en rondelles. Verser la crème fraîche sur la tarte et recouvrir de gruyère râpé. Cuire au four à 180°C pendant 30 minutes.",
+        "appliance": "Four",
         "ustensils": ["moule à tarte", "râpe à fromage", "couteau"]
     },
     {
         "id": 6,
         "image": "Recette06.webp",
-        "name": "Tarte aux pommes",
+        "name": "Tarte aux Pommes",
         "servings": 6,
-        "ingredients":[
-            {
-                "ingredient": "Pâte brisée",
-                "quantity": 1
-            },
-            {
-                "ingredient": "Pomme",
-                "quantity": 3
-            },
-            {
-                "ingredient": "Oeuf",
-                "quantity": "2"
-            },
-            {
-                "ingredient":"Crème fraîche",
-                "quantity":25,
-                "unit": "cl"
-            },
-            {
-                "ingredient": "Sucre en Poudre",
-                "quantity": 100,
-                "unit":"grammes"
-            },
-            {
-                "ingredient": "Sucre vanillé",
-                "quantity": 1,
-                "unit": "sachets"
-
-            }
+        "ingredients": [
+            { "ingredient": "Pâte brisée", "quantity": 1 },
+            { "ingredient": "Pomme", "quantity": 3 },
+            { "ingredient": "Oeuf", "quantity": 2 },
+            { "ingredient": "Crème fraîche", "quantity": 25, "unit": "cl" },
+            { "ingredient": "Sucre en poudre", "quantity": 100, "unit": "grammes" },
+            { "ingredient": "Sucre vanillé", "quantity": 1, "unit": "sachet" }
         ],
         "time": 50,
-        "description": "Commencez par mélanger les oeufs le sucre et le sucre vanillé dans un saladier, découper les pommes en tranches, ajouter la crème fraîche aux oeufs. Une fois que tout est pret, étalez la tarte dans le moule. N'oubliez pas de piquer le fond avec une fourchette avant de positionner les pommes sur la tarte. Finalement verser la préparation à base d'oeufs et de crème fraîche. Laisser cuire au four pendant 30 minutes",
+        "description": "Mélanger les œufs, le sucre et le sucre vanillé dans un saladier. Couper les pommes en tranches. Ajouter la crème fraîche au mélange d’œufs. Étaler la pâte brisée dans un moule, piquer le fond avec une fourchette, disposer les pommes et verser la préparation. Cuire au four à 180°C pendant 30 minutes.",
         "appliance": "Four",
         "ustensils": ["moule à tarte", "saladier", "fourchette"]
-    },{
+    },
+    {
         "id": 7,
         "image": "Recette07.webp",
-        "name": "Tartelettes au chocolat et aux fraises",
+        "name": "Tartelettes au Chocolat et aux Fraises",
         "servings": 6,
-        "ingredients":[
-            {
-                "ingredient": "Pâte sablée",
-                "quantity": 1
-            }, 
-            {
-                "ingredient": "Chocolat au lait",
-                "quantity": 300,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Crème liquide",
-                "quantity": 80,
-                "unit": "cl"
-            },
-            {
-                "ingredient": "Beurre",
-                "quantity": "30",
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Fraise",
-                "quantity": 6
-            }
+        "ingredients": [
+            { "ingredient": "Pâte sablée", "quantity": 1 },
+            { "ingredient": "Chocolat au lait", "quantity": 300, "unit": "grammes" },
+            { "ingredient": "Crème liquide", "quantity": 80, "unit": "cl" },
+            { "ingredient": "Beurre", "quantity": 30, "unit": "grammes" },
+            { "ingredient": "Fraise", "quantity": 6 }
         ],
         "time": 50,
-        "description": "Étaler la pate dans les moules à tartelette. Faire cuire la pate 30 minutes. Découper le chocolat en morceau et le faire chauffer, y ajouter la crème liquide, ajouter le beurre et remuer jusqu'à avoir une pâte homogène. Verser la pate sur les tartelettes. Couper les fraises en 2 et les positionner sur ",
-        "appliance":"Four",
-        "ustensils":["moule à tartelettes (6)", "casserole"]
-    }, {
+        "description": "Étaler la pâte dans des moules à tartelette et cuire au four à 180°C pendant 30 minutes. Faire fondre le chocolat, ajouter la crème liquide et le beurre jusqu'à obtenir une texture homogène. Verser sur les tartelettes et disposer les fraises coupées en deux.",
+        "appliance": "Four",
+        "ustensils": ["moule à tartelettes", "casserole"]
+    },
+    {
         "id": 8,
         "image": "Recette08.webp",
         "name": "Brownie",
         "servings": 10,
-        "ingredients":[
-           {
-                "ingredient": "Noix",
-                "quantity": "180",
-                "unit": "grammes"
-           },
-           {
-               "ingredient": "Chocolat noir",
-               "quantity": 150,
-               "unit": "grammes"
-           },
-           {
-               "ingredient": "Beurre",
-               "quantity": 120,
-               "unit": "grammes"
-           },
-           {
-                "ingredient": "Oeuf",
-                "quantity": 2
-           },
-           {
-               "ingredient": "Sucre en Poudre",
-               "quantity": "110",
-               "unit": "grammes"
-           },
-           {
-                "ingredient": "farine",
-                "quantity": 90,
-                "unit": "grammes"
-           }
-
-        ], 
+        "ingredients": [
+            { "ingredient": "Noix", "quantity": 180, "unit": "grammes" },
+            { "ingredient": "Chocolat noir", "quantity": 150, "unit": "grammes" },
+            { "ingredient": "Beurre", "quantity": 120, "unit": "grammes" },
+            { "ingredient": "Oeuf", "quantity": 2 },
+            { "ingredient": "Sucre en poudre", "quantity": 110, "unit": "grammes" },
+            { "ingredient": "Farine", "quantity": 90, "unit": "grammes" }
+        ],
         "time": 60,
-        "description": "Hachez les noix grossièrement. Faire fondre le chocolat avec le beurre. Mélanger les oeufs et le sucre et mélanger au chocolat. Ajouter la farine. Mélanger afin d'avoir quelque chose d'homogène puis incorporer les noix. Verser la préparation dans un moule de préférence rectangulaire. Cuire 2O à 25 minutes à 180°. Sortez du four et attendez quelques minutes pour démouler. Servir avec une boule de glace pour plus de gourmandise.",
+        "description": "Hacher les noix grossièrement. Faire fondre le chocolat avec le beurre. Mélanger les œufs et le sucre, puis ajouter la farine. Incorporer les noix. Verser la préparation dans un moule rectangulaire et cuire au four à 180°C pendant 20 à 25 minutes.",
         "appliance": "Four",
-        "ustensils": ["moule à gateaux", "casserole"]
+        "ustensils": ["moule à gâteau", "casserole"]
     },
     {
         "id": 9,
         "image": "Recette09.webp",
-        "name": "Salade Méditerannéene fraîche au chèvre",
+        "name": "Salade Méditerranéenne au Chèvre",
         "servings": 4,
-        "ingredients":[
-            {
-                "ingredient": "Concombre",
-                "quantity": 1
-            },
-            {
-                "ingredient": "Olives"
-            },
-            {
-                "ingredient": "Fromage de chèvre",
-                "quantity": 150,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Vinaigre Balsamic"
-            },
-            {
-                "ingredient": "Huile d'olive"
-            }, 
-            {
-                "ingredient": "Basilic"    
-            }
+        "ingredients": [
+            { "ingredient": "Concombre", "quantity": 1 },
+            { "ingredient": "Olives" },
+            { "ingredient": "Fromage de chèvre", "quantity": 150, "unit": "grammes" },
+            { "ingredient": "Vinaigre balsamique" },
+            { "ingredient": "Huile d'olive" },
+            { "ingredient": "Basilic" }
         ],
         "time": 15,
-        "description":"Peler le concombre le couper 2, retirer les pépins. Couper les olives en morceaux, ainsi que le fromage de chèvre. Ajouter le basilic ainsi que le vinaigre balsamic et l'huile d'olives à votre gout.",
-        "appliance":"Saladier",
-        "ustensils":["cuillère en bois", "couteau"]
+        "description": "Peler et épépiner le concombre, le couper en rondelles. Hacher les olives et couper le fromage de chèvre en dés. Mélanger le tout dans un saladier et assaisonner avec le vinaigre balsamique, l'huile d'olive et le basilic.",
+        "appliance": "Saladier",
+        "ustensils": ["couteau", "cuillère en bois"]
     },
     {
         "id": 10,
         "image": "Recette10.webp",
         "name": "Tartiflette",
         "servings": 4,
-        "ingredients":[
-            {
-                "ingredient": "Reblochon",
-                "quantity": "1"
-            },
-            {
-                "ingredient": "Pommes de terre",
-                "quantity": 4.5,
-                "unit": "kg"
-            },
-            {
-                "ingredient": "Jambon fumé",
-                "quantity": 2,
-                "unit": "tranches"
-            },
-            {
-                "ingredient": "Oignon",
-                "quantity": 300,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Vin blanc sec",
-                "quantity": 30,
-                "unit": "cl"
-            }
+        "ingredients": [
+            { "ingredient": "Reblochon", "quantity": 1 },
+            { "ingredient": "Pommes de terre", "quantity": 4.5, "unit": "kg" },
+            { "ingredient": "Jambon fumé", "quantity": 2, "unit": "tranches" },
+            { "ingredient": "Oignon", "quantity": 300, "unit": "grammes" },
+            { "ingredient": "Vin blanc sec", "quantity": 30, "unit": "cl" }
         ],
         "time": 60,
-        "description": "Commencer par cuire les pommes de terre dans l'eau bouillante. Puis épluchez les et coupez les en rondelles. Émincer les oignons puis les faire dorer dans du beurre. Ajouter le jambon fumé coupé en en morceaux ainsi que les pommes de terres. Salez, poivrez à votre gout ( et celui de vos convives ) Laissez cuisiner durant environ 10 minutes puis ajouter le vin blanc. Après 5 minutes, mettre le tout dans un plat à gratin. Coupez le reblochon, soit en tranches, soit le couper en 2 dans le sens de l'épaisseur et recouvrir les pommes de terre. Cuire au four (environ 220°) durant 25 minutes. C'est prêt !",
-        "appliance":"Four",
-        "ustensils": ["plat à gratin", "couteau","Économe"]
-    },{
+        "description": "Faire cuire les pommes de terre à l'eau, les éplucher et les couper en rondelles. Faire dorer les oignons dans du beurre, ajouter le jambon fumé coupé et les pommes de terre. Ajouter le vin blanc, puis placer le tout dans un plat à gratin. Couper le reblochon et le disposer sur le dessus. Cuire au four à 220°C pendant 25 minutes.",
+        "appliance": "Four",
+        "ustensils": ["plat à gratin", "couteau", "économe"]
+    },
+    {
         "id": 11,
         "image": "Recette11.webp",
-        "name": "Salade tomate, mozzarella et pommes",
+        "name": "Salade Tomate, Mozzarella et Pommes",
         "servings": 4,
-        "ingredients":[
-            {
-                "ingredient": "Tomates cerises",
-                "quantity": 250,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Mozzarella",
-                "quantity": 150,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Jambon de parme",
-                "quantity": 4,
-                "unit": "tranches"
-            }, 
-            {
-                "ingredient": "Pommes",
-                "quantity": 1
-            },
-            {
-                "ingredient": "Salade Verte",
-                "quantity": 1
-            },
-            {
-                "ingredient": "Vinaigrette",
-                "quantity": 5,
-                "unit": "cl"
-            }
+        "ingredients": [
+            { "ingredient": "Tomates cerises", "quantity": 250, "unit": "grammes" },
+            { "ingredient": "Mozzarella", "quantity": 150, "unit": "grammes" },
+            { "ingredient": "Jambon de Parme", "quantity": 4, "unit": "tranches" },
+            { "ingredient": "Pomme", "quantity": 1 },
+            { "ingredient": "Salade verte", "quantity": 1 },
+            { "ingredient": "Vinaigrette", "quantity": 5, "unit": "cl" }
         ],
         "time": 10,
-        "description": "Commencer par couper les feuilles de salade, ajouter les tomates cerises et le fromage découpé en cubes ou en boules avec la cuillère à melon. Découper le jambon de parme en fines lamelles. Ajouter la pomme elle aussi découpée en petit morceaux. Assaisonnez à votre gout. ",
+        "description": "Couper les feuilles de salade, les tomates cerises et la mozzarella en cubes. Découper le jambon de Parme en lamelles et la pomme en morceaux. Mélanger et assaisonner avec la vinaigrette.",
         "appliance": "Saladier",
-        "ustensils": ["couteau", "cuillère à melon" ]
-    },{
+        "ustensils": ["couteau", "cuillère en bois"]
+    },
+    {
         "id": 12,
         "image": "Recette12.webp",
-        "name": "Compote pomme rhubarbe",
+        "name": "Compote Pomme Rhubarbe",
         "servings": 4,
-        "ingredients":[
-            {
-                "ingredient": "Rhubarbe",
-                "quantity": 160,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Pommes",
-                "quantity": 8
-            },
-            {
-                "ingredient": "Sucre vanillé",
-                "quantity": 6,
-                "unit": "sachets"
-            },
-            {
-                "ingredient": "Eau",
-                "quantity" : "0.5",
-                "unit" : "tasses"
-            }
+        "ingredients": [
+            { "ingredient": "Rhubarbe", "quantity": 160, "unit": "grammes" },
+            { "ingredient": "Pomme", "quantity": 8 },
+            { "ingredient": "Sucre vanillé", "quantity": 6, "unit": "sachets" },
+            { "ingredient": "Eau", "quantity": 0.5, "unit": "tasse" }
         ],
         "time": 40,
-        "description": "Éplucher les fruits et les couper en morceaux, les mettre dans une casserole en ajoutant l'eau et le sucre vanillé. Laisser cuire 15 minutes en remuant régulièrement.",
+        "description": "Éplucher et couper les fruits en morceaux, les mettre dans une casserole avec l’eau et le sucre vanillé. Cuire 15 minutes en remuant régulièrement.",
         "appliance": "Casserole",
         "ustensils": ["couteau", "économe"]
     },
     {
         "id": 13,
         "image": "Recette13.webp",
-        "name": "Salade mâchée de patates",
+        "name": "Salade Mâchée de Patates",
         "servings": 2,
         "ingredients": [
-            {
-                "ingredient": "Mâche",
-                "quantity": 60,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Pommes de terre",
-                "quantity": 200,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Échalote",
-                "quantity": 2
-
-            },
-            {
-                "ingredient": "Vinaigre de cidre",
-                "quantity": 1,
-                "unit":"cuillère à soupe"
-            },
-            {
-                "ingredient": "huile d'olive",
-                "quantity": 2,
-                "unit": "cuillère à soupe"
-            }
+            { "ingredient": "Mâche", "quantity": 60, "unit": "grammes" },
+            { "ingredient": "Pommes de terre", "quantity": 200, "unit": "grammes" },
+            { "ingredient": "Échalote", "quantity": 2 },
+            { "ingredient": "Vinaigre de cidre", "quantity": 1, "unit": "cuillère à soupe" },
+            { "ingredient": "Huile d'olive", "quantity": 2, "unit": "cuillères à soupe" }
         ],
-        "time":40,
-        "description":"Cuire les pommes de terre environ 30 minutes. Découper les échalotes finement. Durant la cuisson des pommes de terre. Préparez la vinaigrette avec l'huile d'olive et le vinaigre de cidre. Salez poivrez à discrétion. Dans un saladier, mettre le mâche. Ajouter",
+        "time": 40,
+        "description": "Cuire les pommes de terre environ 30 minutes. Pendant ce temps, hacher finement les échalotes et préparer la vinaigrette avec le vinaigre de cidre et l'huile d'olive. Une fois les pommes de terre refroidies, les couper en morceaux et les mélanger avec la mâche et la vinaigrette.",
         "appliance": "Casserole",
-        "ustensils":["couteau","saladier","cuillère en bois"]
+        "ustensils": ["couteau", "saladier", "cuillère en bois"]
     },
     {
         "id": 14,
         "image": "Recette14.webp",
-        "name": "Galette Bretonne Saucisse et Fromage à raclette",
+        "name": "Galette Bretonne Saucisse et Fromage à Raclette",
         "servings": 2,
         "ingredients": [
-            {
-                "ingredient": "Saucisse bretonne ou de Toulouse",
-                "quantity": 2
-            },
-            {
-                "ingredient": "Farine de blé noir",
-                "quantity": 130,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Oeuf",
-                "quantity": 1
-
-            },
-            {
-                "ingredient": "Fromage à raclette",
-                "quantity": 300,
-                "unit":"grammes"
-            },
-            {
-                "ingredient": "Oignon",
-                "quantity": 1
-            },
-            {
-                "ingredient": "Beurre",
-                "quantity": 75,
-                "unit": "grammes"
-            }
-
+            { "ingredient": "Saucisse bretonne ou de Toulouse", "quantity": 2 },
+            { "ingredient": "Farine de blé noir", "quantity": 130, "unit": "grammes" },
+            { "ingredient": "Oeuf", "quantity": 1 },
+            { "ingredient": "Fromage à raclette", "quantity": 300, "unit": "grammes" },
+            { "ingredient": "Oignon", "quantity": 1 },
+            { "ingredient": "Beurre", "quantity": 75, "unit": "grammes" }
         ],
         "time": 100,
-        "description":"Mélanger la farine et les oeufs, faire fondre 25 grammes de beurre et ajouter à la pâte. Ajouter du sel. Laisser reposer 1 heure. Faire les galettes et laisser refroidir. Faire chauffer les saucisses avec du beurre et l'oignon. Enrouler les saucisses dans les crêpes avec une partie du fromage. Mettre le reste du fromage à raclette par dessus les crêpes. Passer four pendant 20 minutes",
+        "description": "Préparer la pâte à galette avec la farine, l'œuf, 25g de beurre fondu et du sel. Laisser reposer 1 heure. Cuire les galettes puis les laisser refroidir. Faire revenir les saucisses avec du beurre et les oignons émincés. Enrouler les saucisses dans les galettes avec une partie du fromage. Mettre le reste du fromage sur le dessus et cuire au four 20 minutes.",
         "appliance": "Four",
-        "ustensils":["poêle à frire","couteau"]
+        "ustensils": ["poêle", "couteau"]
     },
     {
         "id": 15,
@@ -524,135 +251,66 @@ export const recipe =[
         "name": "Crêpes Chocolat Banane",
         "servings": 10,
         "ingredients": [
-            {
-                "ingredient": "Oeuf",
-                "quantity": 3
-            },
-            {
-                "ingredient": "Farine",
-                "quantity": 250,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Lait",
-                "quantity": 600,
-                "unit": "ml"
-            },
-            {
-                "ingredient": "Beurre salé",
-                "quantity": 30,
-                "unit":"grammes"
-            },
-            {
-                "ingredient": "Chocolat au lait",
-                "quantity": 100,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Banane",
-                "quantity": 4
-            }
+            { "ingredient": "Oeuf", "quantity": 3 },
+            { "ingredient": "Farine", "quantity": 250, "unit": "grammes" },
+            { "ingredient": "Lait", "quantity": 600, "unit": "ml" },
+            { "ingredient": "Beurre salé", "quantity": 30, "unit": "grammes" },
+            { "ingredient": "Chocolat au lait", "quantity": 100, "unit": "grammes" },
+            { "ingredient": "Banane", "quantity": 4 }
         ],
         "time": 60,
-        "description":"Mélangez dans un saladier, la farine, les oeufs, et le lait. Battez jusqu'à avoir une masse homogène. Pendant ce temps faites fondre le beurre et ajoutez en une partie à la pâte à crêpes. Faire fondre le chocolat ( avec le reste du beurre salé ). Lorsque vous chauffez les crêpes. Ajouter le chocolat fondu et les bananes coupées en rondelles. Ajoutez une touche de chantilly pour les gourmands",
+        "description": "Mélanger la farine, les œufs et le lait jusqu'à obtenir une pâte homogène. Ajouter une partie du beurre fondu. Faire fondre le chocolat avec le reste du beurre. Cuire les crêpes et les garnir de chocolat fondu et de rondelles de banane.",
         "appliance": "Poêle à crêpe",
-        "ustensils":["saladier", "louche", "cuillère en bois"]
+        "ustensils": ["saladier", "louche", "cuillère en bois"]
     },
     {
         "id": 16,
         "image": "Recette16.webp",
-        "name": "Gratin de pâtes à la tomate",
+        "name": "Gratin de Pâtes à la Tomate",
         "servings": 2,
         "ingredients": [
-            {
-                "ingredient": "Tomate",
-                "quantity": 500,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Mozzarella",
-                "quantity": 250,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Pennes",
-                "quantity": 500,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Basilic",
-                "quantity": 1,
-                "unit":"tiges"
-            },
-            {
-                "ingredient": "huile d'olives",
-                "quantity": 2,
-                "unit": "cuillère à soupe"
-            }
+            { "ingredient": "Tomate", "quantity": 500, "unit": "grammes" },
+            { "ingredient": "Mozzarella", "quantity": 250, "unit": "grammes" },
+            { "ingredient": "Pennes", "quantity": 500, "unit": "grammes" },
+            { "ingredient": "Basilic", "quantity": 1, "unit": "tige" },
+            { "ingredient": "Huile d'olive", "quantity": 2, "unit": "cuillères à soupe" }
         ],
         "time": 45,
-        "description":"Faire cuire les pâtes si vous n'avez pas de pennes des coquillettes peuvent faire l'affaire. Découper les tomates en petits morceaux, soit en tranches soit en dés. Coupez le basilic en petites morceaux et mélangez le aux tomates.  Coupez la mozzarella en tranche. Préchauffez le four à 200°. Alternez entre couches de pattes et couches de tomates, terminez par une couche de pates et recouvrir du fromage. Laisser au four 30 minutes et régalez vous ! Une recette simple qui fera plaisir au petits comme aux grands.",
+        "description": "Faire cuire les pâtes, couper les tomates en dés et la mozzarella en tranches. Hacher le basilic et le mélanger aux tomates. Dans un plat, alterner couches de pâtes, tomates et mozzarella. Cuire au four à 200°C pendant 30 minutes.",
         "appliance": "Four",
-        "ustensils":["plat à gratin", "couteau", "râpe à fromage"]
+        "ustensils": ["plat à gratin", "couteau", "râpe à fromage"]
     },
     {
         "id": 17,
         "image": "Recette17.webp",
-        "name": "Smoothie à la fraise",
+        "name": "Smoothie à la Fraise",
         "servings": 6,
         "ingredients": [
-            {
-                "ingredient": "Fraise",
-                "quantity": 500,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Pastèque",
-                "quantity": 0.5
-            },
-            {
-                "ingredient": "Jus de citron",
-                "quantity": 1,
-                "unit":"cuillères à soupe"
-            },
-            {
-                "ingredient": "Glaçons",
-                "quantity": 8
-            },
-            {
-                "ingredient": "Menthe"
-            }
+            { "ingredient": "Fraise", "quantity": 500, "unit": "grammes" },
+            { "ingredient": "Pastèque", "quantity": 0.5 },
+            { "ingredient": "Jus de citron", "quantity": 1, "unit": "cuillère à soupe" },
+            { "ingredient": "Glaçons", "quantity": 8 },
+            { "ingredient": "Menthe" }
         ],
         "time": 15,
-        "description":"Coupez les fraises en morceaux, découpez la chaire de la pastèque en retirant les pépins. Mettre le tout dans le blender. Ajouter un cuillère à soupe de juste de citron ainsi que les glaçons. Ajoutez quelques feuilles de menthe pour plus de fraîcheur. Mixez le tout. Servir et déguster.",
+        "description": "Couper les fraises et la chair de pastèque en morceaux. Mixer avec le jus de citron et les glaçons. Ajouter quelques feuilles de menthe et servir.",
         "appliance": "Blender",
-        "ustensils":["verres", "couteau", "presse citron"]
+        "ustensils": ["verres", "couteau", "presse-citron"]
     },
     {
         "id": 18,
         "image": "Recette18.webp",
-        "name": "Smoothie ananas et vanille",
+        "name": "Smoothie Ananas et Vanille",
         "servings": 5,
         "ingredients": [
-            {
-                "ingredient": "Ananas",
-                "quantity": 1
-            },
-            {
-                "ingredient": "Glace à la vanille",
-                "quantity": 500,
-                "unit": "ml"
-            },
-            {
-                "ingredient": "Lait",
-                "quantity": 50,
-                "unit": "cl"
-            }
+            { "ingredient": "Ananas", "quantity": 1 },
+            { "ingredient": "Glace à la vanille", "quantity": 500, "unit": "ml" },
+            { "ingredient": "Lait", "quantity": 50, "unit": "cl" }
         ],
         "time": 10,
-        "description":"Séparez 1/5ème d'Ananas ( une belle tranche qui servira pour la décoration des verres ), mettre le reste coupé en cubes au blender, ajouter la glace à la vanille et le lait. Mixez. Servir et décorer avec l'ananas restant. C'est prêt",
+        "description": "Réserver une tranche d’ananas pour la décoration. Mixer le reste avec la glace à la vanille et le lait. Servir dans des verres avec la tranche d'ananas.",
         "appliance": "Blender",
-        "ustensils":["verres", "couteau"]
+        "ustensils": ["verres", "couteau"]
     },
     {
         "id": 19,
@@ -660,228 +318,104 @@ export const recipe =[
         "name": "Shake Banane Kiwi",
         "servings": 4,
         "ingredients": [
-            {
-                "ingredient": "Kiwi",
-                "quantity": 4
-            },
-            {
-                "ingredient": "Citron",
-                "quantity": 1
-            },
-            {
-                "ingredient": "Lait",
-                "quantity": 1,
-                "unit": "litres"
-            },
-            {
-                "ingredient": "Sucre glace",
-                "quantity": 30,
-                "unit":"grammes"
-            },
-            {
-                "ingredient": "Banane",
-                "quantity": 1
-            }
+            { "ingredient": "Kiwi", "quantity": 4 },
+            { "ingredient": "Citron", "quantity": 1 },
+            { "ingredient": "Lait", "quantity": 1, "unit": "litre" },
+            { "ingredient": "Sucre glace", "quantity": 30, "unit": "grammes" },
+            { "ingredient": "Banane", "quantity": 1 }
         ],
-        "time": 0,
-        "description":"Coupez les fruits en morceaux, ajouter le jus de citron et le lait ainsi que le sucre glace. Mixez. Ajoutez des glaçons si le lait n'a pas été mis au frais.",
+        "time": 10,
+        "description": "Éplucher et couper les fruits en morceaux. Ajouter le jus de citron, le lait et le sucre glace. Mixer jusqu'à obtenir une texture lisse.",
         "appliance": "Blender",
-        "ustensils":["couteau", "verres", "presse citron"]
+        "ustensils": ["couteau", "verres", "presse-citron"]
     },
     {
         "id": 20,
         "image": "Recette20.webp",
-        "name": "Pates Carbonara",
+        "name": "Pâtes Carbonara",
         "servings": 5,
         "ingredients": [
-            {
-                "ingredient": "Tagliatelles",
-                "quantity": 500,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Lardons",
-                "quantity": 150,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Crème fraîche",
-                "quantity": 200,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Parmesan",
-                "quantity": 100,
-                "unit":"grammes"
-            },
-            {
-                "ingredient": "huile d'olive",
-                "quantity": 1,
-                "unit": "cuillères à soupe"
-            }
+            { "ingredient": "Tagliatelles", "quantity": 500, "unit": "grammes" },
+            { "ingredient": "Lardons", "quantity": 150, "unit": "grammes" },
+            { "ingredient": "Crème fraîche", "quantity": 200, "unit": "grammes" },
+            { "ingredient": "Parmesan", "quantity": 100, "unit": "grammes" },
+            { "ingredient": "Huile d'olive", "quantity": 1, "unit": "cuillère à soupe" }
         ],
         "time": 30,
-        "description":"Faire cuire les pates comme indiqué sur le paquet. Dorer les lardons dans une sauteuse avec l'huile d'olive. Ajouter la crème fraîche et baisser le feu au minimum. Quand les Tagliatelles sont prêtes les mettre dans la sauteuse et bien mélanger le tout en ajoutant le jaune d'oeuf. Servir et ajouter le parmesan râpé.",
+        "description": "Cuire les pâtes. Faire revenir les lardons, ajouter la crème et laisser mijoter. Mélanger aux pâtes cuites et ajouter du parmesan râpé.",
         "appliance": "Sauteuse",
-        "ustensils":["râpe à fromage", "cuillère en bois"]
+        "ustensils": ["râpe à fromage", "cuillère en bois"]
     },
     {
         "id": 21,
         "image": "Recette21.webp",
-        "name": "Spaghettis à la bolognaise",
+        "name": "Spaghettis à la Bolognaise",
         "servings": 4,
         "ingredients": [
-            {
-                "ingredient": "Spaghettis",
-                "quantity": 400,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Oignon",
-                "quantity": 2
-            },
-            {
-                "ingredient": "Coulis de tomate",
-                "quantity": 300,
-                "unit":"grammes"
-            },
-            {
-                "ingredient": "Viande hachée 1% de matière grasse",
-                "quantity": 400,
-                "unit":"grammes"
-            },
-            {
-                "ingredient": "Vin rouge",
-                "quantity": 20,
-                "unit": "cl"
-            },
-            {
-                "ingredient": "Crème fraîche",
-                "quantity" : 1,
-                "unit": "cuillères à soupe"
-            }
+            { "ingredient": "Spaghettis", "quantity": 400, "unit": "grammes" },
+            { "ingredient": "Oignon", "quantity": 2 },
+            { "ingredient": "Coulis de tomate", "quantity": 300, "unit": "grammes" },
+            { "ingredient": "Viande hachée 1% de matière grasse", "quantity": 400, "unit": "grammes" },
+            { "ingredient": "Vin rouge", "quantity": 20, "unit": "cl" },
+            { "ingredient": "Crème fraîche", "quantity": 1, "unit": "cuillère à soupe" }
         ],
         "time": 30,
-        "description":"Cuisiner la viande hachée dans une poêle à frire. Dans une autre faire cuire les oignons découpés en fins dés avec un peu de beurre. Ajouter du vin rouge. Mélanger les oignons avec la viande hachée. Faire cuire les pates le temps indiqué sur le paquet. Ajouter le coulis de tomates à la viande hachée. Une fois que les pates sont cuites, ajouter la crème fraîche à la viande hachée. Servir.",
+        "description": "Faire cuire la viande hachée dans une poêle. Dans une autre, faire revenir les oignons émincés avec un peu de beurre, puis ajouter le vin rouge. Mélanger avec la viande hachée, ajouter le coulis de tomates et laisser mijoter. Cuire les pâtes, puis incorporer la crème fraîche à la sauce avant de servir.",
         "appliance": "Casserole",
-        "ustensils":["Cuillère en bois", "louche", "couteau"]
+        "ustensils": ["cuillère en bois", "louche", "couteau"]
     },
     {
         "id": 22,
         "image": "Recette22.webp",
-        "name": "Fondant au chocolat",
+        "name": "Fondant au Chocolat",
         "servings": 4,
         "ingredients": [
-            {
-                "ingredient": "Beurre",
-                "quantity": 160,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Chocolat noir",
-                "quantity": 200,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Farine",
-                "quantity": 50,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Oeuf",
-                "quantity": 4
-            },
-            {
-                "ingredient": "Sucre",
-                "quantity": 150,
-                "unit": "grammes"
-            }
+            { "ingredient": "Beurre", "quantity": 160, "unit": "grammes" },
+            { "ingredient": "Chocolat noir", "quantity": 200, "unit": "grammes" },
+            { "ingredient": "Farine", "quantity": 50, "unit": "grammes" },
+            { "ingredient": "Oeuf", "quantity": 4 },
+            { "ingredient": "Sucre", "quantity": 150, "unit": "grammes" }
         ],
         "time": 30,
-        "description":"Faire fondre le chocolat et le beurre au bain marie. Dans un saladier battre les oeufs avec le sucre jusqu'à obtenir une texture de type mousse. Ajouter la farine ainsi que le mélange de beurre et chocolat fondu. Beurrez le moule à gateaux. Mettre au four préchauffé à 200° puis faites chauffer pendant 15 minutes. C'est prêt. Servir avec une boule de glace ou une crème dessert.",
+        "description": "Faire fondre le chocolat et le beurre au bain-marie. Dans un saladier, battre les œufs avec le sucre jusqu'à obtenir une mousse. Ajouter la farine et le mélange chocolat-beurre fondu. Beurrer un moule, verser la préparation et cuire à 200°C pendant 15 minutes.",
         "appliance": "Four",
-        "ustensils":["moule à gateaux", "fouet", "casserole"]
+        "ustensils": ["moule à gâteau", "fouet", "casserole"]
     },
     {
         "id": 23,
         "image": "Recette23.webp",
-        "name": "Quiche lorraine",
+        "name": "Quiche Lorraine",
         "servings": 4,
         "ingredients": [
-            {
-                "ingredient": "Pâte brisée",
-                "quantity": 200,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Lardons",
-                "quantity": 200,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Beurre",
-                "quantity": 30,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Oeuf",
-                "quantity": 3
-            },
-            {
-                "ingredient": "Crème Fraîche",
-                "quantity": 20,
-                "unit": "cl"
-            },
-            {
-                "ingredient": "Lait",
-                "quantity": 20,
-                "unit": "cl"
-            }
+            { "ingredient": "Pâte brisée", "quantity": 200, "unit": "grammes" },
+            { "ingredient": "Lardons", "quantity": 200, "unit": "grammes" },
+            { "ingredient": "Beurre", "quantity": 30, "unit": "grammes" },
+            { "ingredient": "Oeuf", "quantity": 3 },
+            { "ingredient": "Crème fraîche", "quantity": 20, "unit": "cl" },
+            { "ingredient": "Lait", "quantity": 20, "unit": "cl" }
         ],
         "time": 60,
-        "description":"Étaler la pate dans un moule et la piquer.Parsemer de beurre. Faire chauffer les lardon dans une poêle. Battre les oeufs en ajoutant la crème fraîche et le lait. Finalement ajouter les lardons, salez poivrez à votre gout. Verser l'ensemble sur la pâte. Cuire environ 50 minutes.",
+        "description": "Étaler la pâte dans un moule et la piquer avec une fourchette. Faire revenir les lardons dans une poêle. Battre les œufs, la crème et le lait, assaisonner et ajouter les lardons. Verser l'appareil sur la pâte et cuire au four à 180°C pendant 50 minutes.",
         "appliance": "Four",
-        "ustensils":["moule à gateaux", "rouleau à patisserie", "fouet"]
+        "ustensils": ["moule à tarte", "rouleau à pâtisserie", "fouet"]
     },
     {
         "id": 24,
         "image": "Recette24.webp",
-        "name": "Salade de pâtes",
+        "name": "Salade de Pâtes",
         "servings": 4,
         "ingredients": [
-            {
-                "ingredient": "Thon en miettes",
-                "quantity": 160,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Maïs",
-                "quantity": 60,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Tomate",
-                "quantity": 1
-            },
-            {
-                "ingredient": "Concombre",
-                "quantity": 0.5
-            },
-            {
-                "ingredient": "Macaronis",
-                "quantity": 300,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Mayonnaise",
-                "quantity": 2,
-                "unit": "cuillères à soupe"
-            }
+            { "ingredient": "Thon en miettes", "quantity": 160, "unit": "grammes" },
+            { "ingredient": "Maïs", "quantity": 60, "unit": "grammes" },
+            { "ingredient": "Tomate", "quantity": 1 },
+            { "ingredient": "Concombre", "quantity": 0.5 },
+            { "ingredient": "Macaronis", "quantity": 300, "unit": "grammes" },
+            { "ingredient": "Mayonnaise", "quantity": 2, "unit": "cuillères à soupe" }
         ],
         "time": 40,
-        "description":"Découper le concombre et les tomates en dés, les mettre dans un saladier avec le mais et les miettes de poisson, ajouter les pates. Ajouter la mayonnaise. Mélanger le tout et servir frais.",
+        "description": "Cuire les pâtes et les laisser refroidir. Couper le concombre et la tomate en dés, mélanger avec le thon et le maïs dans un saladier. Ajouter la mayonnaise et bien mélanger avant de servir frais.",
         "appliance": "Saladier",
-        "ustensils":["couteau", "cuillère en bois"]
+        "ustensils": ["couteau", "cuillère en bois"]
     },
     {
         "id": 25,
@@ -889,138 +423,67 @@ export const recipe =[
         "name": "Cookies",
         "servings": 4,
         "ingredients": [
-            {
-                "ingredient": "Sucre",
-                "quantity": 100,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Beurre",
-                "quantity": 100,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Farine",
-                "quantity": 100,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Chocolat noir en pépites",
-                "quantity": 100,
-                "unit":"grammes"
-            },
-            {
-                "ingredient": "Oeuf",
-                "quantity": 1
-            }
+            { "ingredient": "Sucre", "quantity": 100, "unit": "grammes" },
+            { "ingredient": "Beurre", "quantity": 100, "unit": "grammes" },
+            { "ingredient": "Farine", "quantity": 100, "unit": "grammes" },
+            { "ingredient": "Chocolat noir en pépites", "quantity": 100, "unit": "grammes" },
+            { "ingredient": "Oeuf", "quantity": 1 }
         ],
         "time": 30,
-        "description":"Faire fondre le beurre et le mélanger avec le sucre. Finalement ajouter l'oeuf. Ajouter la farine tout en mélangeant peu pa peu pour avoir une masse sans grumeaux. Ajouter les pépites de chocolat. Faire, une plaque de cuisson de petites boules pour les cookies. Mettre au four à 180° pour 10 minutes.",
+        "description": "Mélanger le beurre fondu avec le sucre et l'œuf. Ajouter la farine en mélangeant progressivement pour éviter les grumeaux. Incorporer les pépites de chocolat. Former des petites boules et les disposer sur une plaque de cuisson. Cuire au four à 180°C pendant 10 minutes.",
         "appliance": "Four",
-        "ustensils":["fouet", "saladier", "plaque de cuisson"]
+        "ustensils": ["fouet", "saladier", "plaque de cuisson"]
     },
     {
         "id": 26,
         "image": "Recette26.webp",
-        "name": "Soupe de tomates",
+        "name": "Soupe de Tomates",
         "servings": 2,
         "ingredients": [
-            {
-                "ingredient": "Tomate",
-                "quantity": 6
-            },
-            {
-                "ingredient": "Pommes de terre",
-                "quantity": 1
-            },
-            {
-                "ingredient": "Huile d'olives"
-            },
-            {
-                "ingredient": "Oignon",
-                "quantity": 1
-            },
-            {
-                "ingredient": "Ail",
-                "quantity": 1,
-                "unit": "gousses"
-            }
+            { "ingredient": "Tomate", "quantity": 6 },
+            { "ingredient": "Pommes de terre", "quantity": 1 },
+            { "ingredient": "Huile d'olive" },
+            { "ingredient": "Oignon", "quantity": 1 },
+            { "ingredient": "Ail", "quantity": 1, "unit": "gousse" }
         ],
         "time": 25,
-        "description":"Verser de l'huile dans une cocotte minute couper les légumes et les verser dans l'huile chaude. Laisser cuire et remuer pendant 10 minutes. Passer aux mixer. Servir.",
+        "description": "Faire chauffer l'huile d'olive dans une cocotte-minute, ajouter les légumes coupés en morceaux et les faire revenir pendant 10 minutes. Mixer jusqu'à obtention d'une texture lisse. Servir chaud.",
         "appliance": "Mixer",
-        "ustensils":["cocotte minute", "couteau"]
+        "ustensils": ["cocotte-minute", "couteau"]
     },
     {
         "id": 27,
         "image": "Recette27.webp",
-        "name": "Soupe à l'oseille",
+        "name": "Soupe à l'Oseille",
         "servings": 4,
         "ingredients": [
-            {
-                "ingredient": "Oseille",
-                "quantity": 2
-            },
-            {
-                "ingredient": "Oeuf",
-                "quantity": 1
-            },
-            {
-                "ingredient": "Crème fraîche",
-                "quantity": 4,
-                "unit": "cuillère à soupe"
-            },
-            {
-                "ingredient": "Vermicelles",
-                "quantity": 1,
-                "unit":"verres"
-            },
-            {
-                "ingredient": "Beurre salé",
-                "quantity": 50,
-                "unit": "grammes"
-            }
+            { "ingredient": "Oseille", "quantity": 2 },
+            { "ingredient": "Oeuf", "quantity": 1 },
+            { "ingredient": "Crème fraîche", "quantity": 4, "unit": "cuillères à soupe" },
+            { "ingredient": "Vermicelles", "quantity": 1, "unit": "verre" },
+            { "ingredient": "Beurre salé", "quantity": 50, "unit": "grammes" }
         ],
         "time": 15,
-        "description":"Faire fondre l'oseille avec du beurre demi sel, ajouter un litre d'eau. Ajouter les vermicelles. Laisser cuire. une fois prêt, sortir du feu et après 5 minutes ajouter le jaune d'oeuf et la crème fraîche",
+        "description": "Faire fondre l’oseille dans le beurre salé, ajouter un litre d’eau et les vermicelles. Cuire quelques minutes puis retirer du feu. Ajouter le jaune d'œuf et la crème fraîche avant de servir.",
         "appliance": "Casserole",
-        "ustensils":["couteau","cuillère en bois"]
+        "ustensils": ["couteau", "cuillère en bois"]
     },
     {
         "id": 28,
         "image": "Recette28.webp",
-        "name": "Soupe de poireaux",
+        "name": "Soupe de Poireaux",
         "servings": 4,
         "ingredients": [
-            {
-                "ingredient": "Poireau",
-                "quantity": 3
-            },
-            {
-                "ingredient": "Pommes de terre",
-                "quantity": 400,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Oseille",
-                "quantity": 75,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Beurre",
-                "quantity": 50,
-                "unit":"grammes"
-            },
-            {
-                "ingredient": "Crème fraîche",
-                "quantity": 10,
-                "unit": "cl"
-            }
+            { "ingredient": "Poireau", "quantity": 3 },
+            { "ingredient": "Pommes de terre", "quantity": 400, "unit": "grammes" },
+            { "ingredient": "Oseille", "quantity": 75, "unit": "grammes" },
+            { "ingredient": "Beurre", "quantity": 50, "unit": "grammes" },
+            { "ingredient": "Crème fraîche", "quantity": 10, "unit": "cl" }
         ],
         "time": 80,
-        "description":"Émincer les blanc de poireaux et les faire chauffer dans 25 grammes de beurre. AJouter les pommes de terres coupées en morceaux. Ajouter l'eau et laisser mijoter pour 45 minutes. Chauffer l'oseille avec le beurre restant puis incorporer le tout. Mixez. Ajoutez la crème. Bon appetit.",
+        "description": "Émincer les blancs de poireaux et les faire revenir dans 25g de beurre. Ajouter les pommes de terre coupées en morceaux et couvrir d'eau. Laisser mijoter 45 minutes. Faire revenir l’oseille avec le reste du beurre et incorporer au mélange. Mixer la soupe, ajouter la crème fraîche et servir chaud.",
         "appliance": "Mixer",
-        "ustensils":["casserole","couteau"]
+        "ustensils": ["casserole", "couteau"]
     },
     {
         "id": 29,
@@ -1028,239 +491,117 @@ export const recipe =[
         "name": "Houmous Express",
         "servings": 2,
         "ingredients": [
-            {
-                "ingredient": "Pois chiches",
-                "quantity": 1,
-                "unit": "boites"
-            },
-            {
-                "ingredient": "Ail",
-                "quantity": 1,
-                "unit": "gousses"
-            },
-            {
-                "ingredient": "Citron",
-                "quantity": 2
-            },
-            {
-                "ingredient": "Huile d'olive"
-            },
-            {
-                "ingredient": "Paprika"
-            }
+            { "ingredient": "Pois chiches", "quantity": 1, "unit": "boîte" },
+            { "ingredient": "Ail", "quantity": 1, "unit": "gousse" },
+            { "ingredient": "Citron", "quantity": 2 },
+            { "ingredient": "Huile d'olive" },
+            { "ingredient": "Paprika" }
         ],
         "time": 30,
-        "description":"Prendre les pois chiches, les mettre dans le mixer avec de l'huile d'olive, ajouter le jus des 2 citrons et du paprika selon le gout.",
+        "description": "Égoutter les pois chiches, les mettre dans un mixeur avec de l'huile d'olive, le jus des citrons, l’ail et une pincée de paprika. Mixer jusqu'à obtenir une texture lisse et crémeuse.",
         "appliance": "Mixer",
-        "ustensils":["cuillère en bois", "presse citron"]
+        "ustensils": ["cuillère en bois", "presse-citron"]
     },
     {
         "id": 30,
         "image": "Recette30.webp",
-        "name": "Purée de pois cassés",
+        "name": "Purée de Pois Cassés",
         "servings": 4,
         "ingredients": [
-            {
-                "ingredient": "Pois Cassé",
-                "quantity": 500,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Oignon",
-                "quantity": 1
-            },
-            {
-                "ingredient": "Ail",
-                "quantity": 2,
-                "unit": "gousses"
-            }
+            { "ingredient": "Pois cassés", "quantity": 500, "unit": "grammes" },
+            { "ingredient": "Oignon", "quantity": 1 },
+            { "ingredient": "Ail", "quantity": 2, "unit": "gousses" }
         ],
         "time": 60,
-        "description":"Mettre tous les ingrédients dans une cocotte. ajouter de l'eau pour recouvrir l'ensemble et laisser cuire à petit feu pour 1 heure. Passer au mixer. Salez, poivrez. C'est prêt",
+        "description": "Mettre tous les ingrédients dans une cocotte, couvrir d’eau et laisser cuire à feu doux pendant 1 heure. Mixer jusqu'à obtention d’une purée onctueuse, assaisonner selon votre goût et servir chaud.",
         "appliance": "Mixer",
-        "ustensils":["casserole", "cuillère en bois"]
+        "ustensils": ["casserole", "cuillère en bois"]
     },
     {
         "id": 31,
         "image": "Recette31.webp",
-        "name": "Jardinière de légumes",
+        "name": "Jardinière de Légumes",
         "servings": 4,
         "ingredients": [
-            {
-                "ingredient": "Carotte",
-                "quantity": 2
-            },
-            {
-                "ingredient": "Pommes de terre",
-                "quantity": 2
-            },
-            {
-                "ingredient": "Haricots verts",
-                "quantity": 150,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Petits poids",
-                "quantity": 100,
-                "unit":"grammes"
-            },
-            {
-                "ingredient": "Lardons",
-                "quantity": 150,
-                "unit": "grammes"
-            }
+            { "ingredient": "Carotte", "quantity": 2 },
+            { "ingredient": "Pommes de terre", "quantity": 2 },
+            { "ingredient": "Haricots verts", "quantity": 150, "unit": "grammes" },
+            { "ingredient": "Petits pois", "quantity": 100, "unit": "grammes" },
+            { "ingredient": "Lardons", "quantity": 150, "unit": "grammes" }
         ],
         "time": 60,
-        "description":"Découper en cubes les carottes et pommes de terre. Faire revenir dans du beurre. Ajouter les lardons, une fois les lardons dorés, ajouter un grand verre d'eau. Ajouter les petit poids et les haricots verts ( tous deux pré cuits ). Ajouter Sel, poivre, thyms et laurier",
+        "description": "Couper les carottes et pommes de terre en dés. Faire revenir les lardons dans du beurre, ajouter les légumes et un grand verre d'eau. Cuire jusqu'à ce que les légumes soient tendres. Assaisonner avec du sel, du poivre, du thym et du laurier.",
         "appliance": "Poêle",
-        "ustensils":["Couteau", "économe"]
+        "ustensils": ["couteau", "économe"]
     },
     {
         "id": 32,
         "image": "Recette32.webp",
-        "name": "Croque Monsieur à la dinde",
+        "name": "Croque-Monsieur à la Dinde",
         "servings": 4,
         "ingredients": [
-            {
-                "ingredient": "Pain de mie",
-                "quantity": 8,
-                "unit": "tranches"
-            },
-            {
-                "ingredient": "Blanc de dinde",
-                "quantity": 4,
-                "unit": "tranches"
-            },
-            {
-                "ingredient": "Emmental",
-                "quantity": 8,
-                "unit": "tranches"
-            },
-            {
-                "ingredient": "Gruyère",
-                "quantity": 100,
-                "unit":"grammes"
-            },
-            {
-                "ingredient": "Lait",
-                "quantity": 5,
-                "unit": "cl"
-            },
-            {
-                "ingredient": "Noix de muscade",
-                "quantity": 1,
-                "unit": "pincées"
-            }
+            { "ingredient": "Pain de mie", "quantity": 8, "unit": "tranches" },
+            { "ingredient": "Blanc de dinde", "quantity": 4, "unit": "tranches" },
+            { "ingredient": "Emmental", "quantity": 8, "unit": "tranches" },
+            { "ingredient": "Gruyère râpé", "quantity": 100, "unit": "grammes" },
+            { "ingredient": "Lait", "quantity": 5, "unit": "cl" },
+            { "ingredient": "Noix de muscade", "quantity": 1, "unit": "pincée" }
         ],
         "time": 20,
-        "description":"Beurrer les tranches de pain, ajouter entre 2 tranches de pain de mie 1 tranche d’emmental, une de blanc de dinde, et une autre d'emmental. Dans un récipient, mélanger le gruyère rappé avec le lait et la noix de muscade. Mettre sur les croque monsieur. Placer au four durant 10 minutes.",
+        "description": "Beurrer le pain de mie, puis alterner une tranche d’emmental, une de dinde et encore une d’emmental. Mélanger le gruyère râpé avec le lait et la noix de muscade, étaler sur le dessus. Cuire au four 10 minutes à 180°C.",
         "appliance": "Four",
-        "ustensils":["râpe à fromage", "cuillère à Soupe", "couteau"]
+        "ustensils": ["râpe à fromage", "cuillère à soupe", "couteau"]
     },
     {
         "id": 33,
         "image": "Recette33.webp",
-        "name": "Sandwich au saumon fumé",
+        "name": "Sandwich au Saumon Fumé",
         "servings": 4,
         "ingredients": [
-            {
-                "ingredient": "Pain de mie",
-                "quantity": 8,
-                "unit": "tranches"
-            },
-            {
-                "ingredient": "Saumon Fumé",
-                "quantity": 4,
-                "unit": "tranches"
-            },
-            {
-                "ingredient": "Feuilles de laitue",
-                "quantity": 4
-            },
-            {
-                "ingredient": "Fromage blanc",
-                "quantity": 4,
-                "unit":"cuillères à soupe"
-            },
-            {
-                "ingredient": "Jus de citron",
-                "quantity": 1,
-                "unit": "cuillères à soupe"
-            }
+            { "ingredient": "Pain de mie", "quantity": 8, "unit": "tranches" },
+            { "ingredient": "Saumon fumé", "quantity": 4, "unit": "tranches" },
+            { "ingredient": "Feuilles de laitue", "quantity": 4 },
+            { "ingredient": "Fromage blanc", "quantity": 4, "unit": "cuillères à soupe" },
+            { "ingredient": "Jus de citron", "quantity": 1, "unit": "cuillère à soupe" }
         ],
         "time": 5,
-        "description":"Mélanger le fromage blanc avec le citron. Ajouter un peu de sel et poivre à votre gout. Faire dorer le pain de mie. Puis étaler le mélange. Ajouter une feuille de salade puis le saumon fumé. C'est prêt.",
+        "description": "Mélanger le fromage blanc avec le jus de citron, saler et poivrer. Dorer légèrement le pain de mie, tartiner le mélange, ajouter une feuille de salade et une tranche de saumon fumé.",
         "appliance": "Four",
-        "ustensils":["couteau", "cuillère en bois"]
+        "ustensils": ["couteau", "cuillère en bois"]
     },
     {
         "id": 34,
         "image": "Recette34.webp",
-        "name": "Purée de patate douce",
+        "name": "Purée de Patate Douce",
         "servings": 4,
         "ingredients": [
-            {
-                "ingredient": "Patate douce",
-                "quantity": 800,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Crème fraîche",
-                "quantity": 20,
-                "unit": "cl"
-            },
-            {
-                "ingredient": "Huile d'olive"
-            },
-            {
-                "ingredient": "Orange",
-                "quantity": 1
-            }
+            { "ingredient": "Patate douce", "quantity": 800, "unit": "grammes" },
+            { "ingredient": "Crème fraîche", "quantity": 20, "unit": "cl" },
+            { "ingredient": "Huile d'olive" },
+            { "ingredient": "Orange", "quantity": 1 }
         ],
         "time": 25,
-        "description":"Éplucher les patates douces et coupez les en morceaux. Les faire cuire durant 20 minute dans une casserole d'eau bouillante. Passer au mixer en ajoutant la crème et l'huile d'olive à son gout. Salez, poivrez. Pressez l'orange et ajouter le jus à l'ensemble. Servir.",
+        "description": "Éplucher et couper les patates douces en morceaux. Cuire 20 minutes dans l'eau bouillante. Mixer en ajoutant la crème et l'huile d'olive. Ajouter le jus d'orange et assaisonner.",
         "appliance": "Mixer",
-        "ustensils":["couteau", "économe", "cuillère en bois"]
+        "ustensils": ["couteau", "économe", "cuillère en bois"]
     },
     {
         "id": 35,
         "image": "Recette35.webp",
-        "name": "Purée de carottes",
+        "name": "Purée de Carottes",
         "servings": 2,
         "ingredients": [
-            {
-                "ingredient": "Carotte",
-                "quantity": 6
-            },
-            {
-                "ingredient": "Pommes de terre",
-                "quantity": 1
-            },
-            {
-                "ingredient": "Beurre",
-                "quantity": 20,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Crème fraîche",
-                "quantity": 2,
-                "unit":"cuillères à soupe"
-            },
-            {
-                "ingredient": "Cumin",
-                "quantity": 1,
-                "unit": "cuillères à café"
-            },
-            {
-                "ingredient": "Noix de muscade",
-                "quantity": 1,
-                "unit": "pincées"
-            }
+            { "ingredient": "Carotte", "quantity": 6 },
+            { "ingredient": "Pommes de terre", "quantity": 1 },
+            { "ingredient": "Beurre", "quantity": 20, "unit": "grammes" },
+            { "ingredient": "Crème fraîche", "quantity": 2, "unit": "cuillères à soupe" },
+            { "ingredient": "Cumin", "quantity": 1, "unit": "cuillère à café" },
+            { "ingredient": "Noix de muscade", "quantity": 1, "unit": "pincée" }
         ],
         "time": 25,
-        "description":"Éplucher les légumes, les couper en morceaux et les mettre à cuire dans une cocotte minute environ 15 minutes. Mixer en ajoutant le beurre, la crème. Ajouter le cumin et la noix de muscade.",
+        "description": "Éplucher et couper les légumes, les cuire à la cocotte minute 15 minutes. Mixer avec le beurre, la crème, le cumin et la muscade.",
         "appliance": "Mixer",
-        "ustensils":["cocotte minute", "couteau", "cuillère en bois"]
+        "ustensils": ["cocotte-minute", "couteau", "cuillère en bois"]
     },
     {
         "id": 36,
@@ -1268,80 +609,35 @@ export const recipe =[
         "name": "Lasagne Courgettes et Chèvre",
         "servings": 2,
         "ingredients": [
-            {
-                "ingredient": "Courgette",
-                "quantity": 2
-            },
-            {
-                "ingredient": "Fromage de chèvre",
-                "quantity": 4
-            },
-            {
-                "ingredient": "Lait",
-                "quantity": 25,
-                "unit": "cl"
-            },
-            {
-                "ingredient": "Lasagnes",
-                "quantity": 5,
-                "unit":"feuilles"
-            },
-            {
-                "ingredient": "Gruyère",
-                "quantity": 40,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Maïzena",
-                "quantity": 1,
-                "unit": "cuillères à soupe"
-            }
+            { "ingredient": "Courgette", "quantity": 2 },
+            { "ingredient": "Fromage de chèvre", "quantity": 4 },
+            { "ingredient": "Lait", "quantity": 25, "unit": "cl" },
+            { "ingredient": "Lasagnes", "quantity": 5, "unit": "feuilles" },
+            { "ingredient": "Gruyère râpé", "quantity": 40, "unit": "grammes" },
+            { "ingredient": "Maïzena", "quantity": 1, "unit": "cuillère à soupe" }
         ],
         "time": 35,
-        "description":"Raper les courgette et les faire revenir durant 15 minutes. Ajouter les fromages de chèvre frais. Préparer la béchamel avec le lait et la maïzena. Salez poivrez, ajouter de la noix de muscade selon les gouts. Dans un plat, mettre un peu de sauces au fond, puis des lasagnes, puis des courgettes etc... terminer par de la sauces et ajouter le gruyère. Passer au four à 180° durant 20 à 25 minutes.",
+        "description": "Râper les courgettes et les faire revenir 15 minutes. Ajouter le fromage de chèvre. Préparer une béchamel avec le lait et la maïzena. Dans un plat, alterner couches de courgettes, lasagnes et béchamel. Terminer par du gruyère et cuire 25 minutes à 180°C.",
         "appliance": "Four",
-        "ustensils":["plat à gratin", "râpe à fromage", "fouet"]
+        "ustensils": ["plat à gratin", "râpe à fromage", "fouet"]
     },
     {
         "id": 37,
         "image": "Recette37.webp",
-        "name": "Courgettes farcies au boeuf",
+        "name": "Courgettes Farcies au Bœuf",
         "servings": 2,
         "ingredients": [
-            {
-                "ingredient": "Courgette",
-                "quantity": 2
-            },
-            {
-                "ingredient": "Viande hachée",
-                "quantity": 600,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Huile d'olives",
-                "quantity": 25,
-                "unit": "cl"
-            },
-            {
-                "ingredient": "Oignon",
-                "quantity": 1
-            },
-            {
-                "ingredient": "Coulis de tomates",
-                "quantity": 20,
-                "unit": "cl"
-            },
-            {
-                "ingredient": "Gruyère",
-                "quantity": 50,
-                "unit": "grammes"
-            }
-            
+            { "ingredient": "Courgette", "quantity": 2 },
+            { "ingredient": "Viande hachée", "quantity": 600, "unit": "grammes" },
+            { "ingredient": "Huile d'olive", "quantity": 25, "unit": "cl" },
+            { "ingredient": "Oignon", "quantity": 1 },
+            { "ingredient": "Coulis de tomates", "quantity": 20, "unit": "cl" },
+            { "ingredient": "Gruyère râpé", "quantity": 50, "unit": "grammes" }
         ],
         "time": 60,
-        "description":"Couper les courgettes dans le sens de la longueur. Vider les courgette dans un saladier. Réserver.Faire revenir la chair des courgettes dans 25cl d'huile d'olive. Ajouter l'oignon puis la viande hachée. Mettre la farce dans les courgettes. Ajouter le coulis de tomates. Mettre au four pendant 30 minutes. Avant la fin de la cuisson ajouter le fromage râpé",
+        "description": "Couper les courgettes en deux et les vider. Faire revenir la chair dans l’huile d’olive avec l’oignon et la viande. Farcir les courgettes, ajouter le coulis et cuire 30 minutes au four. Ajouter le gruyère râpé en fin de cuisson.",
         "appliance": "Four",
-        "ustensils":["couteau", "cuillère en bois", "Poêle à frire"]
+        "ustensils": ["couteau", "cuillère en bois", "poêle"]
     },
     {
         "id": 38,
@@ -1349,393 +645,196 @@ export const recipe =[
         "name": "Pain Perdu",
         "servings": 4,
         "ingredients": [
-            {
-                "ingredient": "Pain",
-                "quantity": 6,
-                "unit":"tranches"
-            },
-            {
-                "ingredient": "Lait",
-                "quantity": 25,
-                "unit": "cl"
-            },
-            {
-                "ingredient": "Oeuf",
-                "quantity": 3
-            },
-            {
-                "ingredient": "Sucre roux",
-                "quantity": 75,
-                "unit": "grammes"
-            }
+            { "ingredient": "Pain", "quantity": 6, "unit": "tranches" },
+            { "ingredient": "Lait", "quantity": 25, "unit": "cl" },
+            { "ingredient": "Oeuf", "quantity": 3 },
+            { "ingredient": "Sucre roux", "quantity": 75, "unit": "grammes" }
         ],
         "time": 20,
-        "description":"Fouettez les oeufs, le sucre et le lait. tremper les tranches de pain. Le cuire au four pendant environ 10 minutes à 180°. Servir",
+        "description": "Mélanger les œufs, le sucre et le lait dans un saladier. Tremper les tranches de pain dans le mélange. Cuire au four à 180°C pendant 10 minutes ou les dorer à la poêle avec un peu de beurre. Servir chaud avec du miel ou du sucre.",
         "appliance": "Four",
-        "ustensils":["fouet", "bol","Cuillère à Soupe"]
+        "ustensils": ["fouet", "bol", "cuillère à soupe"]
     },
     {
         "id": 39,
         "image": "Recette39.webp",
-        "name": "Crumble aux pommes",
-        "servings": 40,
+        "name": "Crumble aux Pommes",
+        "servings": 4,
         "ingredients": [
-            {
-                "ingredient": "Pomme",
-                "quantity": 2
-            },
-            {
-                "ingredient": "Farine",
-                "quantity": 100,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Beurre",
-                "quantity": 50,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Sucre roux",
-                "quantity": 80,
-                "unit":"grammes"
-            }
+            { "ingredient": "Pomme", "quantity": 2 },
+            { "ingredient": "Farine", "quantity": 100, "unit": "grammes" },
+            { "ingredient": "Beurre", "quantity": 50, "unit": "grammes" },
+            { "ingredient": "Sucre roux", "quantity": 80, "unit": "grammes" }
         ],
         "time": 40,
-        "description":"Découper les pommes en dé. Mélanger dans un saladier la farine, le sucre et le beurre. Bien mélanger. Beurrer le moule et ajouter les pommes. Par dessus placez la pate que vous avez obtenu. Cuire 20 minutes au four",
+        "description": "Préchauffer le four à 180°C. Couper les pommes en dés et les placer dans un moule beurré. Mélanger la farine, le sucre et le beurre du bout des doigts pour obtenir une pâte sableuse. Répartir sur les pommes et cuire 20 minutes.",
         "appliance": "Four",
-        "ustensils":["saladier", "couteau","fouet"]
+        "ustensils": ["saladier", "couteau", "fouet"]
     },
     {
         "id": 40,
         "image": "Recette40.webp",
-        "name": "Limonade",
+        "name": "Limonade Maison",
         "servings": 4,
         "ingredients": [
-            {
-                "ingredient": "Eau",
-                "quantity": 1,
-                "unit": "Litres"
-            },
-            {
-                "ingredient": "Citron Vert",
-                "quantity": 3
-            },
-            {
-                "ingredient": "Sucre en poudre",
-                "quantity": 4,
-                "unit":"cuillères à café"
-            },
-            {
-                "ingredient": "Bicarbonate",
-                "quantity": 1,
-                "unit": "cuillères à café"
-            }
+            { "ingredient": "Eau", "quantity": 1, "unit": "litre" },
+            { "ingredient": "Citron vert", "quantity": 3 },
+            { "ingredient": "Sucre en poudre", "quantity": 4, "unit": "cuillères à café" },
+            { "ingredient": "Bicarbonate", "quantity": 1, "unit": "cuillère à café" }
         ],
         "time": 10,
-        "description":"Dans un saladier mettre l'eau, le jus des citrons et le sucre. Bien mélanger. Ajouter le bicarbonate. Servir. Ajouter des glaçon et une feuille de menthe pour la déco.",
+        "description": "Dans un saladier, mélanger l'eau, le jus des citrons et le sucre. Ajouter le bicarbonate juste avant de servir pour un effet pétillant. Servir avec des glaçons et une feuille de menthe pour la décoration.",
         "appliance": "Saladier",
-        "ustensils":["cuillère en bois"]
+        "ustensils": ["cuillère en bois"]
     },
     {
         "id": 41,
         "image": "Recette41.webp",
-        "name": "Mousse au chocolat",
+        "name": "Mousse au Chocolat",
         "servings": 4,
         "ingredients": [
-            {
-                "ingredient": "Oeuf",
-                "quantity": 3
-            },
-            {
-                "ingredient": "Chocolat noir",
-                "quantity": 100,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Sucre vanillé",
-                "quantity": 1,
-                "unit": "sachets"
-            }
+            { "ingredient": "Oeuf", "quantity": 3 },
+            { "ingredient": "Chocolat noir", "quantity": 100, "unit": "grammes" },
+            { "ingredient": "Sucre vanillé", "quantity": 1, "unit": "sachet" }
         ],
         "time": 20,
-        "description":"Séparer les blancs d'oeufs. Faire fondre le chocolat au bain marie. Ajouter les jaunes et le sucre au chocolat hors du feu. Battre les blancs en neige. Ajouter les blancs au mélange de chocolat. Mélangez délicatement avec une spatule. Servir dans un plat ou dans des verres. Mettre au frais",
+        "description": "Séparer les blancs des jaunes d'œufs. Faire fondre le chocolat au bain-marie et y ajouter les jaunes d'œufs avec le sucre vanillé hors du feu. Monter les blancs en neige et les incorporer délicatement. Mettre au frais au moins 1 heure avant de servir.",
         "appliance": "Casserole",
-        "ustensils":["fouet", "spatule", "verres"]
-    }, 
+        "ustensils": ["fouet", "spatule", "verres"]
+    },
     {
         "id": 42,
         "image": "Recette42.webp",
-        "name": "Charlotte au poires",
+        "name": "Charlotte aux Poires",
         "servings": 3,
         "ingredients": [
-            {
-                "ingredient": "Chocolat",
-                "quantity": 200,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Oeuf",
-                "quantity": 3
-            },
-            {
-                "ingredient": "Poires au jus",
-                "quantity": 0.5,
-                "unit" : "boites"
-            },
-            {
-                "ingredient": "Boudoirs",
-                "quantity": 15
-            }
+            { "ingredient": "Chocolat noir", "quantity": 200, "unit": "grammes" },
+            { "ingredient": "Oeuf", "quantity": 3 },
+            { "ingredient": "Poires au jus", "quantity": 0.5, "unit": "boîte" },
+            { "ingredient": "Boudoirs", "quantity": 15 }
         ],
         "time": 60,
-        "description":"Commencez par préparer la mousse au chocolat au moins 2 heures avant. Quand la mousse est prête et a reposée. Alors mouiller les boudoirs dans le jus des poires. Disposer. Alterner : mousse au chocolat, boudoirs et poires. Mettre au frais.",
+        "description": "Préparer une mousse au chocolat au moins 2 heures avant. Tremper les boudoirs dans le jus des poires et les disposer dans un moule à charlotte. Alterner mousse au chocolat, boudoirs et poires coupées en morceaux. Mettre au frais avant de démouler.",
         "appliance": "Moule à charlotte",
-        "ustensils":["saladier", "couteau", "fouet"]
+        "ustensils": ["saladier", "couteau", "fouet"]
     },
     {
         "id": 43,
         "image": "Recette43.webp",
-        "name": "Tarte au citron",
+        "name": "Tarte au Citron",
         "servings": 6,
         "ingredients": [
-            {
-                "ingredient": "Pâte brisée",
-                "quantity": 200,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Sucre",
-                "quantity": 150,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Beurre fondu",
-                "quantity": 100,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Oeuf",
-                "quantity": 3
-            },
-            {
-                "ingredient": "Citron"
-            }
+            { "ingredient": "Pâte brisée", "quantity": 200, "unit": "grammes" },
+            { "ingredient": "Sucre", "quantity": 150, "unit": "grammes" },
+            { "ingredient": "Beurre fondu", "quantity": 100, "unit": "grammes" },
+            { "ingredient": "Oeuf", "quantity": 3 },
+            { "ingredient": "Citron", "quantity": 2 }
         ],
         "time": 50,
-        "description":"Préchauffez le fours à 200°. Étaler la pate. La mettre dans un moule. Battre les oeufs avec le sucre. Ajouter le jus de citron et le beurre. Verser le tout sur la pate. Au four 30 minutes. Bon appetit ",
+        "description": "Préchauffer le four à 200°C. Étaler la pâte brisée dans un moule et la piquer avec une fourchette. Battre les œufs avec le sucre, ajouter le jus des citrons et le beurre fondu. Verser la préparation sur la pâte et cuire 30 minutes.",
         "appliance": "Four",
-        "ustensils":["rouleau à patisserie", "moule à tarte", "presse citron"]
-    }, 
+        "ustensils": ["rouleau à pâtisserie", "moule à tarte", "presse-citron"]
+    },
     {
         "id": 44,
         "image": "Recette44.webp",
-        "name": "Crème dessert au chocolat",
+        "name": "Crème Dessert au Chocolat",
         "servings": 6,
         "ingredients": [
-            {
-                "ingredient": "Lait",
-                "quantity": 1,
-                "unit": "litres"
-            },
-            {
-                "ingredient": "Chocolat",
-                "quantity": 200,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Sucre",
-                "quantity": 100,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Beurre",
-                "quantity": 50,
-                "unit":"grammes"
-            },
-            {
-                "ingredient": "farine",
-                "quantity": 40,
-                "unit": "grammes"
-            }
+            { "ingredient": "Lait", "quantity": 1, "unit": "litre" },
+            { "ingredient": "Chocolat noir", "quantity": 200, "unit": "grammes" },
+            { "ingredient": "Sucre", "quantity": 100, "unit": "grammes" },
+            { "ingredient": "Beurre", "quantity": 50, "unit": "grammes" },
+            { "ingredient": "Farine", "quantity": 40, "unit": "grammes" }
         ],
         "time": 15,
-        "description":"Mélanger la farine et le beurre fondu en ajoutant le lait peu à peu. Ajouter du sucre après la cuisson. Bien mélanger. Ajouter le chocolat en morceaux et laisser chauffer 8 minutes en mélangeant avec une cuillère en bois. Mettre dans des verres",
+        "description": "Faire chauffer le lait. Mélanger la farine avec le beurre fondu et incorporer le lait chaud progressivement. Ajouter le sucre puis le chocolat en morceaux et laisser chauffer 8 minutes en remuant. Verser dans des ramequins et laisser refroidir.",
         "appliance": "Casserole",
-        "ustensils":["cuillère en bois"]
+        "ustensils": ["cuillère en bois"]
     },
     {
         "id": 45,
         "image": "Recette45.webp",
-        "name": "Crème pâtissière",
+        "name": "Crème Pâtissière",
         "servings": 8,
         "ingredients": [
-            {
-                "ingredient": "Lait",
-                "quantity": 50,
-                "unit": "cl"
-            },
-            {
-                "ingredient": "Oeuf",
-                "quantity": 2
-            },
-            {
-                "ingredient": "Farine",
-                "quantity": 30,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Sucre",
-                "quantity": 80,
-                "unit":"grammes"
-            }
+            { "ingredient": "Lait", "quantity": 50, "unit": "cl" },
+            { "ingredient": "Oeuf", "quantity": 2 },
+            { "ingredient": "Farine", "quantity": 30, "unit": "grammes" },
+            { "ingredient": "Sucre", "quantity": 80, "unit": "grammes" }
         ],
         "time": 30,
-        "description":"Faire bouillir le lait ( on peut y ajouter de l'essence de vanille. Battre les oeufs et le sucre, ajouter la farine puis finalement ajouter le lait chaud. Remettre à feu doux pour faire épaissir en remuant pendant 5 à 10 minutes.",
+        "description": "Faire bouillir le lait avec un peu d'extrait de vanille. Battre les œufs avec le sucre, ajouter la farine et bien mélanger. Verser le lait chaud dessus en remuant, puis remettre sur feu doux jusqu'à épaississement. Laisser refroidir avant utilisation.",
         "appliance": "Casserole",
-        "ustensils":["fouet","saladier"]
+        "ustensils": ["fouet", "saladier"]
     },
     {
         "id": 46,
         "image": "Recette46.webp",
-        "name": "Far breton",
+        "name": "Far Breton",
         "servings": 6,
         "ingredients": [
-            {
-                "ingredient": "Farine",
-                "quantity": 250,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Sucre",
-                "quantity": 150,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Sucre vanillé",
-                "quantity": 1,
-                "unit": "sachets"
-            },
-            {
-                "ingredient": "Oeuf",
-                "quantity": 4
-            },
-            {
-                "ingredient": "Lait",
-                "quantity": 1,
-                "unit": "litre"
-            },
-            {
-                "ingredient": "Pruneaux",
-                "quantity": 100,
-                "unit": "grammes"
-            }
+            { "ingredient": "Farine", "quantity": 250, "unit": "grammes" },
+            { "ingredient": "Sucre", "quantity": 150, "unit": "grammes" },
+            { "ingredient": "Sucre vanillé", "quantity": 1, "unit": "sachet" },
+            { "ingredient": "Oeuf", "quantity": 4 },
+            { "ingredient": "Lait", "quantity": 1, "unit": "litre" },
+            { "ingredient": "Pruneaux", "quantity": 100, "unit": "grammes" }
         ],
         "time": 60,
-        "description":"Mélanger la farine avec le sucre et les oeufs en ajoutant du sucre vanillé. Ajouter le lait petit à petit. Ajouter un petit vers de rhum. Verser la masse dans un plat beurré y placer les pruneaux et faire cuire à 200° pendant 45 minutes",
+        "description": "Préchauffer le four à 200°C. Mélanger la farine, le sucre, le sucre vanillé et les œufs. Ajouter le lait progressivement pour obtenir une pâte homogène. Verser dans un moule beurré, disposer les pruneaux et cuire 45 minutes.",
         "appliance": "Four",
-        "ustensils":["fouet", "moule", "verres"]
+        "ustensils": ["fouet", "moule", "verres"]
     },
     {
         "id": 47,
         "image": "Recette47.webp",
-        "name": "Mousse au citron",
+        "name": "Mousse au Citron",
         "servings": 6,
         "ingredients": [
-            {
-                "ingredient": "Jus de citron",
-                "quantity": 100,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Mascarpone",
-                "quantity": 250,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Sucre",
-                "quantity": 100,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Crème Fraîche",
-                "quantity": 20,
-                "unit":"cl"
-            }
+            { "ingredient": "Jus de citron", "quantity": 100, "unit": "grammes" },
+            { "ingredient": "Mascarpone", "quantity": 250, "unit": "grammes" },
+            { "ingredient": "Sucre", "quantity": 100, "unit": "grammes" },
+            { "ingredient": "Crème fraîche", "quantity": 20, "unit": "cl" }
         ],
         "time": 5,
-        "description":"Mélanger le jus de citron avec le sucre et la mascarpone. Ajouter la crème fraîche. Mélanger le tout et mettre au congélateur pendant 1 heure. Servir",
+        "description": "Mélanger le jus de citron, le sucre et la mascarpone. Ajouter la crème fraîche et bien fouetter. Mettre au congélateur pendant 1 heure avant de servir.",
         "appliance": "Saladier",
-        "ustensils":["fouet", "verres", "cuillère en bois"]
+        "ustensils": ["fouet", "verres", "cuillère en bois"]
     },
     {
         "id": 48,
         "image": "Recette48.webp",
-        "name": "Pizza",
+        "name": "Pizza Maison",
         "servings": 4,
         "ingredients": [
-            {
-                "ingredient": "Pâte à pizza",
-                "quantity": 1
-            },
-            {
-                "ingredient": "Tomates pelées",
-                "quantity": 1,
-                "unit": "boites"
-            },
-            {
-                "ingredient": "Lardons",
-                "quantity": 1,
-                "unit": "barquettes"
-            },
-            {
-                "ingredient": "Champignons de paris",
-                "quantity": 1,
-                "unit":"boites"
-            },
-            {
-                "ingredient": "Gruyère",
-                "quantity": 200,
-                "unit": "grammes"
-            }
+            { "ingredient": "Pâte à pizza", "quantity": 1 },
+            { "ingredient": "Tomates pelées", "quantity": 1, "unit": "boîte" },
+            { "ingredient": "Lardons", "quantity": 1, "unit": "barquette" },
+            { "ingredient": "Champignons de Paris", "quantity": 1, "unit": "boîte" },
+            { "ingredient": "Gruyère râpé", "quantity": 200, "unit": "grammes" }
         ],
         "time": 40,
-        "description":"Étaler la pate a pizza. Écraser les tomates pelées, les étaler sur la pâte, ajouter les lardons et les champignons. Ajouter le gruyère eet passer au four à 220° durant 20 minutes",
+        "description": "Préchauffer le four à 220°C. Étaler la pâte à pizza, écraser les tomates pelées et les répartir dessus. Ajouter les lardons, les champignons émincés et le gruyère râpé. Cuire 20 minutes au four.",
         "appliance": "Four",
-        "ustensils":["rouleau à patisserie", "râpe à fromage","couteau"]
+        "ustensils": ["rouleau à pâtisserie", "râpe à fromage", "couteau"]
     },
     {
         "id": 49,
         "image": "Recette49.webp",
-        "name": "Smoothie tropical",
+        "name": "Smoothie Tropical",
         "servings": 4,
         "ingredients": [
-            {
-                "ingredient": "Bananes",
-                "quantity": 2
-            },
-            {
-                "ingredient": "Kiwis",
-                "quantity": 3
-            },
-            {
-                "ingredient": "Mangue",
-                "quantity": 1
-            },
-            {
-                "ingredient": "Ananas",
-                "quantity": 4,
-                "unit":"tranches"
-            },
-            {
-                "ingredient": "Miel",
-                "quantity": 2,
-                "unit": "cuillères à soupe"
-            }
+            { "ingredient": "Banane", "quantity": 2 },
+            { "ingredient": "Kiwi", "quantity": 3 },
+            { "ingredient": "Mangue", "quantity": 1 },
+            { "ingredient": "Ananas", "quantity": 4, "unit": "tranches" },
+            { "ingredient": "Miel", "quantity": 2, "unit": "cuillères à soupe" }
         ],
-        "time": 0,
-        "description":"Découper les fruits. Le passer au blender jusqu'à obtenir une texture liquide. Mettre au frais. Servir",
+        "time": 10,
+        "description": "Éplucher et couper les fruits en morceaux. Mixer avec le miel jusqu'à obtenir une texture lisse. Mettre au frais avant de servir.",
         "appliance": "Blender",
-        "ustensils":["couteau", "verres"]
+        "ustensils": ["couteau", "verres"]
     },
     {
         "id": 50,
@@ -1743,34 +842,16 @@ export const recipe =[
         "name": "Frangipane",
         "servings": 2,
         "ingredients": [
-            {
-                "ingredient": "Pâte feuilletée",
-                "quantity": 400,
-                "unit":"grammes"
-            },
-            {
-                "ingredient": "Oeuf",
-                "quantity": 6
-            },
-            {
-                "ingredient": "Poudre d'amendes",
-                "quantity": 500,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Beurre",
-                "quantity": 500,
-                "unit": "grammes"
-            },
-            {
-                "ingredient": "Sucre glace",
-                "quantity": 500,
-                "unit":"grammes"
-            }
+            { "ingredient": "Pâte feuilletée", "quantity": 400, "unit": "grammes" },
+            { "ingredient": "Oeuf", "quantity": 6 },
+            { "ingredient": "Poudre d'amandes", "quantity": 500, "unit": "grammes" },
+            { "ingredient": "Beurre", "quantity": 500, "unit": "grammes" },
+            { "ingredient": "Sucre glace", "quantity": 500, "unit": "grammes" }
         ],
         "time": 60,
-        "description":"Préparer la frangipane : Mélanger le sucre la poudre d'amandes, le beurre et les oeufs. Étaler la moitié de la pate feuilleté et mettre dans un moule à tarte. Garnir de frangipane et recouvrir du reste de pate feuilletée. Mettre au four 30 minutes",
+        "description": "Mélanger le sucre glace, la poudre d'amandes, le beurre fondu et les œufs pour préparer la frangipane. Étaler une pâte feuilletée dans un moule, garnir de frangipane, recouvrir de la seconde pâte et sceller les bords. Cuire au four 30 minutes à 180°C.",
         "appliance": "Four",
-        "ustensils":["rouleau à patisserie","fouet"]
-    }
-];
+        "ustensils": ["rouleau à pâtisserie", "fouet"]
+    },
+];  
+
