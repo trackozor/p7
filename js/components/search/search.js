@@ -10,7 +10,6 @@
 /*                     - Mise à jour dynamique des options disponibles.               */
 /* ==================================================================================== */
 
-import { searchRecipesLoopNative } from "./searchloopNative.js";
 import { searchRecipesFunctional } from "./searchFunctional.js";
 import { debounce, logEvent } from "../../utils/utils.js";
 

@@ -16,7 +16,7 @@ import { displayResults } from "../events/eventHandler.js";
 
 
 
-const filters = {
+let selectedFilters = {
     searchKeyword: "",
     ingredients: new Set(),
     appliances: new Set(),
@@ -83,7 +83,7 @@ export async function initFilters() {
 
 function generateFilterData() {
     try {
-        logEvent("info", "🔄 Début de la génération des filtres...");
+        logEvent("info", "Début de la génération des filtres...");
 
         const ingredientsSet = new Set();
         const appliancesSet = new Set();
@@ -119,9 +119,9 @@ function generateFilterData() {
             utensils: [...utensilsSet]
         });
 
-         createFilterSection("#filters", "Ingrédients", "ingredients", ingredientsSet);
-         createFilterSection("#filters", "Appareils", "appliances", appliancesSet);
-         createFilterSection("#filters", "Ustensiles", "utensils", utensilsSet);
+        createFilterSection("#filters", "Ingrédients", "ingredients", ingredientsSet);
+        createFilterSection("#filters", "Appareils", "appliances", appliancesSet);
+        createFilterSection("#filters", "Ustensiles", "utensils", utensilsSet);
 
         logEvent("success", "✅ generateFilterData : Filtres générés avec succès.");
 
@@ -332,8 +332,8 @@ export function applyFilters() {
             // Vérifie si le mot-clé est présent dans le nom, la description ou les ingrédients
             const matchesKeyword = keyword
                 ? normalizeText(recipe.name).includes(keyword) ||
-                  normalizeText(recipe.description).includes(keyword) ||
-                  (recipe.ingredients && recipe.ingredients.some(ing => normalizeText(ing.ingredient).includes(keyword)))
+                    normalizeText(recipe.description).includes(keyword) ||
+                    (recipe.ingredients && recipe.ingredients.some(ing => normalizeText(ing.ingredient).includes(keyword)))
                 : true;
 
             // Vérifie si la recette correspond à tous les filtres actifs
@@ -381,7 +381,7 @@ export function updateFilters(results) {
 
         logEvent("info", `updateFilters : Mise à jour des filtres avec ${results.length} recettes.`);
 
-        const updatedFilters = {
+        let updatedFilters = {
             ingredients: new Set(),
             ustensils: new Set(),
             appliances: new Set()
@@ -391,13 +391,32 @@ export function updateFilters(results) {
             recipe.ingredients?.forEach(ing => updatedFilters.ingredients.add(normalizeText(ing.ingredient)));
             recipe.ustensils?.forEach(ust => updatedFilters.ustensils.add(normalizeText(ust)));
             if (recipe.appliance) {
-              updatedFilters.appliances.add(normalizeText(recipe.appliance));
+                updatedFilters.appliances.add(normalizeText(recipe.appliance));
             }
         });
 
-        selectedFilters.ingredients = new Set([...selectedFilters.ingredients].filter(tag => updatedFilters.ingredients.has(tag)));
-        selectedFilters.ustensils = new Set([...selectedFilters.ustensils].filter(tag => updatedFilters.ustensils.has(tag)));
-        selectedFilters.appliances = new Set([...selectedFilters.appliances].filter(tag => updatedFilters.appliances.has(tag)));
+        // Assure que `selectedFilters` contient bien des `Set()`
+        if (!(selectedFilters.ingredients instanceof Set)) {
+            selectedFilters.ingredients = new Set();
+        }
+        if (!(selectedFilters.utensils instanceof Set)) {
+            selectedFilters.ustensils = new Set();
+        }
+        if (!(selectedFilters.appliances instanceof Set)) {
+            selectedFilters.appliances = new Set();
+        }
+
+        // Met à jour les filtres sélectionnés en s'assurant qu'ils sont bien définis
+        selectedFilters.ingredients = new Set(
+            Array.from(selectedFilters.ingredients).filter(tag => updatedFilters.ingredients.has(tag))
+        );
+        selectedFilters.ustensils = new Set(
+            Array.from(selectedFilters.ustensils).filter(tag => updatedFilters.ustensils.has(tag))
+        );
+        selectedFilters.appliances = new Set(
+            Array.from(selectedFilters.appliances).filter(tag => updatedFilters.appliances.has(tag))
+        );
+
 
         logEvent("success", `updateFilters : Filtres mis à jour.`);
     } catch (error) {

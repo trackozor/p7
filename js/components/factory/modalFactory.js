@@ -1,3 +1,6 @@
+
+
+import { logEvent } from "../../utils/utils.js";
 // ==========================================================
 // 3. Création et Affichage de la Modale de Saisie du Mot de Passe
 // ==========================================================
@@ -15,11 +18,7 @@
  */
 export function createPasswordModal(callback) {
     try {
-        // Vérifie que `callback` est une fonction valide
-        if (!callback || typeof callback !== "function") {
-            logEvent("error", "createPasswordModal : callback invalide ou non fourni");
-            throw new Error("Un callback valide est requis pour la validation du mot de passe.");
-        }
+       
 
         // Vérifie si une modale de mot de passe existe déjà pour éviter les doublons
         if (document.getElementById("password-modal")) {

@@ -15,7 +15,7 @@ export function RecipeFactory(recipeData) {
 
             card.innerHTML = `
                 <figure class="recipe-card__image">
-                    <img src="../assets/images/${this.image}" alt="${this.name}" class="recipe-card__img" loading="lazy">
+                    <img src="../assets/webp/${this.image}" alt="${this.name}" class="recipe-card__img" loading="lazy">
                     <figcaption class="recipe-card__time">${this.time} min</figcaption>
                 </figure>
 

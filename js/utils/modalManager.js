@@ -33,19 +33,24 @@ import { attachModalEvents, detachModalEvents } from "../events/eventHandler.js"
  * @param {function} callback - Fonction exécutée après validation du mot de passe.
  * @throws {Error} Si le callback est invalide ou non fourni.
  */
-export function createPasswordModal(callback) {
+/**
+ * Crée une modale de mot de passe pour l'accès administrateur.
+ * @param {Function} callback - Fonction appelée lors de la validation du mot de passe.
+ */
+/**
+ * Crée et affiche une modale de mot de passe pour l'accès administrateur.
+ */
+export function createPasswordModal() {
     try {
-        // Vérifie que le callback est bien une fonction valide
-        if (!callback || typeof callback !== "function") {
-            logEvent("error", "createPasswordModal : callback invalide ou non fourni");
-            throw new Error("Un callback valide est requis pour la validation du mot de passe.");
-        }
+        logEvent("info", "🔄 createPasswordModal : Début de la création de la modale...");
 
-        // Vérifie si une modale de mot de passe existe déjà pour éviter les doublons
+        // Vérifie si la modale existe déjà pour éviter les doublons
         if (document.getElementById("password-modal")) {
-            logEvent("info", "createPasswordModal : modale de mot de passe déjà présente");
+            logEvent("warning", "⚠️ createPasswordModal : Modale de mot de passe déjà existante.");
             return;
         }
+
+        logEvent("info", "✅ createPasswordModal : Création d'une nouvelle modale...");
 
         // Création de l'élément contenant la modale
         const modal = document.createElement("div");
@@ -54,33 +59,175 @@ export function createPasswordModal(callback) {
         document.body.appendChild(modal); // Ajoute la modale au DOM
         modal.classList.add("active"); // Active l'affichage de la modale
 
-        // Sélection des éléments de saisie et des boutons
+        logEvent("success", "🎉 createPasswordModal : Modale ajoutée au DOM avec succès.");
+
+        // Sélection des éléments de la modale
         const passwordInput = modal.querySelector("#admin-password");
         const validateBtn = modal.querySelector(".validate-btn");
         const cancelBtn = modal.querySelector(".cancel-btn");
 
-        // Vérifie que tous les éléments requis sont présents
+        logEvent("info", "🔍 Vérification des éléments HTML de la modale...");
+
+        // Vérifie que tous les éléments sont bien présents
         if (!passwordInput || !validateBtn || !cancelBtn) {
-            logEvent("error", "createPasswordModal : Échec de l'initialisation des éléments de la modale.");
+            logEvent("error", "❌ createPasswordModal : Un ou plusieurs éléments de la modale sont introuvables.");
             throw new Error("Échec de l'initialisation des éléments de la modale.");
         }
 
-        // Place le focus sur le champ de saisie du mot de passe pour améliorer l'expérience utilisateur
+        logEvent("success", "✅ Tous les éléments de la modale sont présents.");
+
+        // Place le focus sur le champ de saisie du mot de passe
         passwordInput.focus();
+        logEvent("info", "📝 Focus mis sur le champ de saisie du mot de passe.");
 
-        // Attache les événements pour gérer la validation et l'annulation
-        attachModalEvents(passwordInput, validateBtn, cancelBtn, callback, modal);
+        // 🔐 Validation du mot de passe
+        validateBtn.addEventListener("click", () => {
+            const enteredPassword = passwordInput.value.trim();
+            logEvent("info", `🔑 Mot de passe saisi : ${enteredPassword}`);
 
-        logEvent("success", "createPasswordModal : modale de mot de passe créée avec succès");
+            if (enteredPassword === "admin123") {  // Change ici pour ton vrai mot de passe
+                logEvent("success", "✅ Mot de passe correct, accès autorisé.");
+                alert("Accès autorisé !");
+                closeModal(modal);
+            } else {
+                logEvent("error", "❌ Mot de passe incorrect.");
+                alert("Mot de passe incorrect. Réessayez.");
+                passwordInput.value = "";
+                passwordInput.focus();
+            }
+        });
+
+        // ❌ Fermeture de la modale en cas d'annulation
+        cancelBtn.addEventListener("click", () => {
+            logEvent("info", "🚪 Fermeture de la modale via le bouton Annuler.");
+            closeModal(modal);
+        });
 
     } catch (error) {
-        // Capture et logue l'erreur en cas de problème lors de la création de la modale
-        logEvent("error", "createPasswordModal : erreur lors de la création de la modale", { message: error.message });
-
-        // Optionnel : Peut afficher un message utilisateur si la création échoue
+        // Log et gestion de l'erreur
+        logEvent("error", "❌ createPasswordModal : Erreur lors de la création de la modale.", { message: error.message });
         alert("Une erreur est survenue lors de la création de la modale. Veuillez réessayer.");
     }
 }
+
+/**
+ * Ferme la modale et la supprime du DOM.
+ * @param {HTMLElement} modal - L'élément de la modale à fermer.
+ */
+function closeModal(modal) {
+    if (modal) {
+        logEvent("info", "🚪 Suppression de la modale du DOM.");
+        modal.classList.remove("active");
+        setTimeout(() => modal.remove(), 300); // Supprime la modale après la transition
+    }
+}
+/**
+ * Crée et affiche une modale de mot de passe pour l'accès administrateur.
+ */
+/**
+ * Crée et affiche une modale de mot de passe pour l'accès administrateur.
+ */
+export function createPasswordModal() {
+    try {
+        logEvent("info", "🔄 createPasswordModal : Début de la création de la modale...");
+
+        // Vérifie si la modale existe déjà pour éviter les doublons
+        const existingModal = document.getElementById("password-modal");
+        if (existingModal) {
+            logEvent("warning", "⚠️ Modale de mot de passe détectée. Suppression forcée avant nouvelle création.");
+            existingModal.remove(); // Supprime la modale du DOM avant d'en créer une nouvelle
+        }
+
+        logEvent("info", "✅ createPasswordModal : Création d'une nouvelle modale...");
+
+        // Vérifie si `getModalTemplate` est bien défini
+        if (typeof getModalTemplate !== "function") {
+            logEvent("error", "❌ createPasswordModal : getModalTemplate() est introuvable ou invalide.");
+            throw new Error("Le template de la modale ne peut pas être généré.");
+        }
+
+        // Création de l'élément contenant la modale
+        const modal = document.createElement("div");
+        modal.id = "password-modal";
+        modal.innerHTML = getModalTemplate(); // Insère le contenu HTML de la modale
+
+        // Vérifie si la structure HTML générée contient bien les éléments requis
+        const passwordInput = modal.querySelector("#admin-password");
+        const validateBtn = modal.querySelector(".validate-btn");
+        const cancelBtn = modal.querySelector(".cancel-btn");
+
+        if (!passwordInput || !validateBtn || !cancelBtn) {
+            logEvent("error", "❌ createPasswordModal : Structure HTML incorrecte. Vérifiez getModalTemplate().");
+            throw new Error("La structure de la modale est invalide.");
+        }
+
+        // Ajoute la modale au DOM
+        document.body.appendChild(modal);
+        setTimeout(() => modal.classList.add("active"), 10); // Animation d'apparition fluide
+        logEvent("success", "🎉 createPasswordModal : Modale ajoutée au DOM avec succès.");
+
+        // Place le focus sur le champ de saisie du mot de passe
+        passwordInput.focus();
+        logEvent("info", "📝 Focus mis sur le champ de saisie du mot de passe.");
+
+        // 🔐 Validation du mot de passe
+        validateBtn.addEventListener("click", () => validatePassword(modal, passwordInput));
+
+        // ❌ Fermeture de la modale en cas d'annulation
+        cancelBtn.addEventListener("click", () => closeModal(modal));
+
+        // Permet la fermeture avec la touche "Échap"
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
+                logEvent("info", "🚪 Fermeture de la modale via la touche Échap.");
+                closeModal(modal);
+            }
+        }, { once: true });
+
+    } catch (error) {
+        logEvent("error", "❌ createPasswordModal : Erreur lors de la création de la modale.", { message: error.message });
+        alert("Une erreur est survenue lors de la création de la modale. Veuillez réessayer.");
+    }
+}
+
+/**
+ * Vérifie le mot de passe saisi et autorise l'accès si correct.
+ * @param {HTMLElement} modal - Élément de la modale à fermer si mot de passe valide.
+ * @param {HTMLInputElement} passwordInput - Champ de saisie du mot de passe.
+ */
+function validatePassword(modal, passwordInput) {
+    const enteredPassword = passwordInput.value.trim();
+    logEvent("info", `🔑 Mot de passe saisi : ${enteredPassword}`);
+
+    if (enteredPassword === "admin123") { // Remplace ici par ton vrai mot de passe
+        logEvent("success", "✅ Mot de passe correct, accès autorisé.");
+        alert("Accès autorisé !");
+        closeModal(modal);
+        enableBenchmarkMode(); // Si nécessaire, active le mode admin
+    } else {
+        logEvent("error", "❌ Mot de passe incorrect.");
+        alert("Mot de passe incorrect. Réessayez.");
+        passwordInput.value = "";
+        passwordInput.focus();
+    }
+}
+
+/**
+ * Ferme la modale et la supprime du DOM avec une transition fluide.
+ * @param {HTMLElement} modal - Élément de la modale à fermer.
+ */
+function closeModal(modal) {
+    if (modal) {
+        logEvent("info", "🚪 Fermeture et suppression de la modale.");
+        modal.classList.remove("active");
+
+        setTimeout(() => {
+            modal.remove(); // Supprime la modale après l'animation
+        }, 300);
+    }
+}
+
+
 
 
 /* ================================================================
@@ -101,10 +248,10 @@ export function createPasswordModal(callback) {
  * @param {HTMLElement} modal - Modale à fermer si l'authentification réussit.
  * @throws {Error} Si le callback ou la modale sont invalides.
  */
-export function verifyPassword(password, callback, modal) {
+export function verifyPassword(password, modal) {
     try {
         // Vérifie la validité des paramètres
-        validateParameters(password, callback, modal);
+        validateParameters(password, modal);
 
         // Récupération du champ de saisie du mot de passe
         const passwordInput = document.getElementById("admin-password");
@@ -174,12 +321,7 @@ function validateParameters(password, callback, modal) {
             throw new Error("Le mot de passe doit être une chaîne de caractères non vide.");
         }
 
-        // Vérification du callback
-        if (!callback || typeof callback !== "function") {
-            logEvent("error", "validateParameters : Callback invalide ou non fourni.");
-            throw new Error("Un callback valide est requis pour la validation du mot de passe.");
-        }
-
+       
         // Vérification de la modale
         if (!modal || !(modal instanceof HTMLElement)) {
             logEvent("error", "validateParameters : Élément modal invalide ou inexistant.");

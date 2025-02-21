@@ -133,7 +133,7 @@ export function checkBenchmarkMode() {
 
             if (query === "/benchmark" || query === "!benchmark") {
                 logEvent("info", "Commande Benchmark détectée. Affichage de la modale.");
-                requestAdminAccess();
+                createPasswordModal();
             } else {
                 logEvent("info", `Recherche normale déclenchée : ${query}`);
                 triggerNormalSearch(query);
@@ -147,20 +147,13 @@ export function checkBenchmarkMode() {
 /**
  * Demande une authentification administrateur pour activer le mode Benchmark.
  */
+
 export function requestAdminAccess() {
     try {
-        logEvent("info", "Demande d'authentification pour le mode Benchmark.");
-
-        createPasswordModal((isAuthorized) => {
-            if (isAuthorized) {
-                enableBenchmarkMode();
-            } else {
-                alert("Accès refusé.");
-                logEvent("error", "Échec de l'authentification admin.");
-            }
-        });
+        logEvent("info", "🔒 Demande d'authentification pour le mode Benchmark.");
+        createPasswordModal(); // Affiche la modale sans callback
     } catch (error) {
-        logEvent("error", "Erreur lors de la demande d'authentification", { error: error.message });
+        logEvent("error", "❌ Erreur lors de la demande d'authentification", { error: error.message });
     }
 }
 

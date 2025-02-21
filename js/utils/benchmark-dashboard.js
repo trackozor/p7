@@ -15,7 +15,7 @@
 /* ==================================================================================== */
 
 import { benchmarkSearch } from "../benchmark/benchmark.js";
-import { searchRecipesLoopNative } from "../components/search/searchloopNative.js";
+import { searchRecipesLoopNative } from "../components/search/searchloopnative.js";
 import { searchRecipesFunctional } from "../components/search/searchFunctional.js";
 import { logEvent } from "./utils.js";
 

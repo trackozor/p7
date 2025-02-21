@@ -1,6 +1,6 @@
 
 import { searchRecipesFunctional } from "../components/search/searchFunctional.js";
-import { logEvent } from "../utils/utils.js";
+
 
 export function benchmarkSearch(query) {
   const iterations = 1000; // Nombre de répétitions pour mesurer le temps

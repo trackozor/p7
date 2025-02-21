@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    
     <!-- SEO: Description et mots-clés -->
     <meta name="description" content="Recherchez et filtrez vos recettes préférées facilement et rapidement. Découvrez des recettes simples et délicieuses adaptées à votre quotidien.">
     <meta name="keywords" content="recettes, cuisine, ingrédients, ustensiles, appareils, repas, plats, cuisine maison">
@@ -26,15 +26,13 @@
     <title>Les Petits Plats - Trouvez la recette parfaite !</title>
 
     <!-- Polices Google Fonts -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" as="style">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" media="print" onload="this.media='all'">
-
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap">
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="assets/icons/favicon.png">
     <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
     
     <!-- Feuilles de styles -->
-    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
 </head>
@@ -42,12 +40,12 @@
 
 <body>
     <!-- Header -->
-    <header role="banner">
+    <header >
         <div class="header-container">
-            <img src="../assets/icons/fond.png" alt="fond" class="fond">
-            <nav role="navigation" aria-label="Navigation principale">
+            <img src="/assets/webp/fond.webp" alt="fond" class="fond">
+            <nav  aria-label="Navigation principale">
                 <a href="index.html">
-                    <img src="../assets/icons/Logo.png" alt="Logo Les Petits Plats" class="logo">
+                    <img src="/assets/webp/Logo.webp" alt="Logo Les Petits Plats" class="logo">
                 </a>
             </nav>
 
@@ -60,14 +58,14 @@
                 <label id="search-label" for="search" class="sr-only">Rechercher une recette</label>
                 <input type="text" id="search" name="search" placeholder="Recherchez une recette, un ingrédient..." aria-label="Rechercher une recette">
                 <button id="search-btn" type="submit" aria-label="Lancer la recherche">
-                    <i class="fas fa-search"></i>
+                    <i class="fas fa-search" aria-hidden="true"></i>
                 </button>
             </form>
         </div>
     </header>
 
     <!-- Filtres avancés -->
-    <section id="filters" role="search" aria-labelledby="filters-title">
+    <section id="filters"  aria-labelledby="filters-title">
         <div class="filter-container">
             <h2 class="sr-only" id="filters-title">Filtrer les recettes</h2>
 
@@ -78,12 +76,13 @@
             <div class="filter-tags"></div>
         </div>
     </section>
+    <div id="counter-container"></div>"
     <div id= "recipe-count-container"></div>
     <!-- La modale d'authentification sera injectée dynamiquement en JS -->
-    <div id="password-modal"></div>
+    <div id="password-modal" aria-hidden="true"></div>
 
     <!-- Conteneur principal des recettes -->
-    <main id="recipes-container" class="recipes-container" role="main">
+    <main id="recipes-container" class="recipes-container" >
         <div class="main-container">
             <h2 class="visually-hidden">Résultats des recettes</h2>
 
@@ -93,14 +92,14 @@
     </main>
 
     <!-- Footer -->
-    <footer role="contentinfo">
+    <footer >
         <div class="container">
             <p>© 2025 Les Petits Plats. Tous droits réservés.</p>
         </div>
     </footer>
 
     <!-- Fichier JavaScript -->
-    <script src="../js/main.js" type="module"></script>
+    <script src="/js/main.js" type="module"></script>
 
 </body>
 </html>
