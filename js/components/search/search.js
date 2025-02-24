@@ -26,7 +26,7 @@ let searchMode = "functional"; // Par défaut, version fonctionnelle
  * @param {string} query - Texte recherché.
  * @returns {Promise<Array>} Liste des recettes correspondant aux critères.
  */
-export async function executeSearch(query) {
+export async function Search(query) {
     logEvent("info", `Exécution de la recherche avec mode : ${searchMode}`);
 
     if (searchMode === "native") {

@@ -775,7 +775,7 @@ header {
   .fond {
     height: 100%; /* Remplit complètement la hauteur du header */
     object-fit: cover; /* Assure que l’image couvre toute la surface sans être déformée */
-    min-height: 370px; /* Définit une hauteur minimale */
+    min-height: 300px; /* Définit une hauteur minimale */
   }
 }
 @media (min-width: 1440px) {
@@ -1351,6 +1351,112 @@ footer {
   color: #000;
 }
 
+/* 🎨 Variables globales */
+/* 📦 Conteneur des filtres */
+.filters-container {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* 🎛️ Bouton du Dropdown */
+.filter-dropdown {
+  position: relative;
+  min-width: 180px;
+  background: #fff;
+  border: 1px solid rgb(229.5, 229.5, 229.5);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+.filter-dropdown__button {
+  width: 100%;
+  padding: 10px 15px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #4a4a4a;
+  background: transparent;
+  border: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.filter-dropdown__button:hover {
+  color: #ff6b6b;
+}
+.filter-dropdown__button .icon {
+  font-size: 14px;
+  transition: transform 0.3s ease-in-out;
+}
+.filter-dropdown__button.active .icon {
+  transform: rotate(180deg);
+}
+
+/* 📜 Liste déroulante */
+.dropdown-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-height: 250px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid rgb(229.5, 229.5, 229.5);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  transform: translateY(-10px);
+  visibility: hidden;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.dropdown-list.visible {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+}
+.dropdown-list .filter-option {
+  padding: 10px 15px;
+  font-size: 14px;
+  color: #4a4a4a;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.dropdown-list .filter-option:hover {
+  background: white;
+  color: #ff6b6b;
+}
+
+/* 🔍 Barre de recherche dans le dropdown */
+.dropdown-search {
+  width: calc(100% - 30px);
+  margin: 10px auto;
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #b0b0b0;
+  border-radius: 4px;
+  outline: none;
+}
+.dropdown-search:focus {
+  border-color: #ff6b6b;
+}
+
+/* 📱 Responsivité */
+@media (max-width: 768px) {
+  .filters-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  .filter-dropdown {
+    width: 100%;
+    max-width: 250px;
+  }
+}
 /* Composants des filtres de recherche */
 /* ==================================================================================== */
 /*  Nom du fichier    : _benchmark.scss                                                */

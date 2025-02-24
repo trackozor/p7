@@ -32,11 +32,11 @@ export class BenchmarkEngine {
      */
     static runBenchmark(label, testFunction, iterations = this.iterations) {
         if (this.isPaused) {
-            this.log(`⏸ Impossible de démarrer : le benchmark est en pause`, "error");
+            this.log(` Impossible de démarrer : le benchmark est en pause`, "error");
             return;
         }
 
-        this.log(`⏳ Démarrage du benchmark : ${label} (${iterations} itérations)`, "info");
+        this.log(` Démarrage du benchmark : ${label} (${iterations} itérations)`, "info");
 
         // Création d’un Web Worker
         const worker = new Worker(URL.createObjectURL(new Blob([`

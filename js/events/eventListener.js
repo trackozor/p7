@@ -15,6 +15,7 @@
 import { logEvent, debounce } from "../utils/utils.js";
 import domSelectors from "../config/domSelectors.js";
 import { handleSearch, handleFilterChange } from "./eventHandler.js";
+import { safeQuerySelector } from "../config/domSelectors.js";
 
 /*------------------------------------------------------------------
 /*   Initialisation des écouteurs d'événements
@@ -169,6 +170,60 @@ export function attachFilterListeners(filters) {
     } catch (error) {
         logEvent("error", "attachFilterListeners : Erreur lors de l'ajout des écouteurs.", { error: error.message });
     }
+}
+/* ====================================================================================
+/*  SCROLL INFINI POUR LES DROPDOWNS
+/* ==================================================================================== */
+
+/**
+ * Attache le scroll infini aux listes des filtres.
+ * - Charge dynamiquement des éléments lorsqu'on atteint le bas de la liste.
+ * - Empêche le chargement si tous les éléments sont déjà affichés.
+ * - Utilise un `threshold` pour ne pas charger trop tôt.
+ */
+export function attachScrollEvents() {
+    const threshold = 20; // Pixels avant d'atteindre le bas de la liste pour déclencher le chargement
+
+    ["ingredients", "appliances", "utensils"].forEach(filterType => {
+        const listContainer = safeQuerySelector(`#${filterType}-list`);
+        if (!listContainer) return;
+
+        listContainer.addEventListener("scroll", debounce(() => {
+            if (listContainer.scrollTop + listContainer.clientHeight >= listContainer.scrollHeight - threshold) {
+                loadMoreItems(filterType);
+            }
+        }, 150));
+    });
+
+    logEvent("info", "Événements de scroll infini attachés aux filtres.");
+}
+
+/**
+ * Charge dynamiquement plus d'éléments dans un dropdown lorsqu'on scrolle.
+ * - Récupère les nouveaux éléments depuis `recipeCounts`.
+ * - Ajoute progressivement des éléments sans effacer ceux existants.
+ *
+ * @param {string} filterType - Type de filtre (`ingredients`, `appliances`, `utensils`).
+ */
+function loadMoreItems(filterType) {
+    const listContainer = safeQuerySelector(`#${filterType}-list`);
+    if (!listContainer) return;
+
+    const currentItems = listContainer.children.length;
+    const totalItems = Object.keys(recipeCounts[filterType]).length;
+
+    if (currentItems >= totalItems) return; // Arrête le chargement si tous les éléments sont affichés
+
+    const additionalItems = Object.entries(recipeCounts[filterType]).slice(currentItems, currentItems + 5);
+
+    additionalItems.forEach(([key, count]) => {
+        const listItem = document.createElement("li");
+        listItem.classList.add("filter-option");
+        listItem.textContent = `${key} (${count})`;
+        listContainer.appendChild(listItem);
+    });
+
+    logEvent("success", `Chargement de ${additionalItems.length} nouveaux éléments dans ${filterType}`);
 }
 
 /*----------------------------------------------------------------

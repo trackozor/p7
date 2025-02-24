@@ -147,19 +147,6 @@ export async function handleSearch() {
 /*===============================================================*/
 
 /**
- * Attache les événements de validation et d'annulation à la modale.
- *
- * - Vérifie la présence des éléments avant d'attacher les événements.
- * - Associe la validation au bouton de confirmation et à la touche "Enter".
- * - Ajoute un mécanisme de nettoyage des événements lors de la fermeture de la modale.
- *
- * @param {HTMLElement} passwordInput - Champ de saisie du mot de passe.
- * @param {HTMLElement} validateBtn - Bouton de validation.
- * @param {HTMLElement} cancelBtn - Bouton d'annulation.
- * @param {function} callback - Fonction exécutée après validation du mot de passe.
- * @param {HTMLElement} modal - Élément DOM contenant la modale.
- */
-/**
  * Attache les événements à la modale de mot de passe.
  *
  * @param {HTMLInputElement} passwordInput - Champ de saisie du mot de passe.
@@ -182,12 +169,12 @@ export function attachModalEvents(passwordInput, validateBtn, cancelBtn, modal) 
             return;
         }
 
-        // ✅ Ajout des écouteurs d'événements
+        //  Ajout des écouteurs d'événements
         validateBtn.addEventListener("click", () => handleValidation(passwordInput, modal));
         cancelBtn.addEventListener("click", () => handleClose(modal));
         passwordInput.addEventListener("keydown", (event) => handleEnterKey(event, passwordInput, modal));
 
-        // ✅ Ajoute un gestionnaire de fermeture avec "Échap"
+        //  Ajoute un gestionnaire de fermeture avec "Échap"
         document.addEventListener("keydown", (event) => {
             if (event.key === "Escape") {
                 logEvent("info", "🚪 Fermeture de la modale via la touche Échap.");
@@ -195,12 +182,12 @@ export function attachModalEvents(passwordInput, validateBtn, cancelBtn, modal) 
             }
         }, { once: true });
 
-        // ✅ Ajoute une méthode pour nettoyer les événements à la fermeture
+        //  Ajoute une méthode pour nettoyer les événements à la fermeture
         modal.cleanup = () => detachModalEvents(passwordInput, validateBtn, cancelBtn, modal);
 
-        logEvent("success", "🎉 attachModalEvents : Événements attachés avec succès.");
+        logEvent("success", " attachModalEvents : Événements attachés avec succès.");
     } catch (error) {
-        logEvent("error", "❌ attachModalEvents : Erreur lors de l'attachement des événements à la modale.", { error: error.message });
+        logEvent("error", " attachModalEvents : Erreur lors de l'attachement des événements à la modale.", { error: error.message });
     }
 }
 
@@ -209,20 +196,6 @@ export function attachModalEvents(passwordInput, validateBtn, cancelBtn, modal) 
 // Gestion de la Validation du Mot de Passe
 // ==========================================================
 
-/**
- * Vérifie le mot de passe et exécute le callback si valide.
- *
- * - Vérifie que `passwordInput` est un champ de saisie valide.
- * - Vérifie que `callback` est bien une fonction exécutable.
- * - Vérifie que `modal` est un élément HTML valide.
- * - Appelle `verifyPassword` pour exécuter la validation.
- * - Capture et logue les erreurs en cas de problème.
- *
- * @param {HTMLInputElement} passwordInput - Champ de saisie du mot de passe.
- * @param {function} callback - Fonction exécutée après validation.
- * @param {HTMLElement} modal - Élément DOM de la modale.
- * @throws {Error} Si l'un des paramètres est invalide.
- */
 /**
  * Vérifie le mot de passe et ferme la modale si correct.
  *
@@ -253,16 +226,6 @@ function handleValidation(passwordInput, modal) {
 // ==========================================================
 
 /**
- * Ferme la modale après vérification de sa validité.
- *
- * - Vérifie que `modal` est bien un élément HTML valide.
- * - Appelle la fonction `closeModal` pour fermer proprement la modale.
- * - Capture et logue les erreurs si l'élément est invalide.
- *
- * @param {HTMLElement} modal - Élément DOM de la modale.
- * @throws {Error} Si l'élément modal est invalide ou inexistant.
- */
-/**
  * Ferme la modale proprement et nettoie les événements.
  *
  * @param {HTMLElement} modal - Élément de la modale.
@@ -284,19 +247,6 @@ function handleClose(modal) {
 // Gestion de la Validation par la Touche "Enter"
 // ==========================================================
 
-/**
- * Détecte l'appui sur la touche "Enter" et déclenche la validation du mot de passe.
- *
- * - Vérifie si la touche pressée est "Enter".
- * - Exécute la fonction de validation si la condition est remplie.
- * - Gère les erreurs en cas de paramètres invalides.
- *
- * @param {KeyboardEvent} event - Événement de clavier.
- * @param {HTMLInputElement} passwordInput - Champ de saisie du mot de passe.
- * @param {function} callback - Fonction exécutée après validation.
- * @param {HTMLElement} modal - Élément DOM de la modale.
- * @throws {Error} Si l'un des paramètres est invalide.
- */
 /**
  * Gère la validation avec la touche "Entrée".
  *
@@ -357,9 +307,9 @@ export function validateEnterKeyParameters(event, passwordInput, modal) {
 
 /**==================================================================
 /*  Nettoyage des Événements de la Modale 
-/*==================================================================
+/*==================================================================*/
 
-/**
+/** 
  * Détache les événements de la modale pour éviter les fuites mémoire.
  *
  * - Vérifie si un gestionnaire de nettoyage (`cleanup`) est défini.
@@ -411,7 +361,7 @@ export function detachModalEvents(passwordInput, validateBtn, cancelBtn, modal) 
 let cachedFilters = {
     ingredients: [],
     appliances: [],
-    utensils: []
+    ustensils: []
 };
 
 /**
@@ -495,12 +445,6 @@ export async function handleFilterChange(event) {
         const { filterType } = event.target.dataset;
         const selectedValue = event.target.value.trim(); // Nettoie la valeur sélectionnée.
 
-        // 3. Vérifie que le filtre et la valeur sélectionnée sont bien définis.
-        if (!filterType || !selectedValue) {
-            logEvent("warning", "handleFilterChange : Filtre ou valeur sélectionnée manquante.");
-            return; // Stoppe l'exécution si une des valeurs est absente.
-        }
-
         logEvent("info", `handleFilterChange : Filtre appliqué - ${filterType} = ${selectedValue}`);
 
         // 4. Récupère toutes les recettes pour appliquer un filtrage dynamique.
@@ -535,34 +479,7 @@ export async function handleFilterChange(event) {
  * - Vérifie si chaque catégorie contient des données avant de les afficher.
  */
 export async function populateFilters(filters) {
-    try {
-        logEvent("info", "populateFilters : Chargement des options de filtre...");
-
-        // ✅ Vérification et initialisation si `filters` est `undefined`
-        if (!filters || typeof filters !== "object") {
-            logEvent("error", "populateFilters : Données de filtre invalides ou absentes.", { filters });
-            return;
-        }
-
-        // ✅ Attente que les dropdowns existent avant d'ajouter les filtres
-        await waitForElement("#ingredient-list");
-        await waitForElement("#appliance-list");
-        await waitForElement("#utensil-list");
-
-        // ✅ Vérification et initialisation des données de filtre
-        filters.ingredients = Array.isArray(filters.ingredients) ? filters.ingredients : [];
-        filters.appliances = Array.isArray(filters.appliances) ? filters.appliances : [];
-        filters.utensils = Array.isArray(filters.utensils) ? filters.utensils : [];
-
-        // ✅ Mise à jour des listes avec un affichage limité
-        updateFilterList("ingredient-list", filters.ingredients, 10);
-        updateFilterList("appliance-list", filters.appliances, 5);
-        updateFilterList("utensil-list", filters.utensils, 5);
-
-        logEvent("success", "populateFilters : Filtres mis à jour avec succès.");
-    } catch (error) {
-        logEvent("error", "populateFilters : Erreur lors du chargement des filtres.", { error: error.message });
-    }
+    
 }
 
 
@@ -582,100 +499,6 @@ export async function populateFilters(filters) {
  * @param {number} maxVisible - Nombre d'éléments visibles avant le "Voir plus".
  */
 export async function updateFilterList(listId, options, maxVisible = 10) {
-    try {
-        let listElement;
-
-        // Récupération sécurisée via `domSelectors`
-        if (listId === "ingredient-list") {
-            listElement = domSelectors.filters.ingredients();
-        } else if (listId === "appliance-list") {
-            listElement = domSelectors.filters.appliances();
-        } else if (listId === "ustensil-list") {
-            listElement = domSelectors.filters.utensils();
-        }
-
-        // Attente si l'élément n'est pas encore disponible
-        if (!listElement) {
-            listElement = await waitForElement(`#${listId}`);
-        }
-
-        if (!listElement) {
-            logEvent("error", `updateFilterList : Élément DOM introuvable (${listId}).`);
-            return;
-        }
-
-        listElement.innerHTML = ""; // Nettoyage de la liste existante
-
-        if (!Array.isArray(options) || options.length === 0) {
-            logEvent("warning", `updateFilterList : Aucune option pour ${listId}.`);
-            return;
-        }
-
-        logEvent("info", `updateFilterList : Mise à jour de ${listId} avec ${options.length} options.`);
-
-        // ================================
-        // Création du conteneur avec défilement
-        // ================================
-        const listContainer = document.createElement("div");
-        listContainer.classList.add("filter-list-container");
-        listContainer.style.maxHeight = "200px"; // Hauteur max avec scroll
-        listContainer.style.overflowY = "auto";
-
-        const fragment = document.createDocumentFragment();
-
-        // Ajout des options visibles
-        options.slice(0, maxVisible).forEach(option => {
-            const li = document.createElement("li");
-            li.textContent = option;
-            li.classList.add("filter-item");
-            fragment.appendChild(li);
-        });
-
-        listContainer.appendChild(fragment);
-        listElement.appendChild(listContainer);
-
-        // ================================
-        // Gestion du bouton "Voir plus / Voir moins"
-        // ================================
-        if (options.length > maxVisible) {
-            const toggleButton = document.createElement("button");
-            toggleButton.classList.add("toggle-filter-btn");
-            toggleButton.textContent = "Voir plus";
-
-            let isExpanded = false;
-
-            toggleButton.addEventListener("click", () => {
-                isExpanded = !isExpanded;
-                listContainer.innerHTML = ""; // Nettoyage
-
-                if (isExpanded) {
-                    options.forEach(option => {
-                        const li = document.createElement("li");
-                        li.textContent = option;
-                        li.classList.add("filter-item");
-                        listContainer.appendChild(li);
-                    });
-                    listContainer.style.maxHeight = "none"; // Affichage total
-                    toggleButton.textContent = "Voir moins";
-                } else {
-                    options.slice(0, maxVisible).forEach(option => {
-                        const li = document.createElement("li");
-                        li.textContent = option;
-                        li.classList.add("filter-item");
-                        listContainer.appendChild(li);
-                    });
-                    listContainer.style.maxHeight = "200px"; // Remet le scroll
-                    toggleButton.textContent = "Voir plus";
-                }
-            });
-
-            listElement.appendChild(toggleButton);
-        }
-
-        logEvent("success", `updateFilterList : Liste ${listId} mise à jour avec ${options.length} éléments.`);
-    } catch (error) {
-        logEvent("error", "updateFilterList : Erreur lors de la mise à jour des filtres.", { error: error.message });
-    }
 }
 
 /* ================================================================================ 

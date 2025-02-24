@@ -21,7 +21,7 @@ import {
   ENVIRONMENTS,     // Liste des environnements (Développement, Production...)
   ACTIVE_ENVIRONMENT // Environnement actif du projet
 } from "../config/constants.js";
-
+import { safeQuerySelector } from "../config/domSelectors.js";
 
 
 /* =============================================================================
@@ -238,34 +238,43 @@ export function removeClass(element, className) {
     }
 }
 /**
- * Attend qu'un élément spécifique apparaisse dans le DOM.
- * @param {string} selector - Le sélecteur CSS de l'élément à attendre.
- * @param {number} timeout - Temps maximal en millisecondes (par défaut : 5000ms).
- * @returns {Promise<Element>} - Une promesse qui résout l'élément DOM ou rejette si non trouvé.
+ * Attend qu'un élément spécifique apparaisse dans le DOM avant de l’utiliser.
+ * 
+ * - Utilise `safeQuerySelector()` pour exploiter le cache DOM.
+ * - Observe les changements en temps réel avec `MutationObserver`.
+ * - Gère proprement le timeout pour éviter les boucles infinies.
+ *
+ * @param {string} selector - Sélecteur CSS de l'élément à attendre.
+ * @param {number} timeout - Délai maximum (par défaut : 5000ms).
+ * @returns {Promise<Element>} Élément DOM résolu ou rejeté après expiration.
  */
-export function waitForElement(selector, timeout = 1000) {
+export function waitForElement(selector, timeout = 5000) {
     return new Promise((resolve, reject) => {
-        const element = document.querySelector(selector);
-        if (element) {
-            return resolve(element);
+        // Vérifie d'abord si l'élément est déjà disponible grâce au cache
+        const cachedElement = safeQuerySelector(selector, true);
+        if (cachedElement) {
+          return resolve(cachedElement);
         }
 
+        // Création de l'observateur pour surveiller les ajouts d'éléments
         const observer = new MutationObserver(() => {
-            const element = document.querySelector(selector);
+            const element = safeQuerySelector(selector, true);
             if (element) {
-                observer.disconnect();
+                observer.disconnect(); // Arrête l'observation une fois l'élément trouvé
                 resolve(element);
             }
         });
 
         observer.observe(document.body, { childList: true, subtree: true });
 
+        // Timeout pour éviter les attentes infinies
         setTimeout(() => {
             observer.disconnect();
-            reject(new Error(`waitForElement : L'élément "${selector}" n'a pas été trouvé dans le DOM après ${timeout}ms.`));
+            reject(new Error(`waitForElement : "${selector}" introuvable après ${timeout}ms.`));
         }, timeout);
     });
 }
+
 
 /**
  * Fonction debounce pour limiter l'exécution d'une fonction lorsqu'elle est appelée fréquemment.

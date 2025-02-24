@@ -1,17 +1,22 @@
-/* ==================================================================================== */
-/*  FICHIER          : dataManager.js                                                   */
-/*  AUTEUR           : Trackozor                                                        */
-/*  VERSION          : 1.3                                                              */
-/*  DESCRIPTION      : Gère la récupération et la recherche de recettes avec cache.    */
+/* ====================================================================================
+/*  FICHIER          : dataManager.js
+/*  AUTEUR           : Trackozor
+/*  VERSION          : 2.0
+/*  DESCRIPTION      : Gère la récupération et la recherche de recettes avec cache optimisé.
 /* ==================================================================================== */
 
-import { recipe } from "../data/recipe.js"; // Import direct des recettes JS
-import { logEvent } from "../utils/utils.js"; // Gestion des logs
+import { recipe } from "../data/recipe.js"; 
+import { logEvent } from "../utils/utils.js"; 
+import { normalizeText } from "../utils/normalize.js"; // Pour uniformiser les recherches
 
 class DataManager {
     constructor() {
         /** @type {Array<Object>} Cache interne des recettes */
         this.cache = recipe;
+
+        /** @type {Map<number, Object>} Cache des recettes indexées par ID */
+        this.recipeCache = new Map();
+        recipe.forEach(r => this.recipeCache.set(r.id, r));
     }
 
     /**
@@ -20,10 +25,10 @@ class DataManager {
      */
     getAllRecipes() {
         try {
-            logEvent("SUCCESS", "Récupération de toutes les recettes réussie.", { total: this.cache.length });
+            logEvent("success", "Récupération des recettes réussie.", { total: this.cache.length });
             return this.cache;
         } catch (error) {
-            logEvent("ERROR", "Impossible de récupérer les recettes.", { error: error.message });
+            logEvent("error", "Impossible de récupérer les recettes.", { error: error.message });
             return [];
         }
     }
@@ -35,13 +40,15 @@ class DataManager {
      */
     getRecipeById(id) {
         try {
-            const recipe = this.cache.find(recipe => recipe.id === id) || null;
-            recipe
-                ? logEvent("SUCCESS", ` Recette trouvée : ${recipe.name}`, { id })
-                : logEvent("WARNING", " Aucune recette trouvée avec cet ID.", { id });
-            return recipe;
+            if (this.recipeCache.has(id)) {
+                logEvent("success", `Recette trouvée : ${this.recipeCache.get(id).name}`, { id });
+                return this.recipeCache.get(id);
+            } else {
+                logEvent("warning", "Aucune recette trouvée avec cet ID.", { id });
+                return null;
+            }
         } catch (error) {
-            logEvent("ERROR", ` Erreur lors de la récupération de la recette ID ${id}`, { error: error.message });
+            logEvent("error", `Erreur lors de la récupération de la recette ID ${id}`, { error: error.message });
             return null;
         }
     }
@@ -54,18 +61,20 @@ class DataManager {
     searchRecipes(keyword) {
         try {
             if (!keyword.trim()) {
-                logEvent("INFO", "🔍 Aucun mot-clé fourni, retour de toutes les recettes.");
+                logEvent("info", "🔍 Aucun mot-clé fourni, retour de toutes les recettes.");
                 return this.getAllRecipes();
             }
 
+            const normalizedKeyword = normalizeText(keyword);
+
             const filteredRecipes = this.cache.filter(recipe =>
-                this.filterRecipeByKeyword(keyword, recipe)
+                this.filterRecipeByKeyword(normalizedKeyword, recipe)
             );
 
-            logEvent("SUCCESS", ` ${filteredRecipes.length} recettes trouvées pour "${keyword}".`);
+            logEvent("success", `${filteredRecipes.length} recettes trouvées pour "${keyword}".`);
             return filteredRecipes;
         } catch (error) {
-            logEvent("ERROR", ` Erreur lors de la recherche pour '${keyword}'`, { error: error.message });
+            logEvent("error", `Erreur lors de la recherche pour '${keyword}'`, { error: error.message });
             return [];
         }
     }
@@ -77,29 +86,28 @@ class DataManager {
      * @returns {boolean} `true` si correspondance, sinon `false`.
      */
     filterRecipeByKeyword(keyword, recipe) {
-        const lowerKeyword = keyword.toLowerCase();
+        const normalizedName = normalizeText(recipe.name);
         return (
-            recipe.name.toLowerCase().includes(lowerKeyword) ||
-            recipe.ingredients.some(ing => ing.ingredient.toLowerCase().includes(lowerKeyword))
+            normalizedName.includes(keyword) ||
+            recipe.ingredients.some(ing => normalizeText(ing.ingredient).includes(keyword))
         );
     }
 }
+
 /**
  * Retourne les ingrédients, appareils et ustensiles uniques pour les filtres.
  * @returns {Object} { ingredients, appliances, ustensils }
  */
-export async function fetchFilterOptions() {
+export function fetchFilterOptions() {
     try {
-        const recipes = await getAllRecipes();
-
         const ingredientsSet = new Set();
         const appliancesSet = new Set();
         const ustensilsSet = new Set();
 
-        recipes.forEach(recipe => {
-            recipe.ingredients.forEach(ing => ingredientsSet.add(ing.ingredient.toLowerCase()));
-            appliancesSet.add(recipe.appliance.toLowerCase());
-            recipe.ustensils.forEach(ust => ustensilsSet.add(ust.toLowerCase()));
+        recipe.forEach(({ ingredients, appliance, ustensils }) => {
+            ingredients.forEach(ing => ingredientsSet.add(normalizeText(ing.ingredient)));
+            appliancesSet.add(normalizeText(appliance));
+            ustensils.forEach(ust => ustensilsSet.add(normalizeText(ust)));
         });
 
         return {
@@ -108,7 +116,7 @@ export async function fetchFilterOptions() {
             ustensils: [...ustensilsSet].sort()
         };
     } catch (error) {
-        logEvent("ERROR", " Erreur lors du chargement des filtres.", { error: error.message });
+        logEvent("error", "Erreur lors du chargement des filtres.", { error: error.message });
         return { ingredients: [], appliances: [], ustensils: [] };
     }
 }
