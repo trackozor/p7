@@ -1,6 +1,8 @@
 
 
 import { logEvent } from "../../utils/utils.js";
+let isModalOpen = false; // Variable pour suivre l'état de la modale
+
 // ==========================================================
 // 3. Création et Affichage de la Modale de Saisie du Mot de Passe
 // ==========================================================
@@ -18,7 +20,10 @@ import { logEvent } from "../../utils/utils.js";
  */
 export function createPasswordModal(callback) {
     try {
-       
+         if (isModalOpen) {
+            logEvent("info", "createPasswordModal : modale déjà ouverte");
+            return;
+        } 
 
         // Vérifie si une modale de mot de passe existe déjà pour éviter les doublons
         if (document.getElementById("password-modal")) {
@@ -60,7 +65,17 @@ export function createPasswordModal(callback) {
         alert("Une erreur est survenue lors de la création de la modale. Veuillez réessayer.");
     }
 }
-
+/**
+ * Ferme la modale et met à jour l'état.
+ * @param {HTMLElement} modal - La modale à fermer
+ */
+export function closePasswordModal(modal) {
+    if (modal) {
+        modal.remove();
+        isModalOpen = false;
+        logEvent("info", "closePasswordModal : modale fermée");
+    }
+}
 /* ====================================================================
 /* 4. Génération HTML de la Modale de Saisie de Mot de Passe
 /* ====================================================================*/

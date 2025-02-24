@@ -11,7 +11,7 @@ import {  logEvent, waitForElement, debounce } from "./utils/utils.js";
 import { dataManager } from "./data/dataManager.js";
 import { templateManager } from "./data/templateManager.js";
 import { initEventListeners } from "./events/eventListener.js";
-import BenchmarkDashboard from "./utils/benchmark-dashboard.js";
+import {BenchmarkDashboard } from "./utils/benchmark-dashboard.js";
 import { initFilters } from "./components/filterManager.js";
 import {createPasswordModal} from "./components/factory/modalFactory.js";
 
@@ -91,19 +91,10 @@ export async function initApplication() {
     }
 }
 
-
-
 /** ====================================================================================
  * II. DÉTECTION DU MODE BENCHMARK
  * ==================================================================================== */
 
-/**
- * Vérifie si le mode Benchmark doit être activé et gère son affichage.
- * - Surveille le bouton de recherche pour détecter la commande `/benchmark`.
- * - Vérifie si l'utilisateur a saisi `/benchmark` ou `!benchmark` dans la barre de recherche.
- * - Demande une authentification avant d'activer le mode Benchmark.
- * - Active le suivi des interactions utilisateur en mode Benchmark.
- */
 let benchmarkEnabled = false;
 let benchmarkInstance = null;
 
@@ -115,47 +106,52 @@ export function checkBenchmarkMode() {
     const searchInput = document.getElementById("search");
     const searchButton = document.getElementById("search-btn");
 
-    /** ============================
-     *  Validation des éléments du DOM
-     * ============================ */
-    if ( !searchButton) {
-        logEvent("error", "Élément bouton de recherche ou champ de recherche introuvable.");
+    if (!searchButton) {
+        logEvent("error", "Élément bouton de recherche introuvable.");
         return;
     }
 
-    logEvent("info", "Surveillance du bouton de recherche pour détecter le mode Benchmark.");
+    logEvent("info", "Surveillance du champ de recherche pour le mode Benchmark.");
 
     searchButton.addEventListener("click", (event) => {
-        event.preventDefault(); // Empêche l'action par défaut du bouton
+        event.preventDefault();
+        const query = searchInput.value.trim();
 
-        try {
-            const query = searchInput.value.trim();
+        //  Bloquer le mode Benchmark sur Mobile & Tablette
+        if (window.innerWidth < 1024) {  // Vérifie si l'écran est trop petit
+            logEvent("error", "Mode Benchmark interdit sur mobile/tablette.");
+            alert("Le mode Benchmark n'est pas disponible sur mobile et tablette.");
+            return;
+        }
 
-            if (query === "/benchmark" || query === "!benchmark") {
-                logEvent("info", "Commande Benchmark détectée. Affichage de la modale.");
-                createPasswordModal();
-            } else {
-                logEvent("info", `Recherche normale déclenchée : ${query}`);
-                triggerNormalSearch(query);
-            }
-        } catch (error) {
-            logEvent("error", "Erreur lors de la détection du mode Benchmark", { error: error.message });
+        //  Activation normale si Desktop
+        if (query === "/benchmark" || query === "!benchmark") {
+            logEvent("warning", "Tentative d'accès au mode Benchmark.");
+            createPasswordModal();
+        } else {
+            logEvent("info", `Recherche normale : ${query}`);
+            triggerNormalSearch(query);
         }
     });
 }
 
+/** ====================================================================================
+ * III. Authentification Admin
+ * ==================================================================================== */
 /**
  * Demande une authentification administrateur pour activer le mode Benchmark.
- */
-
+ */ 
 export function requestAdminAccess() {
     try {
-        logEvent("info", "🔒 Demande d'authentification pour le mode Benchmark.");
+        logEvent("info", " Demande d'authentification pour le mode Benchmark.");
         createPasswordModal(); // Affiche la modale sans callback
     } catch (error) {
-        logEvent("error", "❌ Erreur lors de la demande d'authentification", { error: error.message });
+        logEvent("error", " Erreur lors de la demande d'authentification", { error: error.message });
     }
 }
+/** ====================================================================================
+ * IV. Activation mode Benchmark par  Admin
+ * ==================================================================================== */
 
 /**
  * Active le mode Benchmark et affiche le tableau de bord des performances.
@@ -176,6 +172,9 @@ export function enableBenchmarkMode() {
     }
 }
 
+/** ====================================================================================
+ * III. suivi performance
+ * ==================================================================================== */
 /**
  * Suivi des performances en enregistrant les interactions utilisateur.
  */
@@ -189,6 +188,9 @@ document.body.addEventListener("click", (event) => {
     }
 });
 
+/** ====================================================================================
+ * III. Mode Recherche par utilisateur
+ * ==================================================================================== */
 /**
  * Gère la recherche normale si ce n'est pas une commande Benchmark.
  * @param {string} query - La requête de recherche saisie par l'utilisateur.

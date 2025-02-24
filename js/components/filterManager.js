@@ -13,7 +13,8 @@ import { logEvent } from "../utils/utils.js";
 import { normalizeText } from "../utils/normalize.js";
 import { createFilterSection} from "./factory/dropdownFactory.js";
 import { displayResults } from "../events/eventHandler.js";
-
+import { waitForElement } from "../utils/utils.js";
+import { populateFilters } from "../events/eventHandler.js";
 
 
 
@@ -40,30 +41,34 @@ let allRecipes = [];
 */
 export async function initFilters() {
     try {
-        // Étape 1 : Log de l'initialisation des filtres
         logEvent("info", "initFilters : Démarrage du chargement des recettes...");
 
-        // Étape 2 : Attente de la récupération des recettes depuis le gestionnaire de données
+        //  Attente de la récupération des recettes
         allRecipes = await dataManager.getAllRecipes();
 
-        // Étape 3 : Vérification des données
         if (!Array.isArray(allRecipes) || allRecipes.length === 0) {
             throw new Error("Aucune recette disponible.");
         }
 
         logEvent("success", `initFilters : ${allRecipes.length} recettes chargées avec succès.`);
 
-        // Étape 4 : Génération des données pour les filtres
-        await generateFilterData(); // Assure que les filtres sont bien générés avant d'afficher
+        //  Attente de la création des dropdowns AVANT d'appliquer les filtres
+        await generateFilterData(); 
 
-        //  Étape 5 : Attendre que le DOM soit prêt avant d'afficher les résultats
+        // Maintenant, on peut appliquer les filtres
+        await populateFilters({ 
+            ingredients: allRecipes.flatMap(recipe => recipe.ingredients.map(ing => ing.ingredient)), 
+            appliances: [...new Set(allRecipes.map(recipe => recipe.appliance))], 
+            utensils: [...new Set(allRecipes.flatMap(recipe => recipe.utensils))] 
+        });
+
+        //  Attente de la présence de `#recipe-container` avant d'afficher les résultats
         await waitForElement("#recipe-container");
 
-        // Étape 6 : Mise à jour de l'affichage des résultats et filtres
+        // Mise à jour de l'affichage des résultats et des filtres
         displayResults(allRecipes);
 
         logEvent("success", "initFilters : Filtres et affichage mis à jour avec succès.");
-        
     } catch (error) {
         logEvent("error", "initFilters : Échec de l'initialisation des filtres.", { error: error.message });
     }

@@ -358,12 +358,6 @@ export function validateEnterKeyParameters(event, passwordInput, modal) {
 /**==================================================================
 /*  Nettoyage des Événements de la Modale 
 /*==================================================================
-/*
-/*  Cette fonction détache proprement tous les événements liés à la modale.
-/*  Elle est utilisée avant la suppression pour éviter les fuites mémoire.
-/*  Vérifie si un gestionnaire de nettoyage existe avant d'exécuter la suppression.
-/*
-/*-------------------------------------------------------------------*/
 
 /**
  * Détache les événements de la modale pour éviter les fuites mémoire.
@@ -413,20 +407,6 @@ export function detachModalEvents(passwordInput, validateBtn, cancelBtn, modal) 
 /* ================================================================================ 
     AFFICHAGE DES RÉSULTATS 
 ================================================================================ */
-
-/**
- * Affiche les résultats des recettes dans le DOM.
- *
- * - Vérifie la présence du conteneur de résultats avant d'ajouter du contenu.
- * - Affiche un message "Aucune recette trouvée" si la liste est vide.
- * - Utilise un `DocumentFragment` pour optimiser l'insertion des éléments.
- * - Nettoie et sécurise les données affichées pour éviter les injections.
- *
- * @param {Array} results - Liste des recettes filtrées.
- */
-/* ==================================================================================== */
-/*  MODIFICATION DE `displayResults()` AVEC FILTRES EN CACHE ET LISTE SCROLLABLE      */
-/* ==================================================================================== */
 
 let cachedFilters = {
     ingredients: [],
@@ -494,7 +474,6 @@ export async function displayResults(recipes) {
 /*----------------------------------------------------------------
 /*   Gestion des événements de filtres
 /*--------------------------------------------------------------- */
-
 /**
  * Gère les changements dans les menus déroulants de filtres.
  *
@@ -555,29 +534,27 @@ export async function handleFilterChange(event) {
  * - Met à jour les listes des filtres dans le DOM.
  * - Vérifie si chaque catégorie contient des données avant de les afficher.
  */
-
-
 export async function populateFilters(filters) {
     try {
         logEvent("info", "populateFilters : Chargement des options de filtre...");
 
-        //  Vérification et initialisation si `filters` est `undefined`
+        // ✅ Vérification et initialisation si `filters` est `undefined`
         if (!filters || typeof filters !== "object") {
             logEvent("error", "populateFilters : Données de filtre invalides ou absentes.", { filters });
             return;
         }
 
-        //  Attendre que les éléments DOM soient bien présents
+        // ✅ Attente que les dropdowns existent avant d'ajouter les filtres
         await waitForElement("#ingredient-list");
         await waitForElement("#appliance-list");
         await waitForElement("#utensil-list");
 
-        // Vérification que chaque catégorie contient bien un tableau
+        // ✅ Vérification et initialisation des données de filtre
         filters.ingredients = Array.isArray(filters.ingredients) ? filters.ingredients : [];
         filters.appliances = Array.isArray(filters.appliances) ? filters.appliances : [];
         filters.utensils = Array.isArray(filters.utensils) ? filters.utensils : [];
 
-        //  Mise à jour des listes avec un affichage limité
+        // ✅ Mise à jour des listes avec un affichage limité
         updateFilterList("ingredient-list", filters.ingredients, 10);
         updateFilterList("appliance-list", filters.appliances, 5);
         updateFilterList("utensil-list", filters.utensils, 5);
@@ -587,6 +564,7 @@ export async function populateFilters(filters) {
         logEvent("error", "populateFilters : Erreur lors du chargement des filtres.", { error: error.message });
     }
 }
+
 
 /*----------------------------------------------------------------
 /*   Mise à jour dynamique des listes de filtres

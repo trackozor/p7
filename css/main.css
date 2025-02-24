@@ -1231,79 +1231,124 @@ footer {
 /*                     et d'afficher des tags de filtres actifs sous forme de badges.  */
 /* ==================================================================================== */
 /* ==================================================================================== */
-/*    Définition du conteneur principal des filtres                                   */
+/*    Conteneur Principal des Filtres (Barre des Filtres)                              */
 /* ==================================================================================== */
 #filters {
-  width: 80%; /* Largeur ajustée pour s'intégrer harmonieusement à la page */
-  background: #e5e5e5; /* Couleur de fond blanche pour s'intégrer au design global */
-  margin: 10% 0; /* Espacement vertical pour une séparation claire avec le contenu */
-  display: flex; /* Utilisation de flexbox pour structurer les éléments */
-  flex-direction: row; /* Disposition horizontale des filtres */
-  align-items: center; /* Alignement vertical au centre */
-  justify-content: space-around; /* Répartition uniforme des éléments */
-  gap: 4%;
+  width: 80%;
+  background: #e5e5e5;
+  margin: 5% auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem; /* Espacement entre les filtres */
 }
 @media (min-width: 767px) {
   #filters {
-    gap: 10%;
-    width: 40%;
-    padding-left: 4%;
-    margin-bottom: 5%;
+    width: 60%;
+    gap: 1rem;
   }
 }
 @media (min-width: 1024px) {
   #filters {
-    padding-top: 2%;
-    margin: 10% 0 5% 0;
-  }
-}
-@media (min-width: 1440px) {
-  #filters {
-    margin: 8% 0 3% 0;
-    padding-left: 2%;
-    gap: 0.5%;
-    width: 30%;
+    width: 50%;
+    gap: 0.5rem;
   }
 }
 
 /* ==================================================================================== */
-/*    Conteneur des filtres - Structure et alignement                                */
+/*    Conteneur du Groupe de Filtres                                                   */
 /* ==================================================================================== */
 .filter-group {
-  width: 70%; /* Largeur relative pour assurer un bon alignement */
-  display: flex; /* Utilisation de flexbox pour aligner les éléments */
+  position: relative; /* Pour aligner le dropdown par rapport au bouton */
+  display: flex;
   flex-direction: column;
-  justify-content: space-around; /* Répartition équitable des éléments */
-  margin: 2% auto; /* Centrage et espacement vertical */
-  gap: 2%; /* Espacement entre les filtres */
-  align-items: center; /* Alignement vertical */
+  align-items: center;
+  width: auto;
 }
 
 /* ==================================================================================== */
-/*    Filtres actifs - Badges affichés après sélection                            */
+/*    Bouton de Filtre (Clickable)                                                     */
 /* ==================================================================================== */
-.filter-tags {
-  display: flex; /* Utilisation de flexbox pour organiser les tags */
-  flex-direction: row;
-  flex-wrap: wrap; /* Permet de passer à la ligne lorsque l'espace est insuffisant */
-  gap: 0.5rem; /* Espacement entre les badges */
-  margin-top: 1rem; /* Espacement au-dessus des tags */
+.filter-button {
+  background: #fff;
+  color: #000;
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 0.7rem 1.5rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  transition: all 0.3s ease-in-out;
+}
+.filter-button:hover {
+  background: #FFD15B;
+  color: #000;
 }
 
-/* -------------------------------------------------------------- */
-/*   Style des badges des filtres actifs                        */
-/* -------------------------------------------------------------- */
-.filter-tag {
-  background: #FFD15B; /* Fond jaune pour différencier les tags des autres éléments */
-  color: #000; /* Couleur du texte pour une lisibilité optimale */
-  font-size: 0.8rem; /* Taille de police adaptée aux badges */
-  font-weight: bold; /* Mise en valeur du texte */
-  padding: 0.5rem 1rem; /* Espacement interne pour améliorer l'affichage */
-  border-radius: 0.5rem; /* Coins arrondis pour une meilleure apparence */
-  display: flex; /* Utilisation de flexbox pour aligner le texte et l'icône de suppression */
-  align-items: center; /* Alignement vertical du contenu */
-  gap: 0.5rem; /* Espacement entre le texte et l'icône */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Ajout d'une ombre légère pour améliorer la visibilité */
+/* ==================================================================================== */
+/*    Dropdown des Filtres (Liste déroulante avec SCROLL)                              */
+/* ==================================================================================== */
+.filter-dropdown {
+  position: absolute;
+  top: 100%; /* Aligne la liste sous le bouton */
+  left: 0;
+  width: max-content;
+  min-width: 200px;
+  max-height: 250px; /* Hauteur maximale pour activer le scroll */
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  overflow-y: auto; /* Activation du scroll */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  z-index: 10;
+}
+.filter-dropdown.open {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ==================================================================================== */
+/*    Input de Recherche dans le Dropdown                                              */
+/* ==================================================================================== */
+.filter-search {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: none;
+  border-bottom: 1px solid #ddd;
+  outline: none;
+}
+
+/* ==================================================================================== */
+/*    Liste des Options dans le Dropdown                                               */
+/* ==================================================================================== */
+.filter-options {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 200px; /* Hauteur de la liste avec scroll */
+  overflow-y: auto;
+}
+
+/* ==================================================================================== */
+/*    Élément de la Liste (Option Individuelle)                                        */
+/* ==================================================================================== */
+.filter-item {
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+}
+.filter-item:hover {
+  background: #FFD15B;
+  color: #000;
 }
 
 /* Composants des filtres de recherche */
