@@ -11,7 +11,8 @@
 /* ==================================================================================== */
 
 import { searchRecipesFunctional } from "./searchFunctional.js";
-import { debounce, logEvent } from "../../utils/utils.js";
+import { searchRecipesLoopNative } from "./searchloopNative.js"; // Vérifie le bon chemin
+import { logEvent } from "../../utils/utils.js";
 
 /*------------------------------------------------------------------*/
 /*   Mode de recherche                                             */

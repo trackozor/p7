@@ -215,9 +215,9 @@ export function getIndexSelectors() {
         /* ============================== */
         filters: {
             container: safeQuerySelector("#filters"),
-            ingredients: () => safeQuerySelector('#ingredient-list') || waitForElement('[data-filter="ingredients"]'),
-            appliances: () => safeQuerySelector('[data-filter="appliances"]') || waitForElement('[data-filter="appliances"]'),
-            ustensils: () => safeQuerySelector('[data-filter="ustensils"]') || waitForElement('[data-filter="ustensils"]'),
+            ingredients: safeQuerySelector('#ingredients-list') || waitForElement('[data-filter="ingredients"]'),
+            appliances: safeQuerySelector('[data-filter="appliances"]') || waitForElement('[data-filter="appliances"]'),
+            ustensils: safeQuerySelector('[data-filter="ustensils"]') || waitForElement('[data-filter="ustensils"]'),
         },
 
         /* ============================== */

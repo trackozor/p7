@@ -44,20 +44,20 @@ function renderRecipes(container, recipes) {
             const recipe = RecipeFactory(recipeData);
 
             if (!recipe || typeof recipe.generateCard !== "function") {
-                console.error("❌ ERREUR : RecipeFactory a retourné une valeur invalide.", recipeData);
+                console.error(" ERREUR : RecipeFactory a retourné une valeur invalide.", recipeData);
                 return;
             }
 
             const recipeCard = recipe.generateCard();
 
             if (!(recipeCard instanceof HTMLElement)) {
-                console.error("❌ ERREUR : generateCard() n'a pas retourné un élément valide.", recipeData);
+                console.error(" ERREUR : generateCard() n'a pas retourné un élément valide.", recipeData);
                 return;
             }
 
             fragment.appendChild(recipeCard);
         } catch (error) {
-            console.error("❌ ERREUR lors de la génération de la recette :", error.message, recipeData);
+            console.error(" ERREUR lors de la génération de la recette :", error.message, recipeData);
         }
     });
 

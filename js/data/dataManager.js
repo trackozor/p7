@@ -1,8 +1,7 @@
-
 /* ====================================================================================
 /*  FICHIER          : dataManager.js
 /*  AUTEUR           : Trackozor
-/*  VERSION          : 2.2
+/*  VERSION          : 2.3
 /*  DESCRIPTION      : Gère la récupération et la recherche de recettes avec cache optimisé.
 /* ==================================================================================== */
 
@@ -10,40 +9,52 @@ import { recipe } from "../data/recipe.js";
 import { logEvent } from "../utils/utils.js"; 
 import { normalizeText } from "../utils/normalize.js"; // Pour uniformiser les recherches
 
-/** Cache des recettes */
-const cache = Array.isArray(recipe) ? recipe : [];
+/* ==================================================================================== */
+/*                                INITIALISATION DU CACHE                              */
+/* ==================================================================================== */
+
+/** Objet global pour stocker les recettes après la première récupération */
+export const recipesData = {
+    recipes: null // `null` signifie que les recettes n'ont pas encore été chargées
+};
+
+/** Cache des recettes pour l'accès rapide par ID */
 const recipeCache = new Map();
-cache.forEach(r => recipeCache.set(r.id, r));
 
 /**
- * Vérification initiale du cache
+ * Vérification et initialisation du cache
  */
 function initializeCache() {
-    if (cache.length === 0) {
+    if (!Array.isArray(recipe) || recipe.length === 0) {
         logEvent("warning", "DataManager : Aucun élément chargé dans le cache des recettes.");
-    } else {
-        logEvent("success", `DataManager : ${cache.length} recettes chargées avec succès.`);
+        recipesData.recipes = []; // Évite de relancer l'opération
+        return;
     }
+
+    recipesData.recipes = recipe; // Stocke toutes les recettes au premier chargement
+    recipe.forEach(r => recipeCache.set(r.id, r));
+
+    logEvent("success", `DataManager : ${recipe.length} recettes chargées avec succès.`);
 }
-initializeCache(); // Appel immédiat pour charger le cache
+
+// Initialisation immédiate au chargement du module
+initializeCache();
+
+/* ==================================================================================== */
+/*                          RÉCUPÉRATION DE TOUTES LES RECETTES                         */
+/* ==================================================================================== */
 
 /**
- * Retourne toutes les recettes stockées.
- * @returns {Array<Object>} Liste des recettes.
+ * Retourne toutes les recettes stockées (réutilisation optimisée).
+ * @returns {Array<Object>} Liste des recettes stockées.
  */
 export function getAllRecipes() {
-    try {
-        if (cache.length === 0) {
-            logEvent("warning", "getAllRecipes : Aucun résultat trouvé.");
-            return [];
-        }
-        logEvent("success", "Récupération des recettes réussie.", { total: cache.length });
-        return cache;
-    } catch (error) {
-        logEvent("error", "getAllRecipes : Impossible de récupérer les recettes.", { error: error.message });
-        return [];
-    }
+    return recipesData.recipes || [];
 }
+
+/* ==================================================================================== */
+/*                        RECHERCHE PAR IDENTIFIANT UNIQUE (ID)                         */
+/* ==================================================================================== */
 
 /**
  * Recherche une recette par son identifiant unique.
@@ -65,6 +76,10 @@ export function getRecipeById(id) {
     }
 }
 
+/* ==================================================================================== */
+/*                            RECHERCHE DE RECETTES PAR MOT-CLÉ                         */
+/* ==================================================================================== */
+
 /**
  * Recherche des recettes contenant un mot-clé.
  * @param {string} keyword - Mot-clé à rechercher.
@@ -73,12 +88,12 @@ export function getRecipeById(id) {
 export function searchRecipes(keyword) {
     try {
         if (!keyword || typeof keyword !== "string" || keyword.trim() === "") {
-            logEvent("info", "🔍 Aucun mot-clé fourni, retour de toutes les recettes.");
-            return getAllRecipes(); // Correction de `this.getAllRecipes()`
+            logEvent("info", " Aucun mot-clé fourni, retour de toutes les recettes.");
+            return getAllRecipes(); // Utilisation directe du cache
         }
 
         const normalizedKeyword = normalizeText(keyword);
-        const filteredRecipes = cache.filter(recipe =>
+        const filteredRecipes = getAllRecipes().filter(recipe =>
             filterRecipeByKeyword(normalizedKeyword, recipe)
         );
 
@@ -108,13 +123,19 @@ function filterRecipeByKeyword(keyword, recipe) {
     );
 }
 
+/* ==================================================================================== */
+/*                        EXTRACTION DES OPTIONS DE FILTRAGE                            */
+/* ==================================================================================== */
+
 /**
  * Retourne les ingrédients, appareils et ustensiles uniques pour les filtres.
  * @returns {Object} { ingredients, appliances, ustensils }
  */
 export function fetchFilterOptions() {
     try {
-        if (cache.length === 0) {
+        const allRecipes = getAllRecipes(); // Réutilise le cache optimisé
+
+        if (allRecipes.length === 0) {
             logEvent("warning", "fetchFilterOptions : Aucune recette disponible pour extraire les filtres.");
             return { ingredients: [], appliances: [], ustensils: [] };
         }
@@ -123,7 +144,7 @@ export function fetchFilterOptions() {
         const appliancesSet = new Set();
         const ustensilsSet = new Set();
 
-        cache.forEach(({ ingredients, appliance, ustensils }) => {
+        allRecipes.forEach(({ ingredients, appliance, ustensils }) => {
             if (Array.isArray(ingredients)) {
                 ingredients.forEach(ing => ingredientsSet.add(normalizeText(ing.ingredient)));
             }
@@ -153,9 +174,16 @@ export function fetchFilterOptions() {
         return { ingredients: [], appliances: [], ustensils: [] };
     }
 }
-export function dataManager () {
-    initializeCache();
 
+/* ==================================================================================== */
+/*                            EXPORTATION DES FONCTIONS                                */
+/* ==================================================================================== */
+
+/**
+ * Fournit un objet avec toutes les méthodes pour gérer les recettes.
+ * @returns {Object} Contient les méthodes pour gérer les recettes.
+ */
+export function dataManager() {
     return {
         getAllRecipes,
         getRecipeById,

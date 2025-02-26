@@ -1,263 +1,186 @@
 /* ==================================================================================== */
 /*  FICHIER          : eventListener.js                                                */
 /*  AUTEUR           : Trackozor                                                       */
-/*  VERSION          : 1.3                                                             */
+/*  VERSION          : 1.4                                                             */
 /*  DATE DE CRÉATION : 12/02/2025                                                      */
-/*  DERNIÈRE MODIF.  : 12/02/2025                                                      */
+/*  DERNIÈRE MODIF.  : 26/02/2025                                                      */
 /*  DESCRIPTION      : Gestion des écouteurs d'événements pour la recherche et les    */
 /*                     filtres interactifs.                                           */
 /*                                                                                     */
-/*  - Initialise les événements pour la barre de recherche et les filtres.            */
-/*  - Vérifie l'existence des éléments avant d'attacher les événements.               */
+/*  - Attache dynamiquement les écouteurs après génération des filtres.               */
+/*  - Surveille le DOM pour s'assurer que les dropdowns existent avant de les écouter.*/
 /*  - Gère les erreurs avec `logEvent()` pour assurer un suivi clair.                  */
 /* ==================================================================================== */
 
 import { logEvent, debounce } from "../utils/utils.js";
 import domSelectors from "../config/domSelectors.js";
 import { handleSearch, handleFilterChange } from "./eventHandler.js";
-import { safeQuerySelector } from "../config/domSelectors.js";
+import { waitForElement } from "../config/domSelectors.js";
 
-let recipeCounts ={};
-export let filters = {};
 
 /* ====================================================================================
-/*  SCROLL INFINI POUR LES DROPDOWNS
+/*  INITIALISATION DES ÉCOUTEURS D'ÉVÉNEMENTS
 /* ==================================================================================== */
 
 /**
- * Attache le scroll infini aux listes des filtres.
- * - Charge dynamiquement des éléments lorsqu'on atteint le bas de la liste.
- * - Empêche le chargement si tous les éléments sont déjà affichés.
- * - Utilise un `threshold` pour ne pas charger trop tôt.
+ * Initialise les écouteurs après que les filtres ont été générés.
  */
-export function attachScrollEvents() {
-    const threshold = 20; // Pixels avant d'atteindre le bas de la liste pour déclencher le chargement
+export function initEventListeners() {
+    try {
+        logEvent("info", "Initialisation des écouteurs d'événements...");
 
-    ["ingredients", "appliances", "utensils"].forEach(filterType => {
-        const listContainer = safeQuerySelector(`#${filterType}-list`);
-        if (!listContainer) {
-            return;
-        }
+        // Attacher les événements de recherche
+        attachSearchListeners(domSelectors.search);
 
-        listContainer.addEventListener("scroll", debounce(() => {
-            if (listContainer.scrollTop + listContainer.clientHeight >= listContainer.scrollHeight - threshold) {
-                loadMoreItems(filterType);
-            }
-        }, 150));
-    });
-
-    logEvent("info", "Événements de scroll infini attachés aux filtres.");
+        // Attendre la génération des filtres avant d'attacher les événements
+        waitForFiltersToBeReady()
+            .then(() => {
+                attachFilterListeners();
+                logEvent("success", " Écouteurs des filtres attachés avec succès.");
+            })
+            .catch(error => logEvent("error", " Erreur lors de l'initialisation des filtres.", { error: error.message }));
+        
+        logEvent("success", " Tous les écouteurs de recherche et filtres sont en cours d'attachement.");
+    } catch (error) {
+        logEvent("error", " Erreur critique lors de l'initialisation des événements.", { error: error.message });
+    }
 }
+
+/* ====================================================================================
+/*  OBSERVATION DU DOM POUR LES FILTRES
+/* ==================================================================================== */
 
 /**
- * Charge dynamiquement plus d'éléments dans un dropdown lorsqu'on scrolle.
- * - Récupère les nouveaux éléments depuis `recipeCounts`.
- * - Ajoute progressivement des éléments sans effacer ceux existants.
- *
- * @param {string} filterType - Type de filtre (`ingredients`, `appliances`, `utensils`).
+ * Attend que les filtres soient générés dans le DOM avant d'attacher les écouteurs.
+ * 
+ * @returns {Promise<void>} Promesse résolue lorsque les filtres existent dans le DOM.
  */
-function loadMoreItems(filterType) {
-    const listContainer = safeQuerySelector(`#${filterType}-list`);
-    if (!listContainer) {
-        return;
-    }
+function waitForFiltersToBeReady() {
+    return new Promise((resolve, reject) => {
+        const observer = new MutationObserver(() => {
+            const ingredients = document.querySelector("#ingredient-list");
+            const appliances = document.querySelector("#appliance-list");
+            const ustensils = document.querySelector("#ustensil-list");
 
-    const currentItems = listContainer.children.length;
-    const totalItems = Object.keys(recipeCounts[filterType]).length;
+            if (ingredients && appliances && ustensils) {
+                observer.disconnect(); // Arrête l'observation
+                resolve();
+            }
+        });
 
-    if (currentItems >= totalItems) {
-        return;
-    } // Arrête le chargement si tous les éléments sont affichés
-
-    const additionalItems = Object.entries(recipeCounts[filterType]).slice(currentItems, currentItems + 5);
-
-    additionalItems.forEach(([key, count]) => {
-        const listItem = document.createElement("li");
-        listItem.classList.add("filter-option");
-        listItem.textContent = `${key} (${count})`;
-        listContainer.appendChild(listItem);
+        // Observe les mutations dans le conteneur des filtres
+        const filtersContainer = document.querySelector("#filters");
+        if (filtersContainer) {
+            observer.observe(filtersContainer, { childList: true, subtree: true });
+        } else {
+            reject(new Error("Impossible de trouver le conteneur des filtres dans le DOM."));
+        }
     });
-
-    logEvent("success", `Chargement de ${additionalItems.length} nouveaux éléments dans ${filterType}`);
 }
 
-/*----------------------------------------------------------------
-/*   Toggle Dropdown
-/*----------------------------------------------------------------*/
+/* ====================================================================================
+/*  BARRE DE RECHERCHE
+/* ==================================================================================== */
+
+/**
+ * Attache les écouteurs d'événements à la barre de recherche.
+ *
+ * - Attache un événement `input` sur le champ de recherche pour une recherche dynamique.
+ * - Empêche le rechargement de la page lors de la soumission du formulaire.
+ * - L'événement `submit` sur le formulaire déclenche la recherche.
+ *
+ * @param {Object} searchSelectors - Sélecteurs DOM de la barre de recherche.
+ */
+export async function attachSearchListeners(searchSelectors) {
+    try {
+        logEvent("info", "attachSearchListeners : Vérification des éléments DOM...");
+
+        // Attente des éléments s'ils sont chargés dynamiquement
+        const form = searchSelectors.form || await waitForElement(".search-bar");
+        const input = searchSelectors.input || await waitForElement("#search");
+
+        if (!form || !input) {
+            throw new Error("attachSearchListeners : Élément(s) de la recherche introuvable(s).");
+        }
+
+        logEvent("success", "✅ attachSearchListeners : Éléments de la recherche trouvés, attachement des écouteurs...");
+
+        // Attache l'événement `input` pour exécuter la recherche au fil de la saisie
+        input.addEventListener("input", debounce(handleSearch, 300));
+
+        // Empêche le rechargement de la page et déclenche la recherche lors du `submit`
+        form.addEventListener("submit", event => {
+            event.preventDefault();
+            handleSearch();
+        });
+
+        logEvent("success", "✅ attachSearchListeners : Écouteurs attachés à la barre de recherche.");
+    } catch (error) {
+        logEvent("error", "🚨 attachSearchListeners : Erreur lors de l'ajout des écouteurs.", { error: error.message });
+    }
+}
+
+
+/* ====================================================================================
+/*  FILTRES DE SÉLECTION
+/* ==================================================================================== */
+
+/**
+ * Ajoute les écouteurs pour les filtres de sélection **après leur génération**.
+ */
+export function attachFilterListeners() {
+    try {
+        logEvent("info", "🔄 Attachement des écouteurs aux filtres...");
+
+        // Boucle sur chaque type de filtre
+        ["ingredients", "appliances", "ustensils"].forEach(filterType => {
+            try {
+                // Sélectionne directement les éléments du DOM
+                const dropdown = document.querySelector(`#${filterType}-list`);
+                const button = document.querySelector(`[data-filter="${filterType}"]`);
+
+                if (!button || !dropdown) {
+                    throw new Error(`attachFilterListeners : Élément(s) manquant(s) pour "${filterType}".`);
+                }
+
+                logEvent("success", `✅ Filtre "${filterType}" trouvé.`);
+
+                // Gestion des événements pour afficher/masquer le dropdown
+                button.addEventListener("click", () => toggleDropdown(dropdown));
+
+                // Gestion des événements pour la sélection dans la liste des filtres
+                dropdown.addEventListener("click", event => handleFilterChange(event));
+
+            } catch (error) {
+                logEvent("error", `attachFilterListeners : Problème avec "${filterType}".`, { error: error.message });
+            }
+        });
+
+        logEvent("test_end", "🎯 Tous les écouteurs de filtres attachés avec succès.");
+
+    } catch (error) {
+        logEvent("critical", "attachFilterListeners : Erreur critique.", { error: error.message });
+    }
+}
 
 /**
  * Affiche ou masque un dropdown.
  *
  * - Ferme tous les autres dropdowns avant d'afficher celui sélectionné.
  * - Ajoute ou retire la classe `hidden` pour basculer l'affichage.
- *
- * @param {HTMLElement} dropdown - Le dropdown à afficher ou masquer.
  */
 function toggleDropdown(dropdown) {
     try {
-        if (!dropdown) {
-            logEvent("error", "toggleDropdown : Aucun dropdown fourni.");
-            return;
-        }
-
-        // Masque tous les dropdowns ouverts
         document.querySelectorAll(".filter-dropdown").forEach(drop => {
             if (drop !== dropdown) {
                 drop.classList.add("hidden");
             }
         });
 
-        // Bascule l'affichage du dropdown sélectionné
         dropdown.classList.toggle("hidden");
+        logEvent("info", `📂 toggleDropdown : Affichage du dropdown.`);
 
-        logEvent("info", `toggleDropdown : Affichage du dropdown ${dropdown.dataset.filter}.`);
     } catch (error) {
         logEvent("error", "toggleDropdown : Erreur lors de l'affichage du dropdown.", { error: error.message });
     }
 }
-
-/*------------------------------------------------------------------
-/*   Initialisation des écouteurs d'événements
-/*------------------------------------------------------------------*/
-
-/**
- * Initialise les écouteurs d'événements pour la recherche et les filtres.
- *
- * - Attache les événements sur la barre de recherche et les filtres.
- * - Vérifie si les éléments DOM existent avant d'ajouter les événements.
- * - Gère les erreurs avec `logEvent()` pour suivre l'état des écouteurs.
- */
-export function initEventListeners() {
-    try {
-        const selectors = domSelectors;
-
-        logEvent("info", "Initialisation des écouteurs d'événements...");
-
-        // Ajout des écouteurs pour la barre de recherche
-        attachSearchListeners(selectors.search);
-
-        // Ajout des écouteurs pour les filtres
-        attachFilterListeners(filters);
-
-        logEvent("success", "Tous les écouteurs d'événements ont été attachés avec succès.");
-    } catch (error) {
-        logEvent("error", "Erreur critique lors de l'initialisation des événements.", { error: error.message });
-    }
-}
-
-/*----------------------------------------------------------------
-/*   Barre de recherche
-/*----------------------------------------------------------------*/
-
-/**
- * Ajoute les écouteurs pour la barre de recherche.
- *
- * - Attache l'événement `input` pour la recherche dynamique.
- * - Empêche le rechargement de la page lors de la soumission du formulaire.
- *
- * @param {Object} searchSelectors - Sélecteurs DOM de la barre de recherche.
- */
-export function attachSearchListeners(searchSelectors) {
-    try {
-        // Vérification des sélecteurs
-        if (!searchSelectors) {
-            logEvent("error", "attachSearchListeners : Aucun sélecteur fourni.");
-            return;
-        }
-
-        const { form, input, button } = searchSelectors;
-
-        if (!form || !input || !button) {
-            logEvent("error", "attachSearchListeners : Élément(s) de la recherche manquant(s).", { form, input, button });
-            return;
-        }
-
-        // Attache l'événement uniquement sur l'input
-        input.addEventListener("input", debounce(handleSearch, 300)); 
-
-        // Empêche le rechargement de la page lors de la soumission du formulaire
-        form.addEventListener("submit", event => {
-            event.preventDefault();
-            handleSearch();
-        }); 
-        logEvent("success", "attachSearchListeners : Écouteurs attachés à la barre de recherche.");
-    } catch (error) {
-        logEvent("error", "attachSearchListeners : Erreur lors de l'ajout des écouteurs.", { error: error.message });
-    }
-}
-
-/*----------------------------------------------------------------
-/*   Filtres de sélection
-/*----------------------------------------------------------------*/
-
-/**
- * Ajoute les écouteurs pour les filtres de sélection.
- *
- * - Attache un événement `click` pour ouvrir/fermer le dropdown.
- * - Vérifie l'existence de chaque filtre avant d'ajouter un écouteur.
- *
- * @param {Object} filterSelectors - Sélecteurs DOM des filtres.
- */
-export function attachFilterListeners(filters) {
-    try {
-        logEvent("info", "attachFilterListeners : Démarrage de l'attachement des écouteurs aux filtres.");
-
-        // Vérification initiale des paramètres
-        if (!filters || typeof filters !== "object") {
-            logEvent("error", "attachFilterListeners : Paramètre `filters` invalide ou non défini.");
-            throw new Error("attachFilterListeners : `filters` doit être un objet contenant les filtres.");
-        }
-
-        // Boucle sur les types de filtres
-        ["ingredients", "appliances", "ustensils"].forEach(filterType => {
-            try {
-                // Vérification que le filtre existe dans l'objet `filters`
-                if (!filters[filterType]) {
-                    logEvent("error", `attachFilterListeners : Filtre "${filterType}" introuvable.`);
-                    throw new Error(`attachFilterListeners : Filtre "${filterType}" non défini.`);
-                }
-
-                const { button, dropdown, list } = filters[filterType];
-
-                // Vérification que chaque élément est bien défini
-                if (!button || !dropdown || !list) {
-                    logEvent("error", `attachFilterListeners : Élément(s) manquant(s) pour "${filterType}".`, { button, dropdown, list });
-                    throw new Error(`attachFilterListeners : Bouton, dropdown ou liste non trouvé(s) pour "${filterType}".`);
-                }
-
-                logEvent("success", `attachFilterListeners : Vérifications complètes pour "${filterType}".`);
-
-                // Gestion des événements pour afficher/masquer le dropdown
-                button.addEventListener("click", () => {
-                    try {
-                        toggleDropdown(dropdown);
-                        logEvent("success", `attachFilterListeners : Dropdown "${filterType}" ouvert/fermé.`);
-                    } catch (error) {
-                        logEvent("error", `attachFilterListeners : Erreur lors de l'ouverture du dropdown "${filterType}".`, { error: error.message });
-                    }
-                });
-
-                // Gestion de la sélection d'un élément dans la liste des filtres
-                list.addEventListener("click", (event) => {
-                    try {
-                        handleFilterChange(event);
-                        logEvent("success", `attachFilterListeners : Sélection de "${event.target.textContent}" dans "${filterType}".`);
-                    } catch (error) {
-                        logEvent("error", `attachFilterListeners : Erreur lors de la sélection dans la liste "${filterType}".`, { error: error.message });
-                    }
-                });
-
-                logEvent("info", `attachFilterListeners : Écouteurs attachés pour "${filterType}".`);
-
-            } catch (error) {
-                logEvent("critical", `attachFilterListeners : Problème rencontré avec "${filterType}".`, { error: error.message });
-            }
-        });
-
-        logEvent("test_end", "attachFilterListeners : Tous les écouteurs ont été attachés avec succès.");
-
-    } catch (error) {
-        logEvent("critical", "attachFilterListeners : Erreur critique lors de l'ajout des écouteurs.", { error: error.message });
-    }
-}
-
