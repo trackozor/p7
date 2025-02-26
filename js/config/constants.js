@@ -9,18 +9,33 @@
                   des logs et des styles CSS standardisés.
 ============================================================================= */
 
-/**
+/**===========================================================================
  * Détection et Gestion des Environnements
  * =============================================================================
  */
 
-// Définition des environnements possibles.
-export const ENVIRONMENTS = {
+/*------------------------------------------------------------------------------
+*               Détection de l 'environnement
+* Définit les types d'environnements dans lesquels l'application peut fonctionner.
+*--------------------------------------------------------------------------------*/
+/**
+ * @constant {Object} ENVIRONMENTS
+ * @description Définit les différents environnements possibles de l'application.
+ * 
+ * - `DEVELOPMENT` : Environnement de développement local (logs activés, debugging facilité).
+ * - `STAGING` : Environnement de préproduction (tests avant mise en production).
+ * - `PRODUCTION` : Environnement en ligne (optimisé pour les performances, logs restreints).
+ */
+export const ENVIRONMENTS = Object.freeze({
   DEVELOPMENT: "development",
   STAGING: "staging",
   PRODUCTION: "production",
-};
+});
 
+/*-------------------------------------------------------------------------------
+*               Détection de l 'environnement Actif
+* Permet d'identifier l'environnement en fonction de l'URL ou d'un paramètre.
+*--------------------------------------------------------------------------------*/
 /**
  * Détecte l'environnement actif en fonction du domaine ou d'un paramètre d'URL.
  * @returns {string} L'environnement détecté (development, staging ou production).
@@ -46,16 +61,34 @@ export const detectEnvironment = () => {
   return ENVIRONMENTS.DEVELOPMENT;
 };
 
+/*-------------------------------------------------------------------------------
+*               Configuration de l 'environnement Actif
+*  Détermine si l'on force le mode développement et affiche l'environnement en cours.
+*--------------------------------------------------------------------------------*/
 
-// Force le mode développement, quelle que soit l'URL (utile pour les tests locaux).
+/**
+ * @constant {boolean} FORCE_DEV_MODE
+ * @description Force l'application à rester en mode développement, quelle que soit l'URL.
+ * Utile pour les tests locaux et le débogage.
+ * 
+ * - `true` : L'environnement sera toujours en mode développement.
+ * - `false` : L'environnement sera détecté automatiquement via `detectEnvironment()`.
+ */
 export const FORCE_DEV_MODE = false;
 
-// Détermination de l'environnement actif.
+/**
+ * @constant {string} ACTIVE_ENVIRONMENT
+ * @description Détermine l'environnement actif de l'application en fonction de `FORCE_DEV_MODE` et `detectEnvironment()`.
+ * 
+ * - Si `FORCE_DEV_MODE` est activé, l'environnement est forcé en `DEVELOPMENT`.
+ * - Sinon, il est automatiquement détecté avec `detectEnvironment()`.
+ */
 export const ACTIVE_ENVIRONMENT = FORCE_DEV_MODE
   ? ENVIRONMENTS.DEVELOPMENT
   : detectEnvironment();
 
-console.log(`Environnement actif : ${ACTIVE_ENVIRONMENT}`);
+
+console.log(`🛠️ Environnement actif : ${ACTIVE_ENVIRONMENT}`);
 
 /**
  * =============================================================================
@@ -148,52 +181,140 @@ export const CONFIGLOG = {
   // -------------------------------------------------------------------------
   // Styles pour les Logs
   // -------------------------------------------------------------------------
-  LOG_STYLES: {
-    default: "color: black;",
-    info: "color: blue; font-weight: bold;",
-    warn: "color: orange; font-weight: bold;",
-    error: "color: red; font-weight: bold;",
-    success: "color: green; font-weight: bold;",
-    test_start: "background-color: purple; color: white; font-weight: bold;",
-    test_end: "background-color: brown; color: white; font-weight: bold;",
-    test_start_modal:
-      "background-color: purple; color: white; font-weight: bold;",
-    test_end_modal: "background-color: brown; color: white; font-weight: bold;",
-    test_start_lightbox:
-      "background-color: darkblue; color: white; font-weight: bold;",
-    test_end_lightbox:
-      "background-color: teal; color: white; font-weight: bold;",
-    test_start_sort:
-      "background-color: lightgreen; color: white; font-weight: bold;",
-    test_end_sort:
-      "background-color: darkgreen; color: white; font-weight: bold;",
-    test_start_events:
-      "background-color: lightpink; color: white; font-weight: bold;",
-    test_end_events:
-      "background-color: darkpink; color: white; font-weight: bold;",
-  },
+  LOG_STYLES: (() => {
+        const baseStyles = {
+            default: "color: black;",
+            info: "color: blue; font-weight: bold;",
+            warn: "color: orange; font-weight: bold;",
+            error: "color: red; font-weight: bold;",
+            success: "color: green; font-weight: bold;",
+        };
+
+        const testStyles = {
+            test_start: "background-color: purple; color: white; font-weight: bold;",
+            test_end: "background-color: brown; color: white; font-weight: bold;",
+            test_start_modal: "background-color: purple; color: white; font-weight: bold;",
+            test_end_modal: "background-color: brown; color: white; font-weight: bold;",
+            test_start_lightbox: "background-color: darkblue; color: white; font-weight: bold;",
+            test_end_lightbox: "background-color: teal; color: white; font-weight: bold;",
+            test_start_sort: "background-color: lightgreen; color: white; font-weight: bold;",
+            test_end_sort: "background-color: darkgreen; color: white; font-weight: bold;",
+            test_start_events: "background-color: lightpink; color: white; font-weight: bold;",
+            test_end_events: "background-color: deeppink; color: white; font-weight: bold;",
+        };
+
+        return Object.freeze({ ...baseStyles, ...testStyles });
+    })(), 
 
   // -------------------------------------------------------------------------
   // Icônes des Logs
   // -------------------------------------------------------------------------
-  LOG_ICONS: {
-    default: "🔵", // Icône par défaut.
-    info: "ℹ️", // Icône pour les infos.
-    warn: "⚠️", // Icône pour les avertissements.
-    error: "❌", // Icône pour les erreurs.
-    success: "✅", // Icône pour les succès.
-    test_start: "🔧", // Icône pour le début des tests.
-    test_end: "🏁", // Icône pour la fin des tests.
-  },
+  // Icônes des logs pour une identification rapide
+    LOG_ICONS: Object.freeze({
+        default: "🔵", // Icône par défaut
+        info: "ℹ️",
+        warn: "⚠️",
+        error: "❌",
+        success: "✅",
+        test_start: "🔧",
+        test_end: "🏁",
+        test_start_modal: "🟣",
+        test_end_modal: "🟤",
+        test_start_lightbox: "🔵",
+        test_end_lightbox: "🟢",
+        test_start_sort: "🟢",
+        test_end_sort: "🟢",
+        test_start_events: "🌸",
+        test_end_events: "🌺",
+    }),
 };
-export const KEY_CODES = (() => {
-    return Object.freeze({
-        ESCAPE: "Escape",
-        TAB: "Tab",
-        ARROW_LEFT: "ArrowLeft",
-        ARROW_RIGHT: "ArrowRight",
-        ENTER: "Enter",
-        SPACE: " ",
-    });
-})();
+
+// -------------------------------------------------------------------------
+// config des touches claviers
+// -------------------------------------------------------------------------
+/**
+ * @constant {Object} KEY_CODES
+ * @description Contient les codes des touches du clavier sous forme d'objet immuable.
+ * Permet de faciliter l'accès aux codes clavier dans les événements `keydown` et `keyup`.
+ * 
+ * Les catégories incluent :
+ * - **Contrôle et navigation** (ESCAPE, TAB, ENTER, SPACE, BACKSPACE, DELETE)
+ * - **Flèches directionnelles** (ARROW_UP, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT)
+ * - **Modificateurs** (SHIFT, CTRL, ALT, META)
+ * - **Touches de fonction (F1 - F12)**
+ * - **Pavé numérique** (NUMPAD_0 à NUMPAD_9, opérations arithmétiques)
+ * - **Lettres (A-Z)**
+ * - **Chiffres du clavier principal (0-9)**
+ * - **Symboles courants** (`-`, `=`, `[`, `]`, etc.)
+ * - **Touches système et verrouillage** (CAPS_LOCK, NUM_LOCK, PRINT_SCREEN...)
+ */
+export const KEY_CODES = Object.freeze({
+  //  Contrôle et navigation
+  ESCAPE: "Escape",        // Touche Échap
+  TAB: "Tab",              // Tabulation
+  ENTER: "Enter",          // Entrée
+  SPACE: " ",              // Espace
+  BACKSPACE: "Backspace",  // Retour arrière
+  DELETE: "Delete",        // Supprimer
+
+  //  Flèches directionnelles
+  ARROW_UP: "ArrowUp",
+  ARROW_DOWN: "ArrowDown",
+  ARROW_LEFT: "ArrowLeft",
+  ARROW_RIGHT: "ArrowRight",
+
+  //  Modificateurs (Touches spéciales)
+  SHIFT: "Shift",
+  CTRL: "Control",
+  ALT: "Alt",
+  META: "Meta", // Touche Windows (PC) ou Commande (Mac)
+
+  //  Touches de fonction (F1 - F12)
+  F1: "F1", F2: "F2", F3: "F3", F4: "F4", F5: "F5",
+  F6: "F6", F7: "F7", F8: "F8", F9: "F9", F10: "F10",
+  F11: "F11", F12: "F12",
+
+  //  Pavé numérique
+  NUMPAD_0: "Numpad0", NUMPAD_1: "Numpad1", NUMPAD_2: "Numpad2",
+  NUMPAD_3: "Numpad3", NUMPAD_4: "Numpad4", NUMPAD_5: "Numpad5",
+  NUMPAD_6: "Numpad6", NUMPAD_7: "Numpad7", NUMPAD_8: "Numpad8",
+  NUMPAD_9: "Numpad9",
+  NUMPAD_DECIMAL: "NumpadDecimal", NUMPAD_DIVIDE: "NumpadDivide",
+  NUMPAD_MULTIPLY: "NumpadMultiply", NUMPAD_SUBTRACT: "NumpadSubtract",
+  NUMPAD_ADD: "NumpadAdd", NUMPAD_ENTER: "NumpadEnter",
+  NUMPAD_EQUAL: "NumpadEqual",
+
+  // Lettres (A-Z)
+  A: "a", B: "b", C: "c", D: "d", E: "e", F: "f", G: "g",
+  H: "h", I: "i", J: "j", K: "k", L: "l", M: "m", N: "n",
+  O: "o", P: "p", Q: "q", R: "r", S: "s", T: "t", U: "u",
+  V: "v", W: "w", X: "x", Y: "y", Z: "z",
+
+  // Chiffres du clavier principal (0-9)
+  DIGIT_0: "0", DIGIT_1: "1", DIGIT_2: "2", DIGIT_3: "3",
+  DIGIT_4: "4", DIGIT_5: "5", DIGIT_6: "6", DIGIT_7: "7",
+  DIGIT_8: "8", DIGIT_9: "9",
+
+  // Symboles courants
+  BACKQUOTE: "`", // Tilde et backtick
+  MINUS: "-", EQUAL: "=", // Moins et Égal
+  BRACKET_LEFT: "[", BRACKET_RIGHT: "]", // Crochets
+  BACKSLASH: "\\", // Barre oblique inverse
+  SEMICOLON: ";", QUOTE: "'", // Point-virgule et apostrophe
+  COMMA: ",", PERIOD: ".", SLASH: "/", // Virgule, point et slash
+
+  // Touches système et verrouillage
+  CAPS_LOCK: "CapsLock",
+  NUM_LOCK: "NumLock",
+  SCROLL_LOCK: "ScrollLock",
+  PRINT_SCREEN: "PrintScreen",
+  PAUSE: "Pause",
+  INSERT: "Insert",
+  HOME: "Home",
+  END: "End",
+  PAGE_UP: "PageUp",
+  PAGE_DOWN: "PageDown",
+});
+
+
 

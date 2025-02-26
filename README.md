@@ -1,12 +1,14 @@
 # PetitsPlats2.0
 
-# 🍽️ Les Petits Plats - Projet JS
+ 🍽️ Les Petits Plats - Projet JS
 
 ## 📌 Description du Projet
+
 Les Petits Plats est un **moteur de recherche de recettes** optimisé et performant.  
 L'objectif est de permettre aux utilisateurs de **rechercher des recettes dynamiquement** à l'aide de **filtres interactifs** sans utiliser d'API externe ni de framework.  
 
 🚀 **Fonctionnalités principales :**
+
 - Recherche instantanée avec filtrage dynamique.
 - Gestion avancée des filtres (`ingrédients`, `appareils`, `ustensiles`).
 - **Scroll infini** pour le chargement progressif des éléments.
@@ -16,6 +18,7 @@ L'objectif est de permettre aux utilisateurs de **rechercher des recettes dynami
 ---
 
 ## ⚙️ Technologies Utilisées
+
 - **JavaScript (ES6+)** : Manipulation DOM, gestion des événements, optimisations.
 - **HTML5/CSS3** : Structure de la page et design des filtres.
 - **SCSS** : Organisation avancée des styles.
@@ -25,6 +28,7 @@ L'objectif est de permettre aux utilisateurs de **rechercher des recettes dynami
 ---
 
 ## 📂 Architecture du Projet
+
 ```plaintext
 📦 Les-Petits-Plats
  ┣ 📂 assets/

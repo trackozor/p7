@@ -11,55 +11,6 @@
  * Date de création: 05/01/2025
  * Dernière MAJ    : 09/02/2025 (Version 2.0.0)
  * ===============================================================
- *
- * Objectifs :
- * - Charger dynamiquement les sélecteurs DOM en fonction de la page active.
- * - Vérifier la présence des sélecteurs essentiels et identifier ceux manquants.
- * - Optimiser les requêtes DOM en stockant les éléments dans un cache local.
- * - Mettre à jour automatiquement les sélecteurs si le DOM est modifié.
- * - Éviter les erreurs en fournissant des alternatives aux éléments manquants.
- * - Centraliser les sélecteurs pour une meilleure maintenabilité du code.
- *
- * Fonctionnalités :
- * 
- *  Gestion avancée du **cache DOM** pour éviter les requêtes inutiles.
- *  Sélection sécurisée des éléments avec **fallback et journalisation des erreurs**.
- * **Détection automatique** de la page active via l’URL.
- *  Vérification récursive des sélecteurs et **rapport des éléments manquants**.
- *  Système de **rafraîchissement dynamique** pour suivre les modifications du DOM.
- *  **Surveillance du DOM** via `MutationObserver` pour détecter les changements en temps réel.
- *  Optimisation des performances avec **détection et prévention des accès redondants**.
- *  Gestion de l’**initialisation différée** pour garantir le chargement complet du DOM avant utilisation.
- *
- *  Architecture du module :
- * 
- * - **Cache DOM** : Stocke les sélecteurs pour limiter les appels répétitifs.
- * - **Fonctions de sélection** : Récupèrent les éléments de manière optimisée.
- * - **Gestion de page** : Identifie la page actuelle et charge les sélecteurs adaptés.
- * - **Vérification des sélecteurs** : Détecte les éléments manquants pour éviter les erreurs.
- * - **Chargement dynamique** : Adapte les sélecteurs selon le contexte.
- * - **Observation des changements** : Met à jour les sélecteurs lorsque le DOM évolue.
- *
- * Standards et Bonnes Pratiques :
- * 
- * - Utilisation de **`Map()`** pour un cache rapide et efficace.
- * - Journalisation détaillée avec **`logEvent()`** pour chaque action.
- * - Utilisation de **`MutationObserver`** pour améliorer la robustesse.
- * - Respect des principes **DRY** (Don't Repeat Yourself) et **KISS** (Keep It Simple, Stupid).
- * - Code entièrement **documenté** et **structuré** pour faciliter la maintenance.
- *
- * Version et Historique :
- * 
- * - v1.0.0 (05/01/2025) : Création initiale du fichier avec récupération basique des sélecteurs.
- * - v1.5.0 (15/01/2025) : Ajout du cache DOM et amélioration de la gestion des erreurs.
- * - v1.7.0 (01/02/2025) : Détection automatique de la page active et log avancé des erreurs.
- * - v2.0.0 (09/02/2025) : Surveillance du DOM, rafraîchissement dynamique et optimisation des performances.
- *
- * Licence :
- * 
- * Ce code est distribué sous licence **MIT**, libre de modification et d'utilisation.
- *
- * ===============================================================
  */
 
 /*==============================================*/
@@ -71,7 +22,6 @@
  * relatives aux sélections DOM.
  */
 import { logEvent } from "../utils/utils.js";
-import {createFilterSection} from "../components/factory/dropdownFactory.js";
 
 /*==============================================*/
 /*         Cache et Sélection Sécurisée         */
@@ -189,7 +139,6 @@ export function safeQuerySelectorAll(selector) {
     return elements;
 }
 
-
 /*==============================================*/
 /*          Détection Dynamique de la Page      */
 /*==============================================*/
@@ -217,7 +166,6 @@ export function getCurrentPage() {
     }
     return "unknown";
 }
-
 
 /*==============================================*/
 /*       Définition Structurée des Sélecteurs   */
@@ -269,7 +217,7 @@ export function getIndexSelectors() {
             container: safeQuerySelector("#filters"),
             ingredients: () => safeQuerySelector('#ingredient-list') || waitForElement('[data-filter="ingredients"]'),
             appliances: () => safeQuerySelector('[data-filter="appliances"]') || waitForElement('[data-filter="appliances"]'),
-            utensils: () => safeQuerySelector('[data-filter="utensils"]') || waitForElement('[data-filter="utensils"]'),
+            ustensils: () => safeQuerySelector('[data-filter="ustensils"]') || waitForElement('[data-filter="ustensils"]'),
         },
 
         /* ============================== */
@@ -288,127 +236,193 @@ export function getIndexSelectors() {
     };
 }
 
+/* =============================================================================
+/*   WaitforElement
+/* ============================================================================= */
 /**
- * Attend qu'un élément apparaisse dans le DOM avant de le récupérer.
+ * Attend qu'un élément spécifique apparaisse dans le DOM avant de l’utiliser.
+ * 
+ * - Utilise `safeQuerySelector()` pour exploiter le cache DOM.
+ * - Observe les changements en temps réel avec `MutationObserver`.
+ * - Gère proprement le timeout pour éviter les boucles infinies.
  *
  * @param {string} selector - Sélecteur CSS de l'élément à attendre.
- * @returns {Promise<Element>} Élément DOM une fois disponible.
+ * @param {number} timeout - Délai maximum (par défaut : 5000ms).
+ * @returns {Promise<Element>} Élément DOM résolu ou rejeté après expiration.
  */
-export function waitForElement(selector) {
-    return new Promise((resolve) => {
+export function waitForElement(selector, timeout = 5000) {
+    logEvent("info", ` Attente de l'élément : "${selector}" (Timeout: ${timeout}ms)`);
+
+    return new Promise((resolve, reject) => {
+        //  Vérifie d'abord si l'élément est déjà présent dans le DOM via le cache
+        const cachedElement = safeQuerySelector(selector, true);
+        if (cachedElement) {
+            logEvent("success", `Élément trouvé immédiatement via le cache : "${selector}"`);
+            return resolve(cachedElement); //  Retourne l'élément immédiatement s'il est trouvé
+        }
+
+        logEvent("info", ` Élément non trouvé, lancement de l'observation avec MutationObserver...`);
+
+        //  Création de l'observateur pour surveiller l'ajout de l'élément dans le DOM
         const observer = new MutationObserver(() => {
-            const element = document.querySelector(selector);
+            logEvent("info", `DOM modifié, recherche de "${selector}"...`);
+            const element = safeQuerySelector(selector, true);
             if (element) {
-                observer.disconnect();
+                logEvent("success", ` Élément détecté dynamiquement : "${selector}"`);
+                observer.disconnect(); //  Arrête l'observation une fois l'élément trouvé
                 resolve(element);
             }
         });
+
+        //  Observe tout changement dans le DOM
         observer.observe(document.body, { childList: true, subtree: true });
+
+        //  Définition d'un timeout pour éviter les attentes infinies
+        setTimeout(() => {
+            logEvent("warn", ` Timeout atteint : "${selector}" non trouvé après ${timeout}ms.`);
+            observer.disconnect(); //  Arrête l'observation en cas d'échec
+            reject(new Error(`waitForElement : "${selector}" introuvable après ${timeout}ms.`));
+        }, timeout);
     });
 }
 /*==============================================*/
 /*    Vérification de la Présence des Éléments  */
 /*==============================================*/
 
-/** ## DESCRIPTION ##
- * ---------------------------------------------------------------------------------------------------
- *  Parcourt un objet contenant des sélecteurs DOM pour vérifier leur présence et signaler ceux manquants.
- * ---------------------------------------------------------------------------------------------------
- * 
+/**
+ * Parcourt un objet contenant des sélecteurs DOM pour vérifier leur présence et signaler ceux manquants.
+ *
+ * - Construit une hiérarchie des sélecteurs pour un meilleur suivi.
+ * - Identifie et stocke les sélecteurs manquants.
+ *
  * @function recursiveCheck
  * @param {Object} obj - Objet contenant les sélecteurs à vérifier (ex: `getIndexSelectors()`).
  * @param {string} [parentKey=""] - Clé parent servant à générer un chemin hiérarchique clair des sélecteurs.
  * @param {Array<string>} [missingSelectors=[]] - Tableau utilisé pour stocker les sélecteurs manquants.
  * @returns {Array<string>} Liste des sélecteurs manquants sous forme de chaînes de caractères.
- * 
+ *
  * @example
  *  Vérifier les sélecteurs d'une page donnée :
  * const selectors = getIndexSelectors();
  * const missing = recursiveCheck(selectors);
  * if (missing.length > 0) {
- *    console.warn("Sélecteurs manquants :", missing);
+ *    logEvent("warn", "Sélecteurs manquants détectés.", { missing });
  * }
  */
 export function recursiveCheck(obj, parentKey = "", missingSelectors = []) {
+    logEvent("test_start", `Début de la vérification des sélecteurs DOM pour : ${parentKey || "racine"}`);
+
     Object.entries(obj).forEach(([key, value]) => {
         // Construit la clé complète pour suivre la hiérarchie des sélecteurs
         const fullKey = parentKey ? `${parentKey}.${key}` : key;
 
         // Si la valeur est un objet, on applique la récursivité
         if (typeof value === "object" && value !== null) {
+            logEvent("info", `Exploration du groupe de sélecteurs : ${fullKey}`);
             recursiveCheck(value, fullKey, missingSelectors);
         } 
         // Si la valeur est absente (null ou undefined), elle est ajoutée à la liste des manquants
         else if (!value) {
+            logEvent("warn", `Sélecteur manquant détecté : ${fullKey}`);
             missingSelectors.push(fullKey);
         }
     });
 
+    if (missingSelectors.length > 0) {
+        logEvent("error", "Vérification terminée : Des sélecteurs manquent.", { missingSelectors });
+    } else {
+        logEvent("test_end", "Vérification terminée : Aucun sélecteur manquant.");
+    }
+
     return missingSelectors; // Retourne la liste des sélecteurs manquants
 }
-
 
 /*==============================================*/
 /*    Vérification Globale des Sélecteurs       */
 /*==============================================*/
-/** 
- * ---------------------------------------------------------------------------------------------------
- *  Vérifie la présence de tous les sélecteurs nécessaires au bon fonctionnement d’une page donnée.
- * ---------------------------------------------------------------------------------------------------
- * 
+/**
+ * Vérifie la présence de tous les sélecteurs nécessaires au bon fonctionnement d’une page donnée.
+ *
+ * - Analyse l’objet de sélecteurs et identifie ceux qui sont manquants.
+ * - Utilise `recursiveCheck()` pour une détection approfondie.
+ *
  * @function checkSelectors
  * @param {Object} selectors - Objet contenant les sélecteurs DOM à vérifier (ex: `getIndexSelectors()`).
  * @returns {Array<string>} Liste des sélecteurs manquants sous forme de chaînes de caractères.
- * 
+ *
  * @example
  *  Vérifier les sélecteurs d'une page spécifique :
  * const missingSelectors = checkSelectors(getIndexSelectors());
  * if (missingSelectors.length > 0) {
- *    console.warn("Sélecteurs DOM manquants :", missingSelectors);
+ *    logEvent("warn", "Sélecteurs DOM manquants :", { missingSelectors });
  * }
  */
 export function checkSelectors(selectors) {
-    return recursiveCheck(selectors);
+    logEvent("info", "Début de la vérification globale des sélecteurs DOM.");
+
+    const missingSelectors = recursiveCheck(selectors);
+
+    if (missingSelectors.length > 0) {
+        logEvent("error", "Sélecteurs DOM manquants détectés.", { missingSelectors });
+    } else {
+        logEvent("success", "Tous les sélecteurs DOM sont présents.");
+    }
+
+    return missingSelectors;
 }
 
 /*==============================================*/
 /*          Chargement Dynamique des Sélecteurs */
 /*==============================================*/
 /**
- * ---------------------------------------------------------------------------------------------------
- *  Charge dynamiquement les sélecteurs nécessaires en fonction de la page détectée.
- * ---------------------------------------------------------------------------------------------------
- * 
+ * Charge dynamiquement les sélecteurs nécessaires en fonction de la page détectée.
+ *
+ * - Identifie la page en cours.
+ * - Récupère les sélecteurs appropriés.
+ * - Vérifie la présence des sélecteurs et signale ceux qui sont absents.
+ *
  * @function loadSelectorsForCurrentPage
  * @returns {Object} Un objet contenant les sélecteurs DOM propres à la page actuelle.
- * 
+ *
+ * @example
+ *  Charger les sélecteurs de la page courante :
+ * const selectors = loadSelectorsForCurrentPage();
+ * console.log(selectors);
  */
 export function loadSelectorsForCurrentPage() {
+    logEvent("info", "Début du chargement des sélecteurs DOM pour la page actuelle.");
+
+    // Détecte la page en cours
     const currentPage = getCurrentPage();
     logEvent("info", `Page détectée : ${currentPage}`);
 
-    // Sélection des sélecteurs en fonction de la page détectée
+    // Sélection des sélecteurs en fonction de la page
     let selectors = {};
     if (currentPage === "index") {
+        logEvent("info", "Chargement des sélecteurs pour la page d'accueil.");
         selectors = getIndexSelectors();
-    } 
+    } else {
+        logEvent("warn", "Aucun sélecteur spécifique défini pour cette page.");
+    }
 
     // Vérification des sélecteurs manquants
     const missingSelectors = checkSelectors(selectors);
     if (missingSelectors.length > 0) {
         logEvent("error", "Sélecteurs manquants détectés.", { missingSelectors });
+    } else {
+        logEvent("success", "Tous les sélecteurs DOM sont présents.");
     }
 
     return selectors;
 }
-
 /*==============================================*/
 /*        Rafraîchissement des Sélecteurs       */
 /*==============================================*/
-/** 
- * ---------------------------------------------------------------------------------------------------
- *  Réinitialise dynamiquement les sélecteurs DOM pour garantir leur validité et éviter les erreurs.
- * ---------------------------------------------------------------------------------------------------
+/**
+ * Réinitialise dynamiquement les sélecteurs DOM pour garantir leur validité et éviter les erreurs.
+ *
+ * - Vide le cache pour s'assurer d'utiliser des références valides.
+ * - Recharge les sélecteurs adaptés à la page active.
  *
  * @function refreshSelectors
  * @returns {void} Ne retourne rien mais met à jour les sélecteurs en arrière-plan.
@@ -422,12 +436,14 @@ export function loadSelectorsForCurrentPage() {
  * updateUI(); // Fonction qui met à jour l'affichage
  */
 export function refreshSelectors() {
-    logEvent("info", "Rafraîchissement des sélecteurs DOM...");
+    logEvent("info", "Début du rafraîchissement des sélecteurs DOM...");
 
     // Purge le cache pour garantir des références valides
+    logEvent("info", "Vidage du cache des sélections DOM.");
     clearDomCache();
 
     // Recharge les sélecteurs dynamiquement en fonction de la page active
+    logEvent("info", "Rechargement des sélecteurs en fonction de la page active.");
     Object.assign(domSelectors, loadSelectorsForCurrentPage());
 
     logEvent("success", "Sélecteurs DOM mis à jour avec succès.");
@@ -440,6 +456,11 @@ export function refreshSelectors() {
  * ---------------------------------------------------------------------------------------------------
  *  Initialise les sélecteurs DOM après le chargement complet de la page et empêche une double exécution.
  * ---------------------------------------------------------------------------------------------------
+/**
+ * Initialise les sélecteurs DOM après le chargement complet de la page et empêche une double exécution.
+ *
+ * - Charge les sélecteurs DOM en fonction de la page détectée.
+ * - Vérifie si l'initialisation a déjà eu lieu pour éviter toute duplication.
  *
  * @function initializeDomSelectors
  * @returns {void} Ne retourne rien mais charge les sélecteurs DOM de manière sécurisée.
@@ -454,24 +475,23 @@ export function refreshSelectors() {
  * }
  */
 function initializeDomSelectors() {
+    logEvent("info", "Début de l'initialisation des sélecteurs DOM.");
+
     // Empêche une double initialisation
     if (window.domSelectorsLoaded) {
+        logEvent("warn", "Initialisation des sélecteurs DOM ignorée (déjà effectuée).");
         return;
     }
 
-    logEvent("info", "Initialisation des sélecteurs DOM...");
-
     // Charge dynamiquement les sélecteurs de la page
+    logEvent("info", "Chargement des sélecteurs en fonction de la page actuelle.");
     Object.assign(domSelectors, loadSelectorsForCurrentPage());
 
-    logEvent("success", "Sélecteurs DOM chargés.");
+    logEvent("success", "Sélecteurs DOM chargés avec succès.");
 
     // Marque l'initialisation comme terminée pour éviter les répétitions
     window.domSelectorsLoaded = true;
 }
-
-// Exécute automatiquement après le chargement complet du DOM
-document.addEventListener("DOMContentLoaded", initializeDomSelectors);
 
 /*==============================================*/
 /*   Observation des Changements du DOM        */
@@ -510,8 +530,7 @@ function observeDomChanges() {
 }
 
 // Exécute l'observation après le chargement complet du DOM
-document.addEventListener("DOMContentLoaded", observeDomChanges);
-
+document.addEventListener("DOMContentLoaded", observeDomChanges, initializeDomSelectors );
 
 /*==============================================*/
 /*       Export des Fonctions & Sélecteurs      */

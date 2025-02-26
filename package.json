@@ -9,7 +9,7 @@
         "sass": "sass --watch scss:css",
         "lint": "eslint . --fix",
         "format": "prettier --write .",
-        "dev": "nodemon --ext scss --exec 'npm run scss'"
+        "dev": "nodemon --ext scss --exec \"npm run scss\""
     },
     "keywords": [],
     "author": "",
@@ -42,7 +42,7 @@
         "braces": "^3.0.3",
         "callsites": "^3.1.0",
         "chalk": "^4.1.2",
-        "chart.js": "^4.4.7",
+        "chart.js": "^4.4.8",
         "chokidar": "^4.0.3",
         "color-convert": "^2.0.1",
         "color-name": "^1.1.4",

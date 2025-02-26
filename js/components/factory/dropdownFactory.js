@@ -5,8 +5,9 @@
 /*  DESCRIPTION      : Génération dynamique et optimisée des dropdowns de filtres.
 /* ==================================================================================== */
 
-import { logEvent, debounce } from "../../utils/utils.js";
+import { logEvent } from "../../utils/utils.js";
 import { safeQuerySelector } from "../../config/domSelectors.js";
+import { handleFilterSelection } from "../../events/eventHandler.js";
 
 /* ====================================================================================
 /* 1. CRÉATION DES FILTRES (DROPDOWNS)
@@ -27,58 +28,93 @@ import { safeQuerySelector } from "../../config/domSelectors.js";
  */
 
 export function createFilterSection(parentSelector, title, filterType, dataSet) {
+    logEvent("info", `createFilterSection : Début de la création du filtre "${title}" (${filterType}).`);
+
     try {
-        if (!parentSelector || !title || !filterType || !(dataSet instanceof Set)) {
-            logEvent("error", `createFilterSection : Paramètres invalides pour ${filterType}.`, { parentSelector, title, filterType, dataSet });
-            return;
+        // Vérification des paramètres
+        if (typeof parentSelector !== "string" || !parentSelector.trim()) {
+            logEvent("error", "createFilterSection : parentSelector doit être une chaîne de caractères non vide.", { parentSelector });
+            return null;
+        }
+        if (typeof title !== "string" || !title.trim()) {
+            logEvent("error", "createFilterSection : title doit être une chaîne de caractères non vide.", { title });
+            return null;
+        }
+        if (typeof filterType !== "string" || !filterType.trim()) {
+            logEvent("error", "createFilterSection : filterType doit être une chaîne de caractères non vide.", { filterType });
+            return null;
+        }
+        if (!(dataSet instanceof Set)) {
+            logEvent("error", "createFilterSection : dataSet doit être une instance de Set.", { dataSet });
+            return null;
         }
 
+        logEvent("info", "createFilterSection : Paramètres validés avec succès.");
+
+        //  Sélection du conteneur parent
         const parent = safeQuerySelector(parentSelector);
         if (!parent) {
-            logEvent("error", `createFilterSection : Conteneur parent introuvable (${parentSelector}).`);
-            return;
+            logEvent("error", `createFilterSection : Conteneur parent introuvable (${parentSelector}). Assurez-vous que le sélecteur est correct.`);
+            return null;
         }
 
-        //  Création du conteneur
+        logEvent("info", `createFilterSection : Conteneur parent trouvé (${parentSelector}).`);
+
+        //  Création des éléments HTML du filtre
+        logEvent("info", `createFilterSection : Création du conteneur du filtre pour "${title}".`);
         const filterContainer = document.createElement("div");
         filterContainer.classList.add("filter-group");
 
-        //  Création du bouton
+        logEvent("info", `createFilterSection : Création du bouton du filtre "${title}".`);
         const filterButton = document.createElement("button");
         filterButton.classList.add("filter-button");
         filterButton.dataset.filter = filterType;
         filterButton.innerHTML = `${title} <i class="fas fa-chevron-down"></i>`;
 
-        //  Création de la liste des filtres
-        const dropdownList = document.createElement("ul");
-        dropdownList.id = `${filterType}-list`;
-        dropdownList.classList.add("dropdown-list");
+        logEvent("info", `createFilterSection : Création de la liste déroulante pour "${title}".`);
+        const filterList = document.createElement("ul");
+        filterList.id = `${filterType}-list`;
+        filterList.classList.add("dropdown-list");
 
-        //  Injection immédiate des options
+        //  Remplissage de la liste déroulante
         if (dataSet.size > 0) {
+            logEvent("info", `createFilterSection : Ajout des options dans la liste déroulante (${dataSet.size} options trouvées).`);
             dataSet.forEach(item => {
+                if (typeof item !== "string" || !item.trim()) {
+                    logEvent("warn", `createFilterSection : Option ignorée car invalide.`, { item });
+                    return;
+                }
                 const listItem = document.createElement("li");
                 listItem.classList.add("filter-option");
                 listItem.textContent = item;
-                dropdownList.appendChild(listItem);
+                listItem.addEventListener("click", () => handleFilterSelection(filterType, item));
+                filterList.appendChild(listItem);
+                logEvent("info", `createFilterSection : Option ajoutée -> "${item}".`);
             });
         } else {
-            dropdownList.innerHTML = `<li class="empty">Aucune option disponible</li>`;
+            logEvent("warn", `createFilterSection : Aucun élément dans le dataSet, affichage d'un message vide.`);
+            filterList.innerHTML = `<li class="empty">Aucune option disponible</li>`;
         }
 
-        // Ajout des éléments au conteneur principal
-        filterButton.appendChild(dropdownList);
+        //  Assemblage des éléments dans le DOM
+        logEvent("info", `createFilterSection : Ajout des éléments au DOM.`);
         filterContainer.appendChild(filterButton);
+        filterContainer.appendChild(filterList);
         parent.appendChild(filterContainer);
 
         logEvent("success", `createFilterSection : Section de filtre "${title}" générée avec succès.`);
-        
-        // Retourne les éléments pour qu'on puisse les manipuler ailleurs
-        return { filterButton, dropdownList };
+
+        //  Retourner un objet structuré avec les éléments créés
+        return { button: filterButton, dropdown: filterContainer, list: filterList };
+
     } catch (error) {
-        logEvent("error", "createFilterSection : Erreur lors de la création de la section de filtre.", { error: error.message });
+        logEvent("error", "createFilterSection : Erreur inattendue lors de la création de la section de filtre.", { error: error.message, stack: error.stack });
+        return null;
     }
 }
+
+
+
 
 
 

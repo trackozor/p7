@@ -14,7 +14,7 @@ const modules = {
     utils: () => import("../utils/utils.js"),
     dataManager: () => import("../data/dataManager.js"),
     templateManager: () => import("../data/templateManager.js"),
-    searchLoop: () => import("../components/search/searchloopnative.js"),
+    searchLoop: () => import("../components/search/searchloopNative.js"),
     searchFunctional: () => import("../components/search/searchFunctional.js"),
     recipeFactory: () => import("../components/factory/recipeFactory.js"),
 };

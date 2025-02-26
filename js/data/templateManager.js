@@ -7,7 +7,7 @@
 /*  DESCRIPTION      : Gère l'affichage des recettes et optimise la gestion du DOM.    */
 /* ==================================================================================== */
 
-import { dataManager } from "../data/dataManager.js";
+import { getAllRecipes } from "../data/dataManager.js";
 import { RecipeFactory } from "../components/factory/recipeFactory.js";
 
 /* ================================================================================ 
@@ -104,7 +104,7 @@ class TemplateManager {
 
             showLoadingMessage(container); // Affichage du message de chargement
 
-            const recipes = await dataManager.getAllRecipes();
+            const recipes = await getAllRecipes();
 
             if (!Array.isArray(recipes)) {
                 console.error("❌ ERREUR : getAllRecipes() n'a pas retourné un tableau.", recipes);
@@ -119,7 +119,7 @@ class TemplateManager {
 
             renderRecipes(container, recipes); // Affichage des recettes
         } catch (error) {
-            console.error("❌ ERREUR - TemplateManager :", error.message);
+            console.error(" ERREUR - TemplateManager :", error.message);
         }
     }
     /**

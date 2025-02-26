@@ -50,23 +50,4 @@ export function setSearchMode(mode) {
     }
 }
 
-/*------------------------------------------------------------------*/
-/*   Écouteur sur la barre de recherche                            */
-/*------------------------------------------------------------------*/
 
-// Sélection de l'élément de recherche
-const searchInput = document.querySelector("#search");
-
-if (searchInput) {
-    searchInput.addEventListener("input", debounce(() => {
-        const query = searchInput.value.trim();
-        
-        if (query.length > 1) { // Évite d'exécuter la recherche sur un seul caractère
-            executeSearch(query).then(displayResults);
-        }
-    }, 300));
-
-    logEvent("success", "Écouteur ajouté à l'input de recherche.");
-} else {
-    logEvent("error", "Impossible d'attacher un écouteur : #search introuvable.");
-}

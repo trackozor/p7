@@ -10,6 +10,7 @@
 /*                     - Affichage ergonomique et interactif.
 /* ==================================================================================== */
 
+
 export class GraphRenderer {
     /* ====================================================================================
     /*  SECTION 1 : INITIALISATION DU GRAPHIQUE
@@ -55,88 +56,10 @@ export class GraphRenderer {
             return;
         }
 
-        this.chart = new Chart(ctx, {
-            type: "line", // Type de graphique par défaut (courbe)
-            data: {
-                labels: [], // Étiquettes des benchmarks
-                datasets: [{
-                    label: "Temps d'exécution (ms)", // Légende du graphe
-                    data: [], // Données en temps réel
-                    borderWidth: 2, // Épaisseur des lignes
-                }]
-            },
-            options: {
-                responsive: true, // Rend le graphe adaptable à la taille de l'écran
-                maintainAspectRatio: false, // Désactive la contrainte de ratio
-                animation: {
-                    duration: 500 // Animation fluide sur les mises à jour
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true // Assure que l'axe Y démarre à zéro
-                    }
-                }
-            }
-        });
-
         // Écouteur d'événements pour changer le type de graphique en temps réel
         document.getElementById("graph-type").addEventListener("change", (event) => {
             this.updateChartType(event.target.value);
         });
-    }
-
-    /* ====================================================================================
-    /*  SECTION 3 : MISE À JOUR DU GRAPHIQUE AVEC DE NOUVELLES DONNÉES
-    /* ==================================================================================== */
-
-    /**
-     * Ajoute une nouvelle entrée au graphique en temps réel.
-     * @param {string} label - Nom du test ou de la fonction benchmarkée.
-     * @param {number} executionTime - Temps d'exécution en millisecondes.
-     */
-    static updateGraph(label, executionTime) {
-        if (!this.chart) {
-            console.error("GraphRenderer : Aucune instance de graphique trouvée.");
-            return;
-        }
-
-        // Ajout des nouvelles données
-        this.chart.data.labels.push(label);
-        this.chart.data.datasets[0].data.push(executionTime);
-        this.chart.update(); // Met à jour l'affichage
-
-        console.log(`GraphRenderer : Données mises à jour → ${label} : ${executionTime} ms`);
-    }
-
-    /* ====================================================================================
-    /*  SECTION 4 : CHANGEMENT DU TYPE DE GRAPHIQUE
-    /* ==================================================================================== */
-
-    /**
-     * Modifie dynamiquement le type de graphique (courbes, barres, radar...).
-     * @param {string} newType - Type de graphique souhaité ("line", "bar", "radar").
-     */
-    static updateChartType(newType) {
-        if (!this.chart) {
-            console.error("GraphRenderer : Impossible de modifier le type de graphique.");
-            return;
-        }
-
-        console.log(`GraphRenderer : Changement du graphique vers le type ${newType.toUpperCase()}`);
-
-        // Récupère les données existantes et détruit le graphique actuel
-        const chartData = this.chart.data;
-        this.chart.destroy();
-        const ctx = document.getElementById("benchmarkChart").getContext("2d");
-
-        // Création du nouveau graphique avec le type sélectionné
-        this.chart = new Chart(ctx, {
-            type: newType,
-            data: chartData,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false
-            }
-        });
-    }
+    };
 }
+
