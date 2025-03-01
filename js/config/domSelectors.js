@@ -34,7 +34,6 @@ const domCache = new Map();
 /*==============================================*/
 /*          Clear Cache (Purge Sélecteurs)    */
 /*==============================================*/
-
 /** ## DESCRIPTION ##
  * ---------------------------------------------------------------------------------------------------
  *  Vide intégralement le cache des sélections DOM pour garantir une mise à jour fiable des éléments.
@@ -55,8 +54,6 @@ export function clearDomCache() {
     domCache.clear();
     logEvent("info", "Cache des sélections DOM vidé avec succès.");
 }
-
-
 
 /*==============================================*/
 /*       Sélection Sécurisée d'un Élément DOM   */
@@ -99,7 +96,6 @@ export function safeQuerySelector(selector, isOptional = false, fallbackValue = 
     domCache.set(selector, element);
     return element;
 }
-
 
 /*==============================================*/
 /*       Sélection Sécurisée de Plusieurs Éléments DOM   */
@@ -214,10 +210,12 @@ export function getIndexSelectors() {
         /* Filtres Dynamiques          */
         /* ============================== */
         filters: {
-            container: safeQuerySelector("#filters"),
-            ingredients: safeQuerySelector('#ingredients-list') || waitForElement('[data-filter="ingredients"]'),
-            appliances: safeQuerySelector('[data-filter="appliances"]') || waitForElement('[data-filter="appliances"]'),
-            ustensils: safeQuerySelector('[data-filter="ustensils"]') || waitForElement('[data-filter="ustensils"]'),
+            container: safeQuerySelector("#filters") || waitForElement("#filters"),
+
+        // Attente correcte des filtres si non disponibles immédiatement
+        ingredients: safeQuerySelector('[data-filter="ingredients"]') ||  waitForElement('[data-filter="ingredients"]'),
+        appliances: safeQuerySelector('[data-filter="appliances"]') ||  waitForElement('[data-filter="appliances"]'),
+        ustensils: safeQuerySelector('[data-filter="ustensils"]') ||  waitForElement('[data-filter="ustensils"]'),
         },
 
         /* ============================== */
@@ -236,9 +234,9 @@ export function getIndexSelectors() {
     };
 }
 
-/* =============================================================================
+/* =============================================
 /*   WaitforElement
-/* ============================================================================= */
+/* ============================================= */
 /**
  * Attend qu'un élément spécifique apparaisse dans le DOM avant de l’utiliser.
  * 
@@ -285,10 +283,10 @@ export function waitForElement(selector, timeout = 5000) {
         }, timeout);
     });
 }
+
 /*==============================================*/
 /*    Vérification de la Présence des Éléments  */
 /*==============================================*/
-
 /**
  * Parcourt un objet contenant des sélecteurs DOM pour vérifier leur présence et signaler ceux manquants.
  *
@@ -496,7 +494,6 @@ function initializeDomSelectors() {
 /*==============================================*/
 /*   Observation des Changements du DOM        */
 /*==============================================*/
-
 /** 
  * ---------------------------------------------------------------------------------------------------
  *  Observe en temps réel les modifications du DOM et met à jour dynamiquement les sélecteurs.
@@ -535,7 +532,6 @@ document.addEventListener("DOMContentLoaded", observeDomChanges, initializeDomSe
 /*==============================================*/
 /*       Export des Fonctions & Sélecteurs      */
 /*==============================================*/
-
 /** 
  * ---------------------------------------------------------------------------------------------------
  *  Regroupe et expose les fonctions essentielles de gestion des sélecteurs DOM pour toute l’application.

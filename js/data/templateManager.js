@@ -1,17 +1,18 @@
-/* ==================================================================================== */
+/* ====================================================================================
 /*  FICHIER          : templateManager.js                                              */
 /*  AUTEUR           : Trackozor                                                       */
-/*  VERSION          : 1.3                                                             */
+/*  VERSION          : 1.4                                                             */
 /*  DATE DE CRÉATION : 08/02/2025                                                      */
-/*  DERNIÈRE MAJ     : 12/02/2025                                                      */
+/*  DERNIÈRE MAJ     : 26/02/2025                                                      */
 /*  DESCRIPTION      : Gère l'affichage des recettes et optimise la gestion du DOM.    */
 /* ==================================================================================== */
 
 import { getAllRecipes } from "../data/dataManager.js";
 import { RecipeFactory } from "../components/factory/recipeFactory.js";
+import { logEvent } from "../utils/utils.js";
 
 /* ================================================================================ 
-    FONCTIONS UTILITAIRES (Déclarées en dehors de la classe)
+    FONCTIONS UTILITAIRES
 ================================================================================ */
 
 /**
@@ -30,101 +31,111 @@ function showNoRecipesMessage(container) {
     container.innerHTML = `<p class="no-recipes">Aucune recette trouvée.</p>`;
 }
 
-
 /**
  * Génère et insère toutes les recettes dans un conteneur donné.
+ * Utilise un cache pour éviter de recréer des cartes déjà affichées.
  * @param {HTMLElement} container - Le conteneur où afficher les recettes.
  * @param {Array} recipes - Liste des recettes à afficher.
+ * @param {Map} cardCache - Cache des cartes pour éviter les re-rendus inutiles.
  */
-function renderRecipes(container, recipes) {
+function renderRecipes(container, recipes, cardCache) {
     const fragment = document.createDocumentFragment();
 
     recipes.forEach(recipeData => {
         try {
-            const recipe = RecipeFactory(recipeData);
+            if (cardCache.has(recipeData.id)) {
+                fragment.appendChild(cardCache.get(recipeData.id)); // Utiliser le cache
+            } else {
+                const recipe = RecipeFactory(recipeData);
 
-            if (!recipe || typeof recipe.generateCard !== "function") {
-                console.error(" ERREUR : RecipeFactory a retourné une valeur invalide.", recipeData);
-                return;
+                if (!recipe || typeof recipe.generateCard !== "function") {
+                    logEvent("error", "RecipeFactory a retourné une valeur invalide.", { recipeData });
+                    return;
+                }
+
+                const recipeCard = recipe.generateCard();
+
+                if (!(recipeCard instanceof HTMLElement)) {
+                    logEvent("error", "generateCard() n'a pas retourné un élément valide.", { recipeData });
+                    return;
+                }
+
+                cardCache.set(recipeData.id, recipeCard); // Ajouter au cache
+                fragment.appendChild(recipeCard);
             }
-
-            const recipeCard = recipe.generateCard();
-
-            if (!(recipeCard instanceof HTMLElement)) {
-                console.error(" ERREUR : generateCard() n'a pas retourné un élément valide.", recipeData);
-                return;
-            }
-
-            fragment.appendChild(recipeCard);
         } catch (error) {
-            console.error(" ERREUR lors de la génération de la recette :", error.message, recipeData);
+            logEvent("error", "Erreur lors de la génération de la recette.", { error: error.message, recipeData });
         }
     });
 
-    container.innerHTML = ""; // Efface uniquement après construction du fragment
+    container.innerHTML = ""; 
     container.appendChild(fragment);
 }
 
-
 /**
- * 
  * Change la classe du conteneur pour basculer entre Grille / Liste.
  * @param {HTMLElement} container - Conteneur des recettes.
  * @param {string} mode - Mode d'affichage ("grid" ou "list").
  */
 function updateViewMode(container, mode) {
-    container.classList.toggle("list-view", mode === "list");
-    console.log(`Mode d'affichage changé : ${mode}`);
+    if (!container.classList.contains(mode)) {
+        container.classList.toggle("list-view", mode === "list");
+        logEvent("info", `Mode d'affichage changé : ${mode}`);
+    }
 }
 
 /* ================================================================================ 
-    CLASSE TemplateManager - Gère l'affichage des recettes
+    CLASSE TemplateManager
 ================================================================================ */
 class TemplateManager {
     /**
-     * Initialise le TemplateManager avec un mode d'affichage par défaut.
+     * Initialise le TemplateManager avec un mode d'affichage par défaut et un cache.
      */
     constructor() {
-        this.viewMode = "grid"; // Mode par défaut (grille)
+        this.viewMode = "grid"; // Mode par défaut
         this.recipeContainer = document.querySelector("#recipes-list"); // Conteneur des recettes
+        this.cardCache = new Map(); // Cache pour éviter les recréations inutiles
     }
 
     /**
-     * Affiche toutes les recettes disponibles dans le conteneur spécifié.
+     * Affiche toutes les recettes disponibles et retourne le nombre de recettes affichées.
      * @param {string} containerSelector - Sélecteur du conteneur où afficher les recettes.
-     * @returns {Promise<void>} - Aucune valeur retournée, mais met à jour le DOM.
+     * @returns {Promise<number>} - Nombre de recettes affichées.
      */
-
     async displayAllRecipes(containerSelector) {
         try {
             const container = document.querySelector(containerSelector);
             if (!container) {
-                throw new Error(`ERREUR : Le conteneur ${containerSelector} est introuvable.`);
+                throw new Error(`Le conteneur ${containerSelector} est introuvable.`);
             }
 
-            showLoadingMessage(container); // Affichage du message de chargement
+            showLoadingMessage(container);
 
             const recipes = await getAllRecipes();
 
             if (!Array.isArray(recipes)) {
-                console.error("❌ ERREUR : getAllRecipes() n'a pas retourné un tableau.", recipes);
+                logEvent("error", "getAllRecipes() n'a pas retourné un tableau.", { recipes });
                 showNoRecipesMessage(container);
-                return;
+                return 0;
             }
 
             if (recipes.length === 0) {
                 showNoRecipesMessage(container);
-                return;
+                return 0;
             }
 
-            renderRecipes(container, recipes); // Affichage des recettes
+            renderRecipes(container, recipes, this.cardCache);
+
+            return recipes.length;
         } catch (error) {
-            console.error(" ERREUR - TemplateManager :", error.message);
+            logEvent("error", "Erreur lors de l'affichage des recettes.", { error: error.message });
+            return 0;
         }
     }
+
     /**
-         * Bascule entre le mode "Grille" et "Liste".
-         */
+     * Bascule entre le mode "Grille" et "Liste".
+     */
     toggleViewMode() {
         this.viewMode = this.viewMode === "grid" ? "list" : "grid";
         updateViewMode(this.recipeContainer, this.viewMode);

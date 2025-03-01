@@ -11,7 +11,7 @@ import { logEvent, waitForElement } from "./utils/utils.js";
 import { getAllRecipes } from "./data/dataManager.js";
 import { templateManager } from "./data/templateManager.js";
 import { initEventListeners } from "./events/eventListener.js";
-
+import { updateCounter } from "./components/count/count.js";
 import { initFilters } from "./components/filterManager.js";
 
 
@@ -49,7 +49,8 @@ export async function initApplication() {
         if (!recipes || recipes.length === 0) {
             throw new Error("Aucune recette trouvée.");
         }
-
+         // Mettre à jour dynamiquement le compteur après affichage des recettes
+        updateCounter();
         // Étape 4 : Afficher toutes les recettes dans le conteneur prévu
         await templateManager.displayAllRecipes("#recipes-container", recipes);
 

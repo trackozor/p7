@@ -42,13 +42,17 @@ export async function Search(query) {
  *
  * @param {string} mode - "native" ou "functional".
  */
-export function setSearchMode(mode) {
+export function setSearchMode(mode, query = "") {
     if (mode === "native" || mode === "functional") {
         searchMode = mode;
         logEvent("success", `Mode de recherche changé : ${mode}`);
+        if (query.length >= 3) {
+            Search(query); 
+        }
     } else {
         logEvent("error", "setSearchMode : Mode invalide, utilisez 'native' ou 'functional'.");
     }
 }
+
 
 

@@ -38,7 +38,7 @@
 </head>
 
 
-<body>
+<div>
     <!-- Header -->
     <header >
         <div class="header-container">
@@ -73,14 +73,12 @@
             <div class="filter-dropdowns"></div>
 
             <!-- Conteneur des filtres sélectionnés -->
-            <div class="filter-tags"></div>
+            <div id="selected-filters" class="selected-filters"></div>
         </div>
     </section>
-    <div id="counter-container"></div>"
-    <div id= "recipe-count-container"></div>
-    <!-- La modale d'authentification sera injectée dynamiquement en JS -->
-    <div id="password-modal" aria-hidden="true"></div>
-
+    <div id="counter-container">
+        <p id= "recipe-count-container">0 recettes trouvées</p>
+    </div>
     <!-- Conteneur principal des recettes -->
     <main id="recipes-container" class="recipes-container" >
         <div class="main-container">

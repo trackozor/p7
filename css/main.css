@@ -1221,319 +1221,156 @@ footer {
 }
 
 /* Styles du pied de page */
+/* ====================================================================================
+/*  FICHIER          : filters.scss
+/*  AUTEUR           : Trackozor
+/*  VERSION          : 1.0
+/*  DESCRIPTION      : Styles des filtres interactifs (dropdowns, tags, animations).
 /* ==================================================================================== */
-/*  Nom du fichier    : _filters.scss                                                   */
-/*  Auteur           : Trackozor                                                        */
-/*  Date de création : 10/02/25                                                         */
-/*  Dernière mise à jour : 10/02/25                                                    */
-/*  Description      : Styles pour les filtres avancés permettant à l'utilisateur       */
-/*                     de sélectionner des critères spécifiques via des dropdowns       */
-/*                     et d'afficher des tags de filtres actifs sous forme de badges.  */
-/* ==================================================================================== */
-/* ==================================================================================== */
-/*    Conteneur Principal des Filtres (Barre des Filtres)                              */
+/* ====================================================================================
+/*                       CONTAINER DES FILTRES
 /* ==================================================================================== */
 #filters {
-  width: 80%;
-  background: #e5e5e5;
-  margin: 5% auto;
+  width: 100%;
+  max-width: 1200px;
+  margin: 20px auto;
   display: flex;
-  flex-direction: row;
-  align-items: center;
   justify-content: center;
-  gap: 2rem; /* Espacement entre les filtres */
+  gap: 20px;
+  flex-wrap: wrap;
 }
-@media (min-width: 767px) {
-  #filters {
-    width: 60%;
-    gap: 1rem;
-  }
-}
-@media (min-width: 1024px) {
-  #filters {
-    width: 50%;
-    gap: 0.5rem;
-  }
-}
-
-/* ==================================================================================== */
-/*    Conteneur du Groupe de Filtres                                                   */
-/* ==================================================================================== */
-.filter-group {
-  position: relative; /* Pour aligner le dropdown par rapport au bouton */
+#filters .filter-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  width: auto;
-}
-
-/* ==================================================================================== */
-/*    Bouton de Filtre (Clickable)                                                     */
-/* ==================================================================================== */
-.filter-button {
-  background: #fff;
-  color: #000;
-  font-size: 1rem;
-  font-weight: bold;
-  padding: 0.7rem 1.5rem;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  transition: all 0.3s ease-in-out;
-}
-.filter-button:hover {
-  background: #FFD15B;
-  color: #000;
-}
-
-/* ==================================================================================== */
-/*    Dropdown des Filtres (Liste déroulante avec SCROLL)                              */
-/* ==================================================================================== */
-.filter-dropdown {
-  position: absolute;
-  top: 100%; /* Aligne la liste sous le bouton */
-  left: 0;
-  width: max-content;
-  min-width: 200px;
-  max-height: 250px; /* Hauteur maximale pour activer le scroll */
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  overflow-y: auto; /* Activation du scroll */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  opacity: 0;
-  transform: translateY(-10px);
-  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-  z-index: 10;
-}
-.filter-dropdown.open {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* ==================================================================================== */
-/*    Input de Recherche dans le Dropdown                                              */
-/* ==================================================================================== */
-.filter-search {
+  gap: 10px;
   width: 100%;
-  padding: 0.5rem;
-  font-size: 1rem;
-  border: none;
-  border-bottom: 1px solid #ddd;
-  outline: none;
+  max-width: 900px;
 }
-
-/* ==================================================================================== */
-/*    Liste des Options dans le Dropdown                                               */
-/* ==================================================================================== */
-.filter-options {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  max-height: 200px; /* Hauteur de la liste avec scroll */
-  overflow-y: auto;
-}
-
-/* ==================================================================================== */
-/*    Élément de la Liste (Option Individuelle)                                        */
-/* ==================================================================================== */
-.filter-item {
-  padding: 0.7rem 1rem;
-  cursor: pointer;
-  transition: background 0.2s ease-in-out;
-}
-.filter-item:hover {
-  background: #FFD15B;
-  color: #000;
-}
-
-/* 🎨 Variables globales */
-/* 📦 Conteneur des filtres */
-.filters-container {
+#filters .filter-dropdowns {
   display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
+  gap: 15px;
   justify-content: center;
-  padding: 20px;
+  flex-wrap: wrap;
 }
 
-/* 🎛️ Bouton du Dropdown */
-.filter-dropdown {
+/* ====================================================================================
+/*                       STYLES DES DROPDOWNS (BOUTONS & LISTES)
+/* ==================================================================================== */
+.filter-group {
   position: relative;
-  min-width: 180px;
-  background: #fff;
-  border: 1px solid rgb(229.5, 229.5, 229.5);
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
+  width: 200px;
+  margin-top: 5%;
+  /* Rotation de l'icône lorsqu'on ouvre le dropdown */
+  /* Afficher le dropdown actif */
 }
-.filter-dropdown__button {
+.filter-group .filter-button {
   width: 100%;
-  padding: 10px 15px;
-  font-size: 16px;
+  background-color: white;
+  color: #2C3E50;
   font-weight: 600;
-  color: #4a4a4a;
-  background: transparent;
   border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  transition: background-color 0.3s;
 }
-.filter-dropdown__button:hover {
-  color: #ff6b6b;
+.filter-group .filter-button:hover {
+  background-color: #ccac00;
 }
-.filter-dropdown__button .icon {
-  font-size: 14px;
-  transition: transform 0.3s ease-in-out;
+.filter-group .filter-button i {
+  transition: transform 0.3s;
 }
-.filter-dropdown__button.active .icon {
+.filter-group .filter-button.active i {
   transform: rotate(180deg);
 }
-
-/* 📜 Liste déroulante */
-.dropdown-list {
+.filter-group .dropdown-container {
   position: absolute;
   top: 100%;
   left: 0;
   width: 100%;
+  max-height: 0;
+  overflow: hidden;
+  background-color: #FFF;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: max-height 0.3s ease-in-out;
+  z-index: 100;
+}
+.filter-group .dropdown-container.active {
   max-height: 250px;
   overflow-y: auto;
-  background: #fff;
-  border: 1px solid rgb(229.5, 229.5, 229.5);
-  border-top: none;
-  border-radius: 0 0 8px 8px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
-  opacity: 0;
-  transform: translateY(-10px);
-  visibility: hidden;
-  transition: opacity 0.2s ease, transform 0.2s ease;
 }
-.dropdown-list.visible {
-  opacity: 1;
-  transform: translateY(0);
-  visibility: visible;
-}
-.dropdown-list .filter-option {
-  padding: 10px 15px;
-  font-size: 14px;
-  color: #4a4a4a;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-.dropdown-list .filter-option:hover {
-  background: white;
-  color: #ff6b6b;
-}
-
-/* 🔍 Barre de recherche dans le dropdown */
-.dropdown-search {
-  width: calc(100% - 30px);
-  margin: 10px auto;
+.filter-group .dropdown-search {
+  width: calc(100% - 20px);
   padding: 8px;
-  font-size: 14px;
-  border: 1px solid #b0b0b0;
+  margin: 10px;
+  border: 1px solid #2C3E50;
   border-radius: 4px;
   outline: none;
+  transition: border-color 0.3s;
 }
-.dropdown-search:focus {
-  border-color: #ff6b6b;
+.filter-group .dropdown-search:focus {
+  border-color: #FFD700;
+}
+.filter-group ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.filter-group ul li {
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 14px;
+}
+.filter-group ul li:hover {
+  background-color: #ffef99;
 }
 
-/* 📱 Responsivité */
-@media (max-width: 768px) {
-  .filters-container {
+/* ====================================================================================
+/*                       STYLES DES FILTRES SÉLECTIONNÉS (TAGS)
+/* ==================================================================================== */
+.selected-filters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.selected-filters .filter-tag {
+  background-color: #FFD700;
+  color: #2C3E50;
+  padding: 6px 12px;
+  border-radius: 15px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: bold;
+}
+.selected-filters .filter-tag i {
+  cursor: pointer;
+  transition: color 0.3s;
+}
+.selected-filters .filter-tag i:hover {
+  color: rgb(25.9032258065, 36.5, 47.0967741935);
+}
+
+/* ====================================================================================
+/*                       RESPONSIVE DESIGN
+/* ==================================================================================== */
+@media screen and (max-width: 768px) {
+  .filter-group {
+    width: 100%;
+  }
+  .filter-dropdowns {
     flex-direction: column;
     align-items: center;
   }
-  .filter-dropdown {
-    width: 100%;
-    max-width: 250px;
-  }
 }
 /* Composants des filtres de recherche */
-/* ==================================================================================== */
-/*  Nom du fichier    : _benchmark.scss                                                */
-/*  Auteur           : Trackozor                                                       */
-/*  Date de création : 10/02/25                                                        */
-/*  Dernière mise à jour : 10/02/25                                                   */
-/*  Description      : Styles pour le tableau de bord de benchmark affichant les      */
-/*                     performances du moteur de recherche et les statistiques.       */
-/* ==================================================================================== */
-/* ==================================================================================== */
-/*  Définition du conteneur principal du benchmark                                 */
-/* ==================================================================================== */
-#benchmark-dashboard {
-  position: fixed; /* Fixe le tableau de bord à un emplacement spécifique */
-  top: 10%; /* Décalage depuis le haut de la page */
-  right: 2%; /* Alignement à droite avec un léger décalage */
-  width: 350px; /* Largeur du tableau de bord */
-  background: rgba(0, 0, 0, 0.9); /* Fond semi-transparent pour un effet sombre */
-  color: white; /* Texte en blanc pour assurer un bon contraste */
-  padding: 15px; /* Ajout d'un espacement interne pour éviter que le contenu soit collé aux bords */
-  border-radius: 8px; /* Coins arrondis pour une apparence plus moderne */
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Effet d'ombre pour améliorer la visibilité */
-  z-index: 1000; /* Priorité d'affichage pour rester au-dessus des autres éléments */
-  transition: all 0.3s ease-in-out; /* Animation fluide lors de l'apparition/disparition */
-}
-
-/* -------------------------------------------------------------- */
-/*   Masquage du benchmark dashboard lorsqu'il est caché        */
-/* -------------------------------------------------------------- */
-#benchmark-dashboard.hidden {
-  transform: translateX(100%); /* Déplace le tableau de bord en dehors de l'écran */
-  opacity: 0; /* Rend le tableau de bord totalement invisible */
-}
-
-/* ==================================================================================== */
-/*  En-tête du benchmark - Contient le titre et les boutons d'action                */
-/* ==================================================================================== */
-.benchmark-header {
-  display: flex; /* Utilisation de flexbox pour aligner les éléments */
-  justify-content: space-between; /* Répartition entre le titre et les boutons */
-  align-items: center; /* Alignement vertical */
-}
-
-/* ==================================================================================== */
-/*  Configuration des benchmarks (options et paramètres)                            */
-/* ==================================================================================== */
-.benchmark-config {
-  margin-bottom: 10px; /* Espacement sous la configuration pour séparer des autres éléments */
-}
-
-/* ==================================================================================== */
-/*  Graphique de performance du benchmark                                          */
-/* ==================================================================================== */
-#benchmarkChart {
-  width: 100%; /* Largeur ajustée au conteneur */
-  height: 250px; /* Hauteur fixe du graphique */
-}
-
-/* ==================================================================================== */
-/*  Tableaux des statistiques du benchmark                                         */
-/* ==================================================================================== */
-table {
-  width: 100%; /* Largeur ajustée au conteneur */
-  border-collapse: collapse; /* Suppression des espaces entre les bordures */
-  margin-top: 10px; /* Espacement entre le tableau et les autres éléments */
-}
-
-/* -------------------------------------------------------------- */
-/*    Styles des cellules du tableau                            */
-/* -------------------------------------------------------------- */
-th, td {
-  padding: 5px; /* Ajout d'un espacement interne pour un meilleur affichage */
-  text-align: left; /* Alignement du texte à gauche */
-  border-bottom: 1px solid #444; /* Ligne de séparation entre les lignes */
-}
-
-/* Optimisation et affichage des performances */
 /* ==================================================================================== */
 /*  Nom du fichier    : _password-modal.scss                                            */
 /*  Auteur           : Trackozor                                                       */
