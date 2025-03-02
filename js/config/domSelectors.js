@@ -222,7 +222,7 @@ export function getIndexSelectors() {
         /* Recettes                    */
         /* ============================== */
         recipes: {
-            recipeCards: () => safeQuerySelector(".recipe-card", true),
+            recipeCards: safeQuerySelector(".recipe-card", true) || null,
         },
 
         /* ============================== */
