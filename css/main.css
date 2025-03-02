@@ -1236,13 +1236,19 @@ footer {
     - Organisation et disposition des éléments de filtres dans la page
    =================================================================================== */
 #filters {
-  width: 100%;
-  max-width: 1200px;
-  margin: 1% auto;
   display: flex;
-  justify-content: flex-start;
-  gap: 20px;
-  flex-wrap: wrap;
+  justify-content: center;
+}
+@media (min-width: 1024px) {
+  #filters {
+    width: 100%;
+    max-width: 1200px;
+    margin: 1% auto;
+    display: flex;
+    justify-content: flex-start;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
 }
 
 .filter-container {
@@ -1518,12 +1524,24 @@ li:hover {
   }
 }
 
+/* ==================================================================================== */
+/*   Conteneur du compteur de recettes                                                   */
+/* ==================================================================================== */
 #recipe-count-container {
-  display: flex; /* Utilisation de flexbox par défaut */
-  position: absolute;
-  right: 7%;
-  top: 43.5%;
   font-weight: 700;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  font-size: 1rem;
+}
+@media (min-width: 1024px) {
+  #recipe-count-container {
+    display: flex; /* Utilisation de flexbox par défaut */
+    position: absolute;
+    right: 7%;
+    top: 43.5%;
+  }
 }
 
 /* Système de grille et disposition des éléments */
