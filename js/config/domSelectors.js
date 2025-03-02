@@ -166,8 +166,7 @@ export function getCurrentPage() {
 /*==============================================*/
 /*       Définition Structurée des Sélecteurs   */
 /*==============================================*/
-
-/** ## DESCRIPTION ##
+/**
  * ---------------------------------------------------------------------------------------------------
  *  Récupère les sélecteurs DOM essentiels pour la page d’accueil (`index.html`) et les organise
  *  par catégories afin de faciliter leur utilisation et leur gestion.
@@ -184,12 +183,10 @@ export function getCurrentPage() {
  * 
  * }
  */
-
 export function getIndexSelectors() {
     return {
-        /* ============================== */
+
         /* Structure Principale        */
-        /* ============================== */
         layout: {
             body: document.body,
             header: safeQuerySelector("header"),
@@ -197,18 +194,14 @@ export function getIndexSelectors() {
             footer: safeQuerySelector("footer"),
         },
 
-        /* ============================== */
         /* Barre de Recherche          */
-        /* ============================== */
         search: {
             form: safeQuerySelector(".search-bar"),
             input: safeQuerySelector("#search"),
             button: safeQuerySelector("#search-btn"),
         },
 
-        /* ============================== */
         /* Filtres Dynamiques          */
-        /* ============================== */
         filters: {
             container: safeQuerySelector("#filters") || waitForElement("#filters"),
 
@@ -218,16 +211,12 @@ export function getIndexSelectors() {
         ustensils: safeQuerySelector('[data-filter="ustensils"]') ||  waitForElement('[data-filter="ustensils"]'),
         },
 
-        /* ============================== */
         /* Recettes                    */
-        /* ============================== */
         recipes: {
             recipeCards: safeQuerySelector(".recipe-card", true) || null,
         },
 
-        /* ============================== */
         /* Compteur de Recettes        */
-        /* ============================== */
         recipeCount: {
             container: safeQuerySelector("#recipe-count-container"),
         },
@@ -249,7 +238,7 @@ export function getIndexSelectors() {
  * @returns {Promise<Element>} Élément DOM résolu ou rejeté après expiration.
  */
 export function waitForElement(selector, timeout = 5000) {
-    logEvent("info", ` Attente de l'élément : "${selector}" (Timeout: ${timeout}ms)`);
+    logEvent("test_start_events", ` Attente de l'élément : "${selector}" (Timeout: ${timeout}ms)`);
 
     return new Promise((resolve, reject) => {
         //  Vérifie d'abord si l'élément est déjà présent dans le DOM via le cache
@@ -266,7 +255,7 @@ export function waitForElement(selector, timeout = 5000) {
             logEvent("info", `DOM modifié, recherche de "${selector}"...`);
             const element = safeQuerySelector(selector, true);
             if (element) {
-                logEvent("success", ` Élément détecté dynamiquement : "${selector}"`);
+                logEvent("test_end_events", ` Élément détecté dynamiquement : "${selector}"`);
                 observer.disconnect(); //  Arrête l'observation une fois l'élément trouvé
                 resolve(element);
             }
@@ -308,7 +297,7 @@ export function waitForElement(selector, timeout = 5000) {
  * }
  */
 export function recursiveCheck(obj, parentKey = "", missingSelectors = []) {
-    logEvent("test_start", `Début de la vérification des sélecteurs DOM pour : ${parentKey || "racine"}`);
+    logEvent("test_start_events", `Début de la vérification des sélecteurs DOM pour : ${parentKey || "racine"}`);
 
     Object.entries(obj).forEach(([key, value]) => {
         // Construit la clé complète pour suivre la hiérarchie des sélecteurs
@@ -329,7 +318,7 @@ export function recursiveCheck(obj, parentKey = "", missingSelectors = []) {
     if (missingSelectors.length > 0) {
         logEvent("error", "Vérification terminée : Des sélecteurs manquent.", { missingSelectors });
     } else {
-        logEvent("test_end", "Vérification terminée : Aucun sélecteur manquant.");
+        logEvent("test_end_events", "Vérification terminée : Aucun sélecteur manquant.");
     }
 
     return missingSelectors; // Retourne la liste des sélecteurs manquants
@@ -356,14 +345,14 @@ export function recursiveCheck(obj, parentKey = "", missingSelectors = []) {
  * }
  */
 export function checkSelectors(selectors) {
-    logEvent("info", "Début de la vérification globale des sélecteurs DOM.");
+    logEvent("test_start_events", "Début de la vérification globale des sélecteurs DOM.");
 
     const missingSelectors = recursiveCheck(selectors);
 
     if (missingSelectors.length > 0) {
         logEvent("error", "Sélecteurs DOM manquants détectés.", { missingSelectors });
     } else {
-        logEvent("success", "Tous les sélecteurs DOM sont présents.");
+        logEvent("test_end_events", "Tous les sélecteurs DOM sont présents.");
     }
 
     return missingSelectors;
@@ -388,7 +377,7 @@ export function checkSelectors(selectors) {
  * console.log(selectors);
  */
 export function loadSelectorsForCurrentPage() {
-    logEvent("info", "Début du chargement des sélecteurs DOM pour la page actuelle.");
+    logEvent("test_start_events", "Début du chargement des sélecteurs DOM pour la page actuelle.");
 
     // Détecte la page en cours
     const currentPage = getCurrentPage();
@@ -408,7 +397,7 @@ export function loadSelectorsForCurrentPage() {
     if (missingSelectors.length > 0) {
         logEvent("error", "Sélecteurs manquants détectés.", { missingSelectors });
     } else {
-        logEvent("success", "Tous les sélecteurs DOM sont présents.");
+        logEvent("test_end_events", "Tous les sélecteurs DOM sont présents.");
     }
 
     return selectors;
@@ -434,7 +423,7 @@ export function loadSelectorsForCurrentPage() {
  * updateUI(); // Fonction qui met à jour l'affichage
  */
 export function refreshSelectors() {
-    logEvent("info", "Début du rafraîchissement des sélecteurs DOM...");
+    logEvent("test_start_events", "Début du rafraîchissement des sélecteurs DOM...");
 
     // Purge le cache pour garantir des références valides
     logEvent("info", "Vidage du cache des sélections DOM.");
@@ -444,7 +433,7 @@ export function refreshSelectors() {
     logEvent("info", "Rechargement des sélecteurs en fonction de la page active.");
     Object.assign(domSelectors, loadSelectorsForCurrentPage());
 
-    logEvent("success", "Sélecteurs DOM mis à jour avec succès.");
+    logEvent("test_end_events", "Sélecteurs DOM mis à jour avec succès.");
 }
 
 /*==============================================*/
@@ -473,7 +462,7 @@ export function refreshSelectors() {
  * }
  */
 function initializeDomSelectors() {
-    logEvent("info", "Début de l'initialisation des sélecteurs DOM.");
+    logEvent("test_start_events", "Début de l'initialisation des sélecteurs DOM.");
 
     // Empêche une double initialisation
     if (window.domSelectorsLoaded) {
@@ -485,7 +474,7 @@ function initializeDomSelectors() {
     logEvent("info", "Chargement des sélecteurs en fonction de la page actuelle.");
     Object.assign(domSelectors, loadSelectorsForCurrentPage());
 
-    logEvent("success", "Sélecteurs DOM chargés avec succès.");
+    logEvent("test_end_events", "Sélecteurs DOM chargés avec succès.");
 
     // Marque l'initialisation comme terminée pour éviter les répétitions
     window.domSelectorsLoaded = true;
@@ -515,7 +504,7 @@ function observeDomChanges() {
         // Limite les rafraîchissements inutiles avec un délai anti-rebond (debounce)
         clearTimeout(window.domUpdateTimeout);
         window.domUpdateTimeout = setTimeout(() => {
-            logEvent("info", "Changements détectés, rafraîchissement des sélecteurs...");
+            logEvent("test_start_events", "Changements détectés, rafraîchissement des sélecteurs...");
             refreshSelectors();
         }, 300);
     });
@@ -523,7 +512,7 @@ function observeDomChanges() {
     // Active l'observation sur tout le document pour détecter les modifications
     observer.observe(document.body, { childList: true, subtree: true });
 
-    logEvent("success", "Observation des changements du DOM activée.");
+    logEvent("test_end_events", "Observation des changements du DOM activée.");
 }
 
 // Exécute l'observation après le chargement complet du DOM
@@ -552,7 +541,6 @@ document.addEventListener("DOMContentLoaded", observeDomChanges, initializeDomSe
  *  Rafraîchir les sélecteurs après un changement de DOM :
  * domSelectors.refreshSelectors();
  */
-
 export const domSelectors = {
     safeQuerySelector,
     getCurrentPage,

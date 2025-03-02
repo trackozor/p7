@@ -35,7 +35,7 @@ const filterContainers = {}; // Stocke les éléments DOM des dropdowns
  */
 export async function initFilters() {
     try {
-        logEvent("info", "initFilters : Début de l'initialisation des filtres.");
+        logEvent("test_start_filter", "initFilters : Début de l'initialisation des filtres.");
 
         // Attendre que le conteneur des filtres soit chargé
         const filtersContainer = await waitForElement("#filters .filter-dropdowns", 3000);
@@ -61,7 +61,7 @@ export async function initFilters() {
             return;
         }
 
-        logEvent("info", "initFilters : Chargement des dropdowns...");
+        logEvent("test_end_filter", "initFilters : Chargement des dropdowns...");
 
         // Nettoyer le conteneur et préparer un fragment pour optimiser le DOM
         filtersContainer.innerHTML = "";

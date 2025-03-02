@@ -41,6 +41,10 @@ export const handleSearch = debounce(async function () {
         logEvent("error", "handleSearch : Erreur lors de la recherche.", { error: error.message });
     }
 }, 300);
+
+/* ====================================================================================
+/*                            GESTION Du formulaire de la recherche
+/* ==================================================================================== */
 /**
  * Gère l'événement de soumission du formulaire de recherche.
  * Empêche le rechargement de la page et déclenche la recherche via `handleSearch()`.
@@ -212,7 +216,7 @@ export function handleKeyboardNavigation(event) {
 
     // Gestion de la touche Entrée pour sélectionner une option de filtre
     if ((event.key === KEY_CODES.ENTER || event.key === KEY_CODES.SPACE) && activeElement.classList.contains("filter-option")) {
-          activeElement.click(); // Simule un clic sur l'option
-          logEvent("success", `handleKeyboardNavigation : Option sélectionnée "${activeElement.textContent}".`);
+        activeElement.click(); // Simule un clic sur l'option
+        logEvent("success", `handleKeyboardNavigation : Option sélectionnée "${activeElement.textContent}".`);
     }
 }

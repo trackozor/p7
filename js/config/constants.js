@@ -101,7 +101,7 @@ export const CONFIGLOG = {
   // -------------------------------------------------------------------------
   // Informations sur l'Environnement
   // -------------------------------------------------------------------------
-  ENABLE_LOGS: ACTIVE_ENVIRONMENT === ENVIRONMENTS.DEVELOPMENT, // Activer les logs uniquement en dev.
+  ENABLE_LOGS: ACTIVE_ENVIRONMENT === ENVIRONMENTS.STAGING, // Activer les logs uniquement en dev.
 
   // -------------------------------------------------------------------------
   // Niveau de verbosité global
@@ -193,14 +193,16 @@ export const CONFIGLOG = {
         const testStyles = {
             test_start: "background-color: purple; color: white; font-weight: bold;",
             test_end: "background-color: brown; color: white; font-weight: bold;",
-            test_start_modal: "background-color: purple; color: white; font-weight: bold;",
-            test_end_modal: "background-color: brown; color: white; font-weight: bold;",
-            test_start_lightbox: "background-color: darkblue; color: white; font-weight: bold;",
-            test_end_lightbox: "background-color: teal; color: white; font-weight: bold;",
-            test_start_sort: "background-color: lightgreen; color: white; font-weight: bold;",
-            test_end_sort: "background-color: darkgreen; color: white; font-weight: bold;",
+            test_start_gallery: "background-color: purple; color: white; font-weight: bold;",
+            test_end_gallery: "background-color: brown; color: white; font-weight: bold;",
+            test_start_filter: "background-color: darkblue; color: white; font-weight: bold;",
+            test_end_filter: "background-color: teal; color: white; font-weight: bold;",
+            test_start_count: "background-color: lightgreen; color: white; font-weight: bold;",
+            test_end_count: "background-color: darkgreen; color: white; font-weight: bold;",
             test_start_events: "background-color: lightpink; color: white; font-weight: bold;",
             test_end_events: "background-color: deeppink; color: white; font-weight: bold;",
+            test_start_search: "background-color: lightyellow; color: black; font-weight: bold;",
+            test_end_search: "background-color: yellow; color: black; font-weight: bold;",
         };
 
         return Object.freeze({ ...baseStyles, ...testStyles });
