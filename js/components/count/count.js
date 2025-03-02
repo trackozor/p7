@@ -38,7 +38,7 @@ export function initCount() {
 
             counterElement = document.createElement("h2");
             counterElement.id = "recipe-counter";
-            counterElement.textContent = "0 recette trouvée";
+            counterElement.textContent = "0 recette ";
 
             // Ajoute l'élément en haut du `body`
             document.body.prepend(counterElement);
@@ -88,7 +88,7 @@ export async function updateCounter() {
         }
 
         // Mise à jour du texte du compteur
-        counterElement.textContent = `${recipeCount} recette${recipeCount !== 1 ? "s" : ""} trouvée${recipeCount !== 1 ? "s" : ""}`;
+        counterElement.textContent = `${recipeCount} recette${recipeCount !== 1 ? "s" : ""} `;
 
         logEvent("test_end_count", `updateCounter : Compteur mis à jour avec ${recipeCount} recette(s) affichée(s).`);
 

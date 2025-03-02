@@ -751,7 +751,7 @@ header {
 }
 @media (min-width: 1024px) {
   .logo {
-    width: 10%; /* Réduit la taille du logo sur écran desktop */
+    width: 20%; /* Réduit la taille du logo sur écran desktop */
     height: 5%;
     margin-top: 2%;
     margin-left: 2%;
@@ -775,7 +775,7 @@ header {
   .fond {
     height: 100%; /* Remplit complètement la hauteur du header */
     object-fit: cover; /* Assure que l’image couvre toute la surface sans être déformée */
-    min-height: 300px; /* Définit une hauteur minimale */
+    min-height: 310px; /* Définit une hauteur minimale */
   }
 }
 @media (min-width: 1440px) {
@@ -1221,49 +1221,58 @@ footer {
 }
 
 /* Styles du pied de page */
-/* ====================================================================================
-/*  FICHIER          : filters.scss
-/*  AUTEUR           : Trackozor
-/*  VERSION          : 1.0
-/*  DESCRIPTION      : Styles des filtres interactifs (dropdowns, tags, animations).
-/* ==================================================================================== */
-/* ====================================================================================
-/*                       CONTAINER DES FILTRES
-/* ==================================================================================== */
+/* ===================================================================================
+   FICHIER          : filters.scss
+   AUTEUR           : Trackozor
+   VERSION          : 1.0
+   DESCRIPTION      : Styles des filtres interactifs (dropdowns, tags, animations)
+   =================================================================================== */
+/* ===================================================================================
+   VARIABLES GLOBALES 
+   - Définition des couleurs et transitions utilisées dans les filtres
+   =================================================================================== */
+/* ===================================================================================
+    CONTAINER DES FILTRES
+    - Organisation et disposition des éléments de filtres dans la page
+   =================================================================================== */
 #filters {
   width: 100%;
   max-width: 1200px;
-  margin: 20px auto;
+  margin: 1% auto;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 20px;
   flex-wrap: wrap;
 }
-#filters .filter-container {
+
+.filter-container {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  width: 100%;
-  max-width: 900px;
+  width: 60%;
+  margin-left: 3%;
 }
-#filters .filter-dropdowns {
+
+.filter-dropdowns {
   display: flex;
+  width: 90%;
   gap: 15px;
-  justify-content: center;
+  justify-content: flex-start;
   flex-wrap: wrap;
 }
 
-/* ====================================================================================
-/*                       STYLES DES DROPDOWNS (BOUTONS & LISTES)
-/* ==================================================================================== */
+/* ===================================================================================
+    STYLES DES DROPDOWNS (BOUTONS & LISTES)
+    - Personnalisation des boutons et des menus déroulants des filtres
+   =================================================================================== */
 .filter-group {
   position: relative;
-  width: 200px;
-  margin-top: 5%;
-  /* Rotation de l'icône lorsqu'on ouvre le dropdown */
-  /* Afficher le dropdown actif */
+  width: 150px;
+  margin-top: 1%;
 }
-.filter-group .filter-button {
+
+/* Bouton principal du dropdown */
+.filter-button {
   width: 100%;
   background-color: white;
   color: #2C3E50;
@@ -1277,16 +1286,12 @@ footer {
   justify-content: space-between;
   transition: background-color 0.3s;
 }
-.filter-group .filter-button:hover {
+.filter-button:hover {
   background-color: #ccac00;
 }
-.filter-group .filter-button i {
-  transition: transform 0.3s;
-}
-.filter-group .filter-button.active i {
-  transform: rotate(180deg);
-}
-.filter-group .dropdown-container {
+
+/* Conteneur du menu déroulant */
+.dropdown-container {
   position: absolute;
   top: 100%;
   left: 0;
@@ -1299,77 +1304,71 @@ footer {
   transition: max-height 0.3s ease-in-out;
   z-index: 100;
 }
-.filter-group .dropdown-container.active {
-  max-height: 250px;
+
+/* Style du dropdown lorsqu'il est actif */
+.dropdown-container.active {
+  max-height: 100px;
   overflow-y: auto;
 }
-.filter-group .dropdown-search {
+
+/* Champ de recherche à l'intérieur du dropdown */
+.dropdown-search {
   width: calc(100% - 20px);
   padding: 8px;
-  margin: 10px;
+  margin: 2% 10px;
   border: 1px solid #2C3E50;
   border-radius: 4px;
   outline: none;
   transition: border-color 0.3s;
 }
-.filter-group .dropdown-search:focus {
+.dropdown-search:focus {
   border-color: #FFD700;
 }
-.filter-group ul {
+
+/* Liste des options de filtres */
+ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
-.filter-group ul li {
+
+/* Style des éléments de liste */
+li {
   padding: 10px;
   cursor: pointer;
   transition: background-color 0.3s;
   font-size: 14px;
 }
-.filter-group ul li:hover {
+li:hover {
   background-color: #ffef99;
 }
 
-/* ====================================================================================
-/*                       STYLES DES FILTRES SÉLECTIONNÉS (TAGS)
-/* ==================================================================================== */
+/* ===================================================================================
+    STYLES DES FILTRES SÉLECTIONNÉS (TAGS)
+    - Apparence des tags affichés lorsqu'un filtre est sélectionné
+   =================================================================================== */
 .selected-filters {
   display: flex;
   gap: 10px;
+  width: 90%;
   flex-wrap: wrap;
-  margin-top: 10px;
+  margin: 0 auto;
 }
-.selected-filters .filter-tag {
+
+/* Apparence des tags de filtres sélectionnés */
+.filter-tag {
   background-color: #FFD700;
+  min-width: 120px;
   color: #2C3E50;
-  padding: 6px 12px;
-  border-radius: 15px;
+  padding: 2% 4%;
+  border-radius: 0.5rem;
   font-size: 14px;
   display: flex;
   align-items: center;
   gap: 6px;
   font-weight: bold;
 }
-.selected-filters .filter-tag i {
-  cursor: pointer;
-  transition: color 0.3s;
-}
-.selected-filters .filter-tag i:hover {
-  color: rgb(25.9032258065, 36.5, 47.0967741935);
-}
 
-/* ====================================================================================
-/*                       RESPONSIVE DESIGN
-/* ==================================================================================== */
-@media screen and (max-width: 768px) {
-  .filter-group {
-    width: 100%;
-  }
-  .filter-dropdowns {
-    flex-direction: column;
-    align-items: center;
-  }
-}
 /* Composants des filtres de recherche */
 /* ==================================================================================== */
 /*  Nom du fichier    : _password-modal.scss                                            */
@@ -1517,6 +1516,14 @@ footer {
     margin: 0 auto; /* Centrage du conteneur */
     row-gap: 1%; /* Espacement entre les lignes pour une meilleure lisibilité */
   }
+}
+
+#recipe-count-container {
+  display: flex; /* Utilisation de flexbox par défaut */
+  position: absolute;
+  right: 7%;
+  top: 43.5%;
+  font-weight: 700;
 }
 
 /* Système de grille et disposition des éléments */
