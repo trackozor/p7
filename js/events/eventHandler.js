@@ -220,3 +220,4 @@ export function handleKeyboardNavigation(event) {
         logEvent("success", `handleKeyboardNavigation : Option sélectionnée "${activeElement.textContent}".`);
     }
 }
+
