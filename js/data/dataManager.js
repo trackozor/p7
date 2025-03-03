@@ -10,55 +10,56 @@ import { logEvent } from "../utils/utils.js";
 import { normalizeText } from "../utils/normalize.js";
 
 /* ====================================================================================
-/*                               INITIALISATION DU CACHE
-/* ==================================================================================== */
-/* ------------------------------- */
-/*  Définition des structures de stockage  */
-/* ------------------------------- */
+    INITIALISATION DU CACHE
+   ==================================================================================== */
 
-/** Objet global pour stocker les recettes après la première récupération */
-export const recipesData = {
-    recipes: null
-};
+/** Objet global stockant les recettes après la première récupération */
+export const recipesData = { recipes: null };
 
-/** Cache des recettes pour un accès rapide par ID */
+/** Cache des recettes pour un accès rapide */
 const recipeCache = new Map();
 
-/** Cache temporaire pour optimiser la recherche */
+/** Cache de recherche pour éviter les recherches répétitives */
 const searchCache = new Map();
 const SEARCH_CACHE_LIMIT = 50;
 
-/** Index des recettes pour accélérer la recherche par mots-clés */
+/** Index des recettes pour optimiser la recherche */
 const recipeIndex = new Map();
 
 /* ------------------------------- */
-/*  Initialisation du cache de recettes  */
+/*  Initialisation du cache  */
 /* ------------------------------- */
 /**
- * Initialise le cache avec les recettes chargées.
- * Vérifie la validité des données avant de les stocker pour éviter des erreurs.
+ * Initialise le cache des recettes et vérifie la validité des données.
+ * 
+ * - Vérifie que `recipe` est un tableau valide.
+ * - Stocke les recettes en mémoire pour un accès rapide.
+ * - Remplit le cache des recettes en indexant chaque recette par son ID.
+ * - Ajoute des logs détaillés pour suivre chaque étape du processus.
  *
- * @returns {void} Ne retourne rien, initialise la mémoire des recettes.
+ * @returns {void} Ne retourne rien, initialise le cache des recettes.
  */
 function initializeCache() {
     try {
-        // Vérifie si les recettes sont valides et non vides
+        logEvent("test_start_search", "initializeCache : Début de l'initialisation du cache des recettes.");
+
+        // Vérification que `recipe` est un tableau valide et non vide
         if (!Array.isArray(recipe) || recipe.length === 0) {
-            logEvent("warning", "initializeCache : Aucune recette chargée.");
-            recipesData.recipes = [];
+            logEvent("warning", "initializeCache : Aucune recette trouvée, initialisation d'un cache vide.");
+            recipesData.recipes = []; // Stocke un tableau vide pour éviter les erreurs
             return;
         }
 
-        logEvent("info", `initializeCache : Chargement de ${recipe.length} recettes dans le cache.`);
-
-        // Stocke les recettes dans la structure globale
+        // Stockage des recettes en mémoire pour un accès rapide
         recipesData.recipes = recipe;
+        logEvent("info", `initializeCache : Stockage de ${recipe.length} recettes en mémoire.`);
 
-        // Remplit le cache des recettes pour un accès rapide via ID
+        // Remplit le cache des recettes en indexant chaque recette par son ID
         recipe.forEach(r => recipeCache.set(r.id, r));
+        logEvent("test_end_search", "initializeCache : Cache des recettes rempli avec succès.");
 
-        logEvent("success", "initializeCache : Cache des recettes initialisé avec succès.");
     } catch (error) {
+        // Capture et journalisation des erreurs en cas d'échec
         logEvent("error", "initializeCache : Erreur lors de l'initialisation du cache.", { error: error.message });
     }
 }
@@ -68,216 +69,248 @@ function initializeCache() {
 /* ------------------------------- */
 /**
  * Construit un index des recettes pour accélérer la recherche par mots-clés.
- * Chaque recette est indexée par son nom normalisé afin de permettre des recherches optimisées.
  *
- * @returns {void} Ne retourne rien, génère l'index de recherche.
+ * - Récupère toutes les recettes en mémoire.
+ * - Normalise le nom de chaque recette pour uniformiser la recherche.
+ * - Stocke les recettes indexées dans une `Map` pour un accès rapide.
+ * - Efface l'ancien index avant de le reconstruire pour éviter les doublons.
+ * - Ajoute des logs détaillés pour suivre le processus d'indexation.
+ *
+ * @returns {void} Ne retourne rien, met à jour l'index de recherche.
  */
 function buildRecipeIndex() {
     try {
-        logEvent("info", "buildRecipeIndex : Construction de l'index des recettes...");
+        logEvent("info", "buildRecipeIndex : Démarrage de la construction de l'index de recherche.");
 
-        // Récupère toutes les recettes en mémoire
+        // Récupération de toutes les recettes stockées en mémoire
         const allRecipes = getAllRecipes();
-        
-        // Réinitialise l'index avant de le reconstruire
-        recipeIndex.clear();
 
-        // Parcourt chaque recette et indexe son nom pour la recherche rapide
+        // Vérification que des recettes sont bien disponibles avant d'indexer
+        if (!Array.isArray(allRecipes) || allRecipes.length === 0) {
+            logEvent("warning", "buildRecipeIndex : Aucune recette disponible, index non généré.");
+            return;
+        }
+
+        // Réinitialisation de l'index pour éviter les doublons
+        recipeIndex.clear();
+        logEvent("info", "buildRecipeIndex : Ancien index effacé, début du remplissage.");
+
+        // Indexation de chaque recette en utilisant un nom normalisé
         allRecipes.forEach(recipe => {
             const normalizedName = normalizeText(recipe.name);
             recipeIndex.set(normalizedName, recipe);
         });
 
-        logEvent("success", "buildRecipeIndex : Index de recherche construit avec succès.");
+        // Log de confirmation avec le nombre total d'entrées indexées
+        logEvent("success", `buildRecipeIndex : Indexation terminée avec ${recipeIndex.size} recettes.`);
+
     } catch (error) {
-        logEvent("error", "buildRecipeIndex : Erreur lors de la création de l'index.", { error: error.message });
+        // Capture et journalisation des erreurs en cas d'échec de l'indexation
+        logEvent("error", "buildRecipeIndex : Erreur lors de l'indexation des recettes.", { error: error.message });
     }
 }
 
-/* ------------------------------- */
-/*  Exécution des fonctions d'initialisation  */
-/* ------------------------------- */
-// Charge le cache des recettes dès le chargement du module
+// Initialisation du cache et de l'index
 initializeCache();
-// Construit l'index de recherche dès l'initialisation
 buildRecipeIndex();
 
 /* ====================================================================================
-/*                          GESTION DES RECETTES ET DU CACHE
-/* ==================================================================================== */
-/* ------------------------------- */
-/*  Récupération de toutes les recettes  */
-/* ------------------------------- */
+    GESTION DES RECETTES ET DU CACHE
+==================================================================================== */
+
+/* ====================================================================================
+    RÉCUPÉRATION DES RECETTES
+==================================================================================== */
 /**
- * Retourne toutes les recettes stockées en mémoire.
- * Si aucune recette n'est disponible, retourne un tableau vide.
+ * Récupère toutes les recettes stockées en mémoire.
  *
- * @returns {Array<Object>} Liste des recettes stockées.
+ * - Vérifie si des recettes sont disponibles avant de les retourner.
+ * - Retourne un tableau vide si aucune recette n'est stockée pour éviter les erreurs.
+ * - Ajoute des logs pour suivre les accès aux données en mémoire.
+ *
+ * @returns {Array<Object>} Liste des recettes stockées ou un tableau vide si aucune recette n'est disponible.
  */
 export function getAllRecipes() {
-    logEvent("info", "getAllRecipes : Récupération des recettes en cache.");
-    return recipesData.recipes || [];
-}
-
-/* ------------------------------- */
-/*  Mise à jour du cache des recettes  */
-/* ------------------------------- */
-/**
- * Met à jour le cache des recettes après ajout ou suppression.
- * Cette fonction vide l'ancien cache et stocke les nouvelles recettes.
- *
- * @param {Array<Object>} newRecipes - Nouveau tableau de recettes.
- * @returns {void} Ne retourne rien, met à jour le cache des recettes.
- */
-export function updateRecipeCache(newRecipes) {
     try {
-        // Vérifie que newRecipes est un tableau valide
-        if (!Array.isArray(newRecipes)) {
-            logEvent("error", "updateRecipeCache : Données invalides, mise à jour annulée.");
-            return;
+        logEvent("test_start_search", "getAllRecipes : Récupération des recettes en mémoire.");
+
+        // Vérification de la disponibilité des recettes
+        if (!Array.isArray(recipesData.recipes) || recipesData.recipes.length === 0) {
+            logEvent("warn", "getAllRecipes : Aucune recette disponible en mémoire.");
+            return [];
         }
 
-        logEvent("info", `updateRecipeCache : Mise à jour du cache avec ${newRecipes.length} nouvelles recettes.`);
-
-        // Mise à jour du stockage des recettes
-        recipesData.recipes = newRecipes;
-
-        // Réinitialisation du cache des recettes
-        recipeCache.clear();
-
-        // Ajout des nouvelles recettes dans le cache
-        newRecipes.forEach(recipe => recipeCache.set(recipe.id, recipe));
-
-        // Reconstruction de l'index de recherche pour optimiser les futures recherches
-        buildRecipeIndex();
-
-        logEvent("success", "updateRecipeCache : Cache des recettes mis à jour avec succès.");
+        // Retourne les recettes stockées
+        logEvent("test_end_search", `getAllRecipes : ${recipesData.recipes.length} recettes récupérées.`);
+        return recipesData.recipes;
     } catch (error) {
-        logEvent("error", "updateRecipeCache : Erreur lors de la mise à jour du cache des recettes.", { error: error.message });
+        // Capture et journalisation des erreurs en cas de problème d'accès aux données
+        logEvent("error", "getAllRecipes : Erreur lors de la récupération des recettes.", { error: error.message });
+        return [];
     }
 }
 
-/* ------------------------------- */
-/*  Recherche de recette par ID  */
-/* ------------------------------- */
+/* ====================================================================================
+    RECHERCHE D'UNE RECETTE PAR ID
+==================================================================================== */
 /**
  * Recherche une recette par son identifiant unique.
- * Cette fonction permet un accès rapide aux recettes stockées en cache.
  *
- * @param {number} id - Identifiant unique de la recette.
+ * - Vérifie si l'ID fourni est valide avant d'effectuer la recherche.
+ * - Utilise le cache des recettes (`recipeCache`) pour un accès rapide.
+ * - Retourne `null` si aucune recette ne correspond à l'ID fourni.
+ * - Ajoute des logs détaillés pour suivre chaque étape du processus.
+ *
+ * @param {number} id - Identifiant unique de la recette recherchée.
  * @returns {Object|null} La recette trouvée ou `null` si inexistante.
  */
 export function getRecipeById(id) {
     try {
-        // Vérifie si l'ID est présent dans le cache des recettes
+        logEvent("info", `getRecipeById : Recherche de la recette avec ID ${id} en cours.`);
+
+        // Vérification que l'ID est bien un nombre valide
+        if (typeof id !== "number" || isNaN(id) || id <= 0) {
+            logEvent("error", `getRecipeById : ID invalide fourni (${id}). Recherche annulée.`);
+            return null;
+        }
+
+        // Vérifie si la recette est présente dans le cache
         if (recipeCache.has(id)) {
-            logEvent("info", `getRecipeById : Recette ID ${id} trouvée dans le cache.`);
+            logEvent("success", `getRecipeById : Recette trouvée pour l'ID ${id}.`);
             return recipeCache.get(id);
         }
 
+        // Log si aucune recette ne correspond à l'ID fourni
         logEvent("warn", `getRecipeById : Aucune recette trouvée pour l'ID ${id}.`);
         return null;
     } catch (error) {
+        // Capture et journalisation des erreurs en cas d'échec
         logEvent("error", `getRecipeById : Erreur lors de la récupération de la recette ID ${id}.`, { error: error.message });
         return null;
     }
 }
 
 /* ====================================================================================
-/*                          RECHERCHE DE RECETTES PAR MOT-CLÉ
-/* ==================================================================================== */
+    MISE À JOUR DU CACHE DES RECETTES
+==================================================================================== */
 /**
- * Recherche des recettes contenant un mot-clé.
- * Cette fonction analyse le titre, la description et les ingrédients de chaque recette
- * pour retourner celles qui correspondent aux mots-clés fournis.
+ * Met à jour le cache des recettes après une modification.
  *
- * @param {string} keyword - Mot-clé à rechercher.
- * @returns {Array<Object>} Liste des recettes correspondant aux critères.
+ * - Vérifie si `newRecipes` est bien un tableau avant de procéder à la mise à jour.
+ * - Vérifie si `newRecipes` contient au moins une recette avant d’écraser l'ancien cache.
+ * - Vide complètement l'ancien cache avant d'insérer les nouvelles recettes.
+ * - Met à jour l'index des recettes pour assurer une recherche rapide.
+ * - Ajoute des logs détaillés pour suivre chaque étape.
+ *
+ * @param {Array<Object>} newRecipes - Nouvelles recettes à stocker dans le cache.
+ * @returns {void} Ne retourne rien, met à jour le cache et l'index des recettes.
+ */
+export function updateRecipeCache(newRecipes) {
+    try {
+        logEvent("info", "updateRecipeCache : Début de la mise à jour du cache.");
+
+        // Vérification que `newRecipes` est un tableau valide
+        if (!Array.isArray(newRecipes)) {
+            logEvent("error", "updateRecipeCache : Données invalides reçues, mise à jour annulée.");
+            return;
+        }
+
+        // Vérification si `newRecipes` contient des données avant mise à jour
+        if (newRecipes.length === 0) {
+            logEvent("warn", "updateRecipeCache : Tableau de recettes vide, aucun changement appliqué.");
+            return;
+        }
+
+        logEvent("info", `updateRecipeCache : Mise à jour du cache avec ${newRecipes.length} nouvelles recettes.`);
+
+        // Mise à jour du stockage en mémoire
+        recipesData.recipes = newRecipes;
+
+        // Suppression de l'ancien cache
+        recipeCache.clear();
+        logEvent("info", "updateRecipeCache : Cache vidé avant insertion des nouvelles recettes.");
+
+        // Ajout des nouvelles recettes dans le cache avec indexation par ID
+        newRecipes.forEach(recipe => recipeCache.set(recipe.id, recipe));
+
+        logEvent("info", `updateRecipeCache : ${recipeCache.size} recettes stockées dans le cache.`);
+
+        // Mise à jour de l'index des recettes pour la recherche
+        buildRecipeIndex();
+
+        logEvent("success", "updateRecipeCache : Mise à jour du cache et de l'index des recettes terminée.");
+    } catch (error) {
+        // Capture et journalisation des erreurs en cas de problème
+        logEvent("error", "updateRecipeCache : Erreur lors de la mise à jour du cache des recettes.", { error: error.message });
+    }
+}
+/* ====================================================================================
+    RECHERCHE DE RECETTES PAR MOT-CLÉ
+   ==================================================================================== */
+/**
+ * Effectue une recherche de recettes selon un mot-clé.
+ * @param {string} keyword - Terme recherché.
+ * @returns {Array<Object>}
  */
 export function searchRecipes(keyword) {
     try {
-        logEvent("info", `searchRecipes : Démarrage de la recherche pour '${keyword}'`);
+        logEvent("test_start", `searchRecipes : Recherche pour '${keyword}'`);
 
-        // Vérification de la validité du mot-clé avant de lancer la recherche
-        if (!keyword || typeof keyword !== "string" || keyword.trim() === "") {
-            logEvent("warn", "searchRecipes : Mot-clé vide ou invalide, retour de toutes les recettes.");
+        if (!keyword || typeof keyword !== "string" || keyword.trim().length < 3) {
+            logEvent("warn", "searchRecipes : Mot-clé vide ou trop court, affichage de toutes les recettes.");
             return getAllRecipes();
         }
 
-        // Normalisation du mot-clé pour éviter les différences de casse ou d'accents
-        const normalizedKeyword = normalizeText(keyword).trim();
+        const normalizedKeyword = normalizeText(keyword.trim());
 
-        // Vérification si la recherche a déjà été effectuée pour ce mot-clé
         if (searchCache.has(normalizedKeyword)) {
-            logEvent("info", `searchRecipes : Résultats récupérés depuis le cache pour '${normalizedKeyword}'.`);
+            logEvent("info", `searchRecipes : Cache utilisé pour '${normalizedKeyword}'.`);
             return searchCache.get(normalizedKeyword);
         }
 
-        // Séparation du mot-clé en plusieurs termes pour une recherche plus précise
-        const keywordsArray = normalizedKeyword.split(" ");
-        const filteredRecipes = [];
+        const filteredRecipes = getAllRecipes().filter(recipe =>
+            normalizeText(recipe.name).includes(normalizedKeyword) ||
+            normalizeText(recipe.description).includes(normalizedKeyword) ||
+            recipe.ingredients.some(ing => normalizeText(ing.ingredient).includes(normalizedKeyword))
+        );
 
-        // Parcours des recettes indexées pour rechercher des correspondances
-        for (let [name, recipe] of recipeIndex) {
-            const normalizedDescription = normalizeText(recipe.description || "");
-            const normalizedIngredients = recipe.ingredients.map(ing => normalizeText(ing.ingredient)).join(" ");
-
-            // Vérification si tous les mots-clés sont présents dans au moins un des champs analysés
-            if (
-                keywordsArray.every(word => name.includes(word) || 
-                                            normalizedDescription.includes(word) || 
-                                            normalizedIngredients.includes(word))
-            ) {
-                filteredRecipes.push(recipe);
-            }
-        }
-
-        // Vérification de la taille du cache et suppression des anciennes entrées si nécessaire
         if (searchCache.size >= SEARCH_CACHE_LIMIT) {
             const firstKey = searchCache.keys().next().value;
             searchCache.delete(firstKey);
-            logEvent("info", `searchRecipes : Suppression de la plus ancienne entrée du cache (${firstKey}).`);
+            logEvent("info", `searchRecipes : Cache nettoyé, suppression de '${firstKey}'.`);
         }
 
-        // Enregistrement des résultats de la recherche dans le cache
         searchCache.set(normalizedKeyword, filteredRecipes);
-        logEvent("success", `searchRecipes : ${filteredRecipes.length} résultats trouvés pour '${normalizedKeyword}'.`);
-
+        logEvent("success", `searchRecipes : ${filteredRecipes.length} résultats trouvés.`);
         return filteredRecipes;
     } catch (error) {
-        logEvent("error", `searchRecipes : Erreur lors de la recherche pour '${keyword}'`, { error: error.message });
+        logEvent("error", "searchRecipes : Erreur de recherche.", { error: error.message });
         return [];
     }
 }
 
 /* ====================================================================================
-/*                           RÉINITIALISATION DU CACHE DE RECHERCHE
-/* ==================================================================================== */
+    RÉINITIALISATION DU CACHE DE RECHERCHE
+   ==================================================================================== */
+
 /**
  * Vide complètement le cache de recherche.
- * Cette fonction supprime toutes les entrées stockées dans `searchCache`,
- * garantissant ainsi que les futures recherches ne seront pas influencées par des données mises en cache.
- *
- * @returns {void} Ne retourne rien, mais efface toutes les données du cache de recherche.
+ * @returns {void}
  */
 export function clearSearchCache() {
     try {
-        // Vérifie si le cache contient des éléments avant de le vider
         const cacheSize = searchCache.size;
-        
         if (cacheSize === 0) {
-            logEvent("info", "clearSearchCache : Aucun élément à vider, le cache était déjà vide.");
+            logEvent("info", "clearSearchCache : Cache déjà vide.");
             return;
         }
 
-        // Suppression de toutes les entrées du cache
         searchCache.clear();
-        logEvent("success", `clearSearchCache : Cache de recherche vidé (${cacheSize} entrées supprimées).`);
+        logEvent("success", `clearSearchCache : Cache vidé (${cacheSize} entrées supprimées).`);
     } catch (error) {
-        logEvent("error", "clearSearchCache : Erreur lors de la réinitialisation du cache de recherche.", { error: error.message });
+        logEvent("error", "clearSearchCache : Erreur lors de la suppression.", { error: error.message });
     }
 }
-
 /* ====================================================================================
 /*                        EXTRACTION DES OPTIONS DE FILTRAGE
 /* ==================================================================================== */

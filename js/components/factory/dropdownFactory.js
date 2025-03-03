@@ -67,7 +67,7 @@ export function createFilterSection(title, filterType, dataSet) {
         const searchInput = document.createElement("input");
         searchInput.type = "text";
         searchInput.classList.add("dropdown-search");
-        searchInput.placeholder = `Rechercher dans ${translatedTitle}...`;
+        searchInput.placeholder = `Rechercher`;
 
         // Liste des options
         const filterList = document.createElement("ul");
