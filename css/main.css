@@ -891,6 +891,49 @@ header {
   }
 }
 
+/* ====================================================== */
+/*  Définition des styles de l'auto-complétion           */
+/* ====================================================== */
+.autocomplete-container {
+  position: relative; /* Permet de positionner les suggestions correctement */
+  width: 100%; /* Assure que l'auto-complétion prend toute la largeur */
+}
+
+.autocomplete-suggestions {
+  position: absolute;
+  width: 100%;
+  max-height: 250px; /* Limite la hauteur pour éviter les débordements */
+  overflow-y: auto; /* Active le scroll si nécessaire */
+  background: white;
+  border: 1px solid #ddd;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  z-index: 10; /* S'assure que les suggestions apparaissent au-dessus des autres éléments */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+}
+
+.suggestion-item {
+  padding: 10px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s ease-in-out;
+}
+
+.suggestion-item:hover,
+.suggestion-item.selected {
+  background-color: #f0f0f0;
+}
+
+/* Style du texte lorsque aucune suggestion n'est trouvée */
+.no-suggestion {
+  padding: 10px;
+  color: #999;
+  text-align: center;
+  font-style: italic;
+}
+
 /* Styles du header et de la navigation */
 /* ==================================================================================== */
 /*  Nom du fichier    : _button.scss                                                   */

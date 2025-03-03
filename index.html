@@ -32,7 +32,7 @@
     <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
     
     <!-- Feuilles de styles -->
-    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="./css/main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
 </head>
@@ -56,11 +56,15 @@
             </div>
             <form class="search-bar" role="search" aria-labelledby="search-label">
                 <label id="search-label" for="search" class="sr-only">Rechercher une recette</label>
-                <input type="text" id="search" name="search" placeholder="Recherchez une recette, un ingrédient..." aria-label="Rechercher une recette">
+                <div class="autocomplete-container">
+                    <input type="text" id="search" name="search" placeholder="Recherchez une recette, un ingrédient..." aria-label="Rechercher une recette">
+                    <ul id="autocomplete-suggestions" class="autocomplete-suggestions"></ul>
+                </div>
                 <button id="search-btn" type="submit" aria-label="Lancer la recherche">
                     <i class="fas fa-search" aria-hidden="true"></i>
                 </button>
             </form>
+            
         </div>
     </header>
 
@@ -97,7 +101,7 @@
     </footer>
 
     <!-- Fichier JavaScript -->
-    <script src="/js/main.js" type="module"></script>
+    <script src="./js/main.js" type="module"></script>
 
 </body>
 </html>

@@ -14,7 +14,7 @@ import { logEvent } from "../../utils/utils.js";
 import { getAllRecipes } from "../../data/dataManager.js";
 import { normalizeText } from "../../utils/normalize.js";
 import { updateFilters } from "../filterManager.js";
-import { matchesSearchCriteria, matchFilters } from "./searchloopNative.js";
+import { matchesSearchCriteria, matchFilters } from "./search.js";
 
 /* ====================================================================================
 /*                     RECHERCHE DES RECETTES AVEC PROGRAMMATION FONCTIONNELLE
