@@ -1,64 +1,102 @@
 # 🍽️ Les Petits Plats - Moteur de Recherche de Recettes
 
-![Les Petits Plats](https://your-image-link.com) <!-- Remplace par un lien d’image si disponible -->
+![Les Petits Plats](https://your-image-link.com) <!-- Remplace par une image si disponible -->
 
 ## 📌 Description du Projet  
 
-**Les Petits Plats** est une application web avancée qui permet une **recherche ultra-rapide et interactive** de recettes de cuisine.  
-Elle repose sur un **moteur de recherche optimisé en JavaScript Vanilla**, garantissant une **expérience utilisateur fluide et instantanée** sans nécessiter de **connexion à une API externe ni l'utilisation d'un framework**.  
-
-### 🏆 **Caractéristiques et Innovations**  
-
-- 🚀 **Performances maximisées** : Algorithme de recherche **100% en local**, optimisé pour traiter rapidement de grands ensembles de données.  
-- 🔍 **Filtrage dynamique avancé** : Affinage des résultats en temps réel grâce à des critères spécifiques (**ingrédients, appareils, ustensiles**).  
-- 💡 **Expérience utilisateur fluide** : Interface **réactive et sans latence**, avec une **mise à jour instantanée des résultats**.  
-- 📡 **Zéro dépendance externe** : Fonctionnement **autonome et hors ligne**, idéal pour une **exécution rapide sur tous types de navigateurs**.  
-- ⚡ **Architecture modulaire et scalable** : Organisation du code en **composants réutilisables**, facilitant la maintenance et l'extension du projet.  
-- 📱 **Interface entièrement responsive** : Adaptée aux **mobiles, tablettes et écrans larges**, garantissant une navigation optimale sur tous les appareils.  
-
-### 🔬 **Technologie et Optimisations**  
-
-**Les Petits Plats** exploite des **optimisations algorithmiques avancées** pour offrir une **rapidité de recherche inégalée** :  
-
-- **Détection instantanée des correspondances** via une normalisation et un prétraitement des données.  
-- **Mise en cache intelligente** des résultats pour éviter les recalculs inutiles et améliorer la réactivité.  
-- **Déclenchement optimisé des événements utilisateur** avec un **système de debounce**, évitant les requêtes excessives et améliorant la fluidité.  
-- **Gestion fine du DOM** pour limiter les re-rendus et accélérer le chargement de l’interface.  
-
-### 🏗 **Pourquoi ce projet ?**  
-
-Dans un contexte où la rapidité et l'efficacité sont essentielles, **Les Petits Plats** offre une alternative aux moteurs de recherche classiques en **supprimant toute dépendance externe** et en **optimisant au maximum les performances**.  
-Son objectif est de permettre aux passionnés de cuisine de **trouver instantanément la recette idéale**, sans latence, sur une interface intuitive et moderne.
-
----
+**Les Petits Plats** est une application web conçue pour permettre une **recherche rapide, interactive et optimisée** de recettes de cuisine.  
+Elle repose sur un **moteur de recherche performant en JavaScript Vanilla**, garantissant une **expérience fluide et instantanée** sans recours à une **API externe ni à un framework**.
 
 ### 🎯 Objectifs  
 
-✅ **Moteur de recherche ultra-performant** : Algorithme optimisé permettant une **recherche instantanée** même sur un grand volume de recettes.  
-✅ **Filtrage dynamique intelligent** : Affinage précis des résultats en **temps réel** via des **filtres interactifs avancés** (ingrédients, appareils, ustensiles).  
-✅ **Expérience utilisateur immersive** : Interface **réactive, ergonomique et intuitive**, offrant une **navigation fluide et rapide**.  
-✅ **Performance et optimisation** : Chargement rapide, gestion efficace du **DOM**, et **mise en cache des résultats** pour une navigation sans latence.  
-✅ **Accessibilité et compatibilité** : Interface **100% responsive**, garantissant une expérience optimale sur **mobiles, tablettes et desktops**.  
-✅ **Zéro dépendance externe** : Moteur de recherche **entièrement autonome**, sans appel API ni framework, pour une **exécution ultra-rapide en local**.  
+✅ **Moteur de recherche ultra-rapide** : Traitement instantané des requêtes utilisateur.  
+✅ **Filtrage dynamique avancé** : Recherche précise par **ingrédients, appareils et ustensiles**.  
+✅ **Expérience utilisateur immersive** : Interface fluide et **entièrement responsive**.  
+✅ **Performance optimisée** : **Détection instantanée des résultats**, gestion efficace du DOM.  
+✅ **Autonomie complète** : Exécution **100% locale**, garantissant rapidité et indépendance.  
 
 ---
 
 ## ⚙️ Technologies Utilisées  
 
-| Technologie | Usage & Avantages |
-|------------|----------------------------------------------|
-| **JavaScript (ES6+)** | Moteur de recherche performant, manipulation DOM optimisée, gestion avancée des événements. |
-| **HTML5 / CSS3** | Structure sémantique et responsive, optimisée pour le SEO et la compatibilité multi-navigateurs. |
-| **SCSS** | Préprocesseur CSS permettant une meilleure modularité et une gestion efficace des styles. |
-| **Node.js (Dev Only)** | Utilisé pour la gestion des dépendances (`npm`), le développement en local |
-| **ESLint & Prettier** | Outils de linting et formatage pour garantir un code propre, maintenable et homogène. |
-| **Git & GitHub** | Versioning du projet, collaboration avec les Pull Requests et gestion des versions. |
-| **Nodemon** | Surveillance automatique des fichiers SCSS pour un développement plus rapide et efficace. |
-| **Chart.js** | Intégration de graphiques interactifs pour l'analyse des performances du moteur de recherche. |
+| Technologie | Usage |
+|------------|----------------------------------|
+| **JavaScript (ES6+)** | Moteur de recherche, manipulation DOM optimisée |
+| **HTML5 / CSS3** | Structure et mise en page adaptative |
+| **SCSS** | Préprocesseur CSS pour une meilleure gestion des styles |
+| **Node.js** | Gestion des dépendances et transpilation SCSS |
+| **ESLint & Prettier** | Linting et formatage du code |
+| **Git & GitHub** | Versioning et gestion des contributions |
+| **Chart.js** | Génération de graphiques pour l’analyse des performances |
+| **Nodemon** | Surveillance des fichiers SCSS et rechargement automatique |
 
 ---
 
-## 📂 Architecture du Projet
+## 📦 Installation & Lancement  
+
+### 🔹 **1️⃣ Prérequis**  
+
+- **Node.js** (`>= 18.0.0`) & **npm** (`>= 9.0.0`)
+- **Git** installé sur le système
+
+📌 **Vérifier l'installation des prérequis**  
+
+```sh
+node -v    # Vérifie la version de Node.js
+npm -v     # Vérifie la version de npm
+git --version  # Vérifie la version de Git
+```
+
+### 🔹 **2️⃣ Clonage du projet**  
+
+```sh
+git clone https://github.com/trackozor/p7.git
+cd p7
+```
+
+### 🔹 **3️⃣ Installation des dépendances**  
+
+```sh
+npm install
+```
+
+📌 **Dépendances clés installées :**  
+
+| Type | Bibliothèques |
+|------|-------------|
+| **Développement** | `eslint`, `prettier`, `nodemon`, `sass` |
+| **Production** | `chart.js`, `chalk`, `ajv` |
+
+### 🚨 **Problèmes courants et solutions**  
+
+| Erreur | Solution |
+|--------|----------|
+| `EACCES: permission denied` (Linux/Mac) | `sudo npm install --unsafe-perm` |
+| `fsevents` error (Windows) | `npm rebuild` |
+
+### 🔹 **4️⃣ Exécution en mode développement**  
+
+```sh
+npm run dev
+```
+
+### 🔹 **5️⃣ Exécution en mode production**  
+
+```sh
+npm start
+```
+
+### 🔹 **6️⃣ Commandes complémentaires**  
+
+```sh
+npm run sass    # Compilation SCSS
+npm run lint    # Vérification du code
+npm run format  # Formatage du code
+```
+
+---
+
+## 📂 Structure du Projet  
 
 ```plaintext
 📦 p7-les-petits-plats/
@@ -119,12 +157,9 @@ Son objectif est de permettre aux passionnés de cuisine de **trouver instantan�
  ┣ 📜 optimized_recipes.json      # Fichier contenant les recettes optimisées
  ┣ 📜 package.json                # Déclaration des dépendances npm
  ┣ 📜 README.md                   # Documentation principale du projet
-
 ```
 
 ---
-
-## 📦 Installation & Lancement
 
 ### 🔧 1️⃣ Cloner le projet
 
