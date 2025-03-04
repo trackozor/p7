@@ -30,14 +30,14 @@ let suggestionList = [];  // Liste des suggestions disponibles
  * @param {Event} event - Événement déclenché lors de la saisie dans la barre de recherche.
  * @returns {void} Ne retourne rien, mais déclenche la recherche et l’auto-complétion.
  */
-export function handleSearch(event) {
+export function handlebarSearch(event) {
     try {
-        logEvent("test_start", "handleSearch : Début de la gestion de la saisie utilisateur.");
+        logEvent("test_start", "handlebarSearch : Début de la gestion de la saisie utilisateur.");
 
         // Vérifie que l'élément `event.target` est valide et contient bien une valeur
         const searchInput = event.target;
         if (!searchInput || typeof searchInput.value !== "string") {
-            logEvent("error", "handleSearch : Élément input introuvable ou valeur non valide.");
+            logEvent("error", "handlebarSearch : Élément input introuvable ou valeur non valide.");
             return;
         }
 
@@ -46,26 +46,26 @@ export function handleSearch(event) {
 
         // Si l'utilisateur tape 3 caractères ou plus, on active l'auto-complétion
         if (query.length >= 3) {
-            logEvent("info", `handleSearch : Activation de l'auto-complétion pour '${query}'.`);
+            logEvent("info", `handlebarSearch : Activation de l'auto-complétion pour '${query}'.`);
             generateAutoCompletion(query);
         } else {
             // Si moins de 3 caractères, on efface la liste des suggestions
-            logEvent("info", "handleSearch : Effacement des suggestions (moins de 3 caractères).");
+            logEvent("info", "handlebarSearch : Effacement des suggestions (moins de 3 caractères).");
             clearSuggestions();
         }
 
-        // Si la requête est valide (au moins 3 caractères), on exécute la recherche
+        // Si la requête est valide (au moins 3 caractères), on exécute la recherche avec le type `searchBar`
         if (query.length >= 3) {
-            logEvent("info", `handleSearch : Recherche déclenchée pour '${query}'.`);
-            Search(query);
+            logEvent("info", `handlebarSearch : Recherche déclenchée pour '${query}' depuis la barre de recherche.`);
+            Search(query, "searchBar");  // On passe "searchBar" comme type de recherche
         }
 
-        logEvent("test_end", "handleSearch : Gestion de la saisie utilisateur terminée.");
+        logEvent("test_end", "handlebarSearch : Gestion de la saisie utilisateur terminée.");
     } catch (error) {
-        // Capture des erreurs et enregistrement dans les logs
-        logEvent("error", "handleSearch : Erreur lors du traitement de la recherche.", { error: error.message });
+        logEvent("error", "handlebarSearch : Erreur lors du traitement de la recherche.", { error: error.message });
     }
 }
+
 
 /** ====================================================================================
  *  SECTION 2 : AUTO-COMPLÉTION ET SUGGESTIONS

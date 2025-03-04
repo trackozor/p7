@@ -12,7 +12,7 @@
 /* ==================================================================================== */
 
 import { logEvent } from "../../utils/utils.js";
-import { templateManager } from "../../data/templateManager.js";
+
 
 /*------------------------------------------------------------------
 /*   Initialisation du compteur
@@ -65,7 +65,10 @@ export function initCount() {
  * - Récupère et affiche le nombre actuel de recettes via `templateManager.displayAllRecipes()`.
  * - Assure une gestion des erreurs robuste pour éviter tout blocage de l'UI.
  */
-export async function updateCounter() {
+/**
+ * Met à jour dynamiquement le compteur de recettes affichées.
+ */
+export function updateCounter() {
     try {
         logEvent("test_start_count", "updateCounter : Début de la mise à jour du compteur.");
 
@@ -74,26 +77,22 @@ export async function updateCounter() {
 
         // Vérifie si l'élément du compteur est présent
         if (!counterElement) {
+            console.error(" updateCounter : L'élément #recipe-count-container est introuvable.");
             logEvent("error", "updateCounter : L'élément #recipe-count-container est introuvable.");
             return;
         }
 
-        // Récupérer le nombre de recettes affichées via `displayAllRecipes`
-        const recipeCount = await templateManager.displayAllRecipes("#recipes-container");
-
-        // Vérification de la validité du nombre de recettes récupérées
-        if (typeof recipeCount !== "number" || recipeCount < 0) {
-            logEvent("error", "updateCounter : Valeur de `recipeCount` invalide.", { recipeCount });
-            return;
-        }
+        // Compter le nombre de recettes affichées dans le conteneur principal
+        const recipeCards = document.querySelectorAll("#recipes-container .recipe-card");
+        const recipeCount = recipeCards.length;
 
         // Mise à jour du texte du compteur
-        counterElement.textContent = `${recipeCount} recette${recipeCount !== 1 ? "s" : ""} `;
+        counterElement.textContent = `${recipeCount} recette${recipeCount !== 1 ? "s" : ""}`;
 
-        logEvent("test_end_count", `updateCounter : Compteur mis à jour avec ${recipeCount} recette(s) affichée(s).`);
-
+        logEvent("test_end_count", `updateCounter : ${recipeCount} recette(s) affichée(s).`);
     } catch (error) {
-        logEvent("error", "updateCounter : Erreur lors de la mise à jour du compteur.", { error: error.message });
+        logEvent("error", " updateCounter : Erreur lors de la mise à jour du compteur.", { error: error.message });
     }
 }
+
 

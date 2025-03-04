@@ -104,10 +104,27 @@ export async function initFilters() {
  */
 export function handleFilterSelection(filterType, filterValue) {
     try {
+        console.log("handleFilterSelection appelée avec :", { filterType, filterValue });
+
         // Vérification des paramètres
         if (!filterType || !filterValue) {
             logEvent("error", "handleFilterSelection : Paramètres invalides.");
             throw new Error("Les paramètres filterType et filterValue sont obligatoires.");
+        }
+
+        // Vérifier que activeFilters est défini
+        if (typeof activeFilters === "undefined") {
+            logEvent("error", "handleFilterSelection : activeFilters n'est pas défini.");
+            throw new Error("activeFilters n'a pas été initialisé.");
+        }
+
+        console.log("État actuel de activeFilters :", activeFilters);
+
+        // Vérifier si le type de filtre existe dans activeFilters
+        if (!activeFilters[filterType]) {
+            logEvent("error", `handleFilterSelection : Type de filtre "${filterType}" inconnu.`);
+            console.log("Erreur : filterType inconnu dans activeFilters :", filterType);
+            return;
         }
 
         logEvent("info", `handleFilterSelection : Tentative d'ajout de "${filterValue}" dans "${filterType}".`);
@@ -128,8 +145,10 @@ export function handleFilterSelection(filterType, filterValue) {
         updateFilters();
     } catch (error) {
         logEvent("error", "handleFilterSelection : Erreur lors de l'ajout du filtre.", { error: error.message });
+        console.error("Erreur détectée dans handleFilterSelection :", error);
     }
 }
+
 
 /*--------------- */
 /* Retrait        */

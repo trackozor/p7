@@ -34,7 +34,7 @@ const domCache = new Map();
 /*==============================================*/
 /*          Clear Cache (Purge Sélecteurs)    */
 /*==============================================*/
-/** ## DESCRIPTION ##
+/**
  * ---------------------------------------------------------------------------------------------------
  *  Vide intégralement le cache des sélections DOM pour garantir une mise à jour fiable des éléments.
  * ---------------------------------------------------------------------------------------------------
@@ -58,13 +58,10 @@ export function clearDomCache() {
 /*==============================================*/
 /*       Sélection Sécurisée d'un Élément DOM   */
 /*==============================================*/
-
-/** ## DESCRIPTION ##
+/**
  * ---------------------------------------------------------------------------------------------------
  *  Sélectionne un élément du DOM en toute sécurité avec gestion du cache et fallback optionnel.
- * ---------------------------------------------------------------------------------------------------
- * 
- *  
+ * ---------------------------------------------------------------------------------------------------  
  * @function safeQuerySelector
  * @param {string} selector - Sélecteur CSS de l'élément à récupérer.
  * @param {boolean} [isOptional=false] - Ne génère pas d'erreur si l'élément est absent.
@@ -100,8 +97,7 @@ export function safeQuerySelector(selector, isOptional = false, fallbackValue = 
 /*==============================================*/
 /*       Sélection Sécurisée de Plusieurs Éléments DOM   */
 /*==============================================*/
-
-/** ## DESCRIPTION ##
+/** 
  * ---------------------------------------------------------------------------------------------------
  *  Récupère une liste d'éléments DOM en toute sécurité avec gestion du cache et validation dynamique.
  * ---------------------------------------------------------------------------------------------------
@@ -138,8 +134,7 @@ export function safeQuerySelectorAll(selector) {
 /*==============================================*/
 /*          Détection Dynamique de la Page      */
 /*==============================================*/
-
-/** ## DESCRIPTION ##
+/**
  * ---------------------------------------------------------------------------------------------------
  *  Détecte la page active en analysant l’URL actuelle du navigateur et retourne son type.
  * ---------------------------------------------------------------------------------------------------
@@ -206,9 +201,9 @@ export function getIndexSelectors() {
             container: safeQuerySelector("#filters") || waitForElement("#filters"),
 
         // Attente correcte des filtres si non disponibles immédiatement
-        ingredients: safeQuerySelector('[data-filter="ingredients"]') ||  waitForElement('[data-filter="ingredients"]'),
-        appliances: safeQuerySelector('[data-filter="appliances"]') ||  waitForElement('[data-filter="appliances"]'),
-        ustensils: safeQuerySelector('[data-filter="ustensils"]') ||  waitForElement('[data-filter="ustensils"]'),
+        ingredients: safeQuerySelector('[data-filter-type="ingredients"]') ||  waitForElement('[data-filter-type="ingredients"]'),
+        appliances: safeQuerySelector('[data-filter-type="appliances"]') ||  waitForElement('[data-filter-type="appliances"]'),
+        ustensils: safeQuerySelector('[data-filter-type="ustensils"]') ||  waitForElement('[data-filter-type="ustensils"]'),
         },
 
         /* Recettes                    */
@@ -238,40 +233,31 @@ export function getIndexSelectors() {
  * @returns {Promise<Element>} Élément DOM résolu ou rejeté après expiration.
  */
 export function waitForElement(selector, timeout = 5000) {
-    logEvent("test_start_events", ` Attente de l'élément : "${selector}" (Timeout: ${timeout}ms)`);
-
     return new Promise((resolve, reject) => {
-        //  Vérifie d'abord si l'élément est déjà présent dans le DOM via le cache
-        const cachedElement = safeQuerySelector(selector, true);
-        if (cachedElement) {
-            logEvent("success", `Élément trouvé immédiatement via le cache : "${selector}"`);
-            return resolve(cachedElement); //  Retourne l'élément immédiatement s'il est trouvé
+        const startTime = Date.now();
+
+        function checkElement() {
+            const element = document.querySelector(selector) || document.querySelector(`[data-filter-type="${selector.replace(/\[data-filter="(.*?)"\]/, "$1")}"]`);
+
+            if (element) {
+                console.log(`✅ Élément trouvé : ${selector}`);
+                resolve(element);
+                return;
+            }
+
+            if (Date.now() - startTime >= timeout) {
+                logEvent("warn", `Timeout atteint : "${selector}" non trouvé après ${timeout}ms.`);
+                reject(new Error(`Timeout atteint : "${selector}" non trouvé.`));
+                return;
+            }
+
+            setTimeout(checkElement, 100);
         }
 
-        logEvent("info", ` Élément non trouvé, lancement de l'observation avec MutationObserver...`);
-
-        //  Création de l'observateur pour surveiller l'ajout de l'élément dans le DOM
-        const observer = new MutationObserver(() => {
-            logEvent("info", `DOM modifié, recherche de "${selector}"...`);
-            const element = safeQuerySelector(selector, true);
-            if (element) {
-                logEvent("test_end_events", ` Élément détecté dynamiquement : "${selector}"`);
-                observer.disconnect(); //  Arrête l'observation une fois l'élément trouvé
-                resolve(element);
-            }
-        });
-
-        //  Observe tout changement dans le DOM
-        observer.observe(document.body, { childList: true, subtree: true });
-
-        //  Définition d'un timeout pour éviter les attentes infinies
-        setTimeout(() => {
-            logEvent("warn", ` Timeout atteint : "${selector}" non trouvé après ${timeout}ms.`);
-            observer.disconnect(); //  Arrête l'observation en cas d'échec
-            reject(new Error(`waitForElement : "${selector}" introuvable après ${timeout}ms.`));
-        }, timeout);
+        checkElement();
     });
 }
+
 
 /*==============================================*/
 /*    Vérification de la Présence des Éléments  */

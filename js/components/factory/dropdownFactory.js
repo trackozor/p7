@@ -1,27 +1,28 @@
-/* ==================================================================================== */
-/*  FICHIER          : dropdownFactory.js                                              */
-/*  AUTEUR           : Trackozor                                                        */
-/*  VERSION          : 2.6                                                              */
-/*  DESCRIPTION      : Factory pour la génération des dropdowns de filtres.            */
-/* ==================================================================================== */
+/* ====================================================================================
+ *  FICHIER          : dropdownFactory.js
+ *  AUTEUR           : Trackozor
+ *  VERSION          : 2.7
+ *  DESCRIPTION      : Factory pour la génération des dropdowns de filtres.
+ * ==================================================================================== */
 
 import { logEvent } from "../../utils/utils.js";
 
-/* ==================================================================================== */
-/* 1. CRÉATION DES FILTRES (DROPDOWNS) */
-/* ==================================================================================== */
+/* ====================================================================================
+ * 1. CRÉATION DES FILTRES (DROPDOWNS)
+ * ==================================================================================== */
 /**
  * Crée dynamiquement un dropdown de filtre avec un champ de recherche et des options.
  *
- * - Affiche les titres en français tout en conservant `filterType` en anglais pour éviter de casser le site.
+ * - Affiche les titres en français tout en conservant `filterType` en anglais.
  * - Vérifie les paramètres pour éviter les erreurs.
  * - Génère dynamiquement les options et le champ de recherche.
+ * - Ajoute des `id`, `name` et `label` pour l’accessibilité.
  * - Journalise chaque étape avec `logEvent()`.
  *
  * @param {string} title - Titre du filtre (ex: "Ingrédients", "Appareils").
  * @param {string} filterType - Identifiant du filtre utilisé en interne (ex: "ingredients", "appliances").
  * @param {Set<string>} dataSet - Ensemble des options disponibles.
- * @returns {HTMLElement} Retourne le conteneur du dropdown sans gestion d'événements.
+ * @returns {HTMLElement|null} Retourne le conteneur du dropdown ou `null` en cas d'erreur.
  */
 export function createFilterSection(title, filterType, dataSet) {
     try {
@@ -44,59 +45,96 @@ export function createFilterSection(title, filterType, dataSet) {
             appliances: "Appareils",
             ustensils: "Ustensiles"
         };
-
-        // Utilisation du label traduit au lieu de `title`
         const translatedTitle = labelMapping[filterType] || title;
 
         // Création du conteneur principal du dropdown
         const filterContainer = document.createElement("div");
         filterContainer.classList.add("filter-group");
-        filterContainer.dataset.filter = filterType;
+        filterContainer.dataset.filterType = filterType;  // Correction pour `handleFilterSelectionWrapper`
 
-        // Création du bouton principal
+        // Création du bouton principal du dropdown avec `aria-expanded`
         const filterButton = document.createElement("button");
         filterButton.classList.add("filter-button");
-        filterButton.dataset.filter = filterType;
+        filterButton.dataset.filterType = filterType;
         filterButton.innerHTML = `${translatedTitle} <i class="fas fa-chevron-down"></i>`;
+        filterButton.setAttribute("aria-expanded", "false"); // Amélioration accessibilité
 
         // Conteneur du dropdown
         const dropdownContainer = document.createElement("div");
         dropdownContainer.classList.add("dropdown-container");
 
-        // Champ de recherche
+        // Création du champ de recherche avec `id`, `name` et `label`
+        const searchContainer = document.createElement("div");
+        searchContainer.classList.add("dropdown-search-container");
+
+        const searchLabel = document.createElement("label");
+        searchLabel.setAttribute("for", `search-${filterType}`);
+        searchLabel.classList.add("sr-only"); // Masqué visuellement mais accessible pour les lecteurs d'écran
+        searchLabel.textContent = `Rechercher dans ${translatedTitle}`;
+
         const searchInput = document.createElement("input");
         searchInput.type = "text";
         searchInput.classList.add("dropdown-search");
-        searchInput.placeholder = `Rechercher`;
+        searchInput.placeholder = `Rechercher...`;
+        searchInput.id = `search-${filterType}`;
+        searchInput.name = `search-${filterType}`;
+
+        searchContainer.appendChild(searchLabel);
+        searchContainer.appendChild(searchInput);
 
         // Liste des options
         const filterList = document.createElement("ul");
         filterList.classList.add(`${filterType}-list`);
 
-        // Ajout des options
+        // Ajout des options via `createDropdownOption`
         dataSet.forEach(item => {
-            if (typeof item === "string" && item.trim()) {
-                const listItem = document.createElement("li");
-                listItem.classList.add("filter-option");
-                listItem.textContent = item;
-                listItem.dataset.filter = filterType;
-                filterList.appendChild(listItem);
+            const listItem = createDropdownOption(item, filterType);
+            if (listItem) {
+              filterList.appendChild(listItem);
             }
         });
 
         // Ajout des éléments au dropdown
-        dropdownContainer.appendChild(searchInput);
+        dropdownContainer.appendChild(searchContainer);
         dropdownContainer.appendChild(filterList);
         filterContainer.appendChild(filterButton);
         filterContainer.appendChild(dropdownContainer);
 
         logEvent("test_end", `createFilterSection : Dropdown "${translatedTitle}" généré avec succès.`);
-
-        return filterContainer; // Retourne uniquement l'élément généré
+        return filterContainer;
 
     } catch (error) {
         logEvent("error", "createFilterSection : Erreur inattendue.", { error: error.message });
         return null;
     }
+}
+
+/* ====================================================================================
+ * 2. CRÉATION DES OPTIONS DU DROPDOWN
+ * ==================================================================================== */
+/**
+ * Crée un élément `<li>` pour une option du dropdown.
+ *
+ * - Vérifie que `item` est une chaîne non vide.
+ * - Ajoute l'attribut `data-filter-type` pour éviter les erreurs de sélection.
+ *
+ * @param {string} item - Nom de l'option à ajouter.
+ * @param {string} filterType - Type du filtre auquel appartient l'option.
+ * @returns {HTMLElement|null} Retourne l'élément `<li>` ou `null` si invalide.
+ */
+function createDropdownOption(item, filterType) {
+    if (typeof item !== "string" || !item.trim()) {
+        logEvent("warn", `createDropdownOption : Élément invalide ignoré.`);
+        return null;
+    }
+
+    const listItem = document.createElement("li");
+    listItem.classList.add("filter-option");
+    listItem.textContent = item;
+    listItem.dataset.filterType = filterType;  // Correction pour `handleFilterSelectionWrapper`
+
+    console.log(`✅ Option créée : ${item}, filterType = ${filterType}`); // Vérification console
+
+    return listItem;
 }
 

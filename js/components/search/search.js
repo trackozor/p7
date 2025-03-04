@@ -22,26 +22,28 @@ let searchMode = "functional";
 
 /* ==================================================================================== */
 /*  FONCTION PRINCIPALE DE RECHERCHE                                                   */
-/* ==================================================================================== */
+/* ==================================================================================== *
 /**
- * Exécute la recherche avec le mode défini.
+ * Exécute la recherche en fonction du mode sélectionné et de l'origine de l'appel.
  *
- * - Normalise la requête pour éviter les erreurs.
- * - Vérifie que la requête a une longueur valide.
- * - Sélectionne le bon mode de recherche (`native` ou `functional`).
- * - Passe les résultats à `updateRecipes()` pour l'affichage.
+ * - Si la recherche vient de la barre (`searchBar`), elle nécessite au moins 3 caractères.
+ * - Si elle vient des filtres (`filters`), elle s'exécute directement sans restriction.
+ * - Applique la méthode de recherche (`native` ou `functional`).
+ * - Met à jour l'affichage des recettes avec `updateRecipes()`.
  *
  * @param {string} query - Texte recherché par l'utilisateur.
+ * @param {string} [searchType="default"] - Type de recherche ("searchBar" ou "filters").
  * @returns {Promise<Array>} Liste des recettes correspondant aux critères.
  */
-export async function Search(query) {
+export async function Search(query, searchType = "default") {
     try {
-        logEvent("test_start", `Search : Début de la recherche avec mode "${searchMode}"`);
+        logEvent("test_start", `Search : Début de la recherche avec mode "${searchMode}" depuis "${searchType}".`);
 
         // Vérification et nettoyage de la requête utilisateur
         const sanitizedQuery = query.trim().toLowerCase();
 
-        if (sanitizedQuery.length < 3) {
+        // Si la recherche vient de la barre de recherche, on impose un minimum de 3 caractères
+        if (searchType === "searchBar" && sanitizedQuery.length < 3) {
             logEvent("warn", "Search : Requête trop courte (minimum 3 caractères).");
             updateRecipes([]); // Réinitialise l'affichage si la requête est invalide
             return [];
@@ -56,7 +58,7 @@ export async function Search(query) {
             results = await searchRecipesFunctional(sanitizedQuery);
         }
 
-        logEvent("info", `Search : ${results.length} recette(s) trouvée(s) pour "${sanitizedQuery}"`);
+        logEvent("info", `Search : ${results.length} recette(s) trouvée(s) pour "${sanitizedQuery}" depuis "${searchType}".`);
 
         // Mise à jour de la galerie avec les nouvelles recettes
         updateRecipes(results);
@@ -64,7 +66,7 @@ export async function Search(query) {
         logEvent("test_end", "Search : Recherche terminée.");
         return results;
     } catch (error) {
-        logEvent("error", "Search : Erreur lors de la recherche.", { error: error.message });
+        logEvent("error", `Search : Erreur lors de la recherche depuis "${searchType}".`, { error: error.message });
         return [];
     }
 }
@@ -152,6 +154,59 @@ export function matchFilters(recipe) {
 
     } catch (error) {
         logEvent("error", "matchFilters : Erreur lors de la vérification des filtres.", { error: error.message });
+        return false;
+    }
+}
+/** ====================================================================================
+ *  AJOUT DE `matchesSearchCriteria` POUR VÉRIFIER LES CRITÈRES DE RECHERCHE
+ * ==================================================================================== */
+/**
+ * Vérifie si une recette correspond aux critères de recherche.
+ *
+ * - Vérifie si le nom de la recette contient la requête.
+ * - Vérifie si un ingrédient, un appareil ou un ustensile correspond à la requête.
+ * - Utilise `normalizeText()` pour éviter les erreurs de casse et d’accents.
+ *
+ * @param {Object} recipe - Objet représentant une recette.
+ * @param {string} query - Texte recherché.
+ * @returns {boolean} `true` si la recette correspond aux critères, sinon `false`.
+ */
+export function matchesSearchCriteria(recipe, query) {
+    try {
+        if (!recipe || typeof recipe !== "object") {
+            logEvent("error", "matchesSearchCriteria : Recette invalide.");
+            return false;
+        }
+
+        if (!query || typeof query !== "string") {
+            logEvent("error", "matchesSearchCriteria : Requête invalide.");
+            return false;
+        }
+
+        logEvent("info", `matchesSearchCriteria : Vérification de la recette "${recipe.name}" avec la requête '${query}'`);
+
+        const normalizedQuery = normalizeText(query);
+
+        // Vérifie si le nom de la recette correspond
+        const nameMatch = normalizeText(recipe.name).includes(normalizedQuery);
+
+        // Vérifie si un ingrédient correspond
+        const ingredientMatch = recipe.ingredients.some(ing => normalizeText(ing.ingredient).includes(normalizedQuery));
+
+        // Vérifie si l’appareil correspond
+        const applianceMatch = normalizeText(recipe.appliance).includes(normalizedQuery);
+
+        // Vérifie si un ustensile correspond
+        const ustensilMatch = recipe.ustensils.some(ust => normalizeText(ust).includes(normalizedQuery));
+
+        // Si l'un des critères correspond, retourne `true`
+        const isMatch = nameMatch || ingredientMatch || applianceMatch || ustensilMatch;
+
+        logEvent("success", `matchesSearchCriteria : Résultat pour "${recipe.name}" → ${isMatch ? "Match" : "Non-match"}`);
+
+        return isMatch;
+    } catch (error) {
+        logEvent("error", "matchesSearchCriteria : Erreur inattendue.", { error: error.message });
         return false;
     }
 }

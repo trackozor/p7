@@ -6,16 +6,23 @@
 /* ==================================================================================== */
 
 import { logEvent, debounce } from "../utils/utils.js";
-import { handleFilterSelection as applyFilterSelection, removeTag } from "../components/filterManager.js";
+import { handleFilterSelection , removeTag } from "../components/filterManager.js";
 import { trapFocus } from "../utils/accessibility.js";
 import { KEY_CODES } from "../config/constants.js";
+import { Search } from "../components/search/search.js"; 
 
 /* ====================================================================================
 /*                            GESTION DE LA RECHERCHE
 /* ==================================================================================== */
 /**
- * Gère la recherche en appliquant un délai pour éviter les appels excessifs.
- * Déclenche la recherche lorsque l'utilisateur entre du texte dans la barre de recherche.
+ * Gère la recherche en appliquant une temporisation (`debounce`).
+ *
+ * - Vérifie que l'élément de recherche existe dans le DOM.
+ * - Nettoie et normalise la requête utilisateur.
+ * - Déclenche `Search()` uniquement si la requête contient au moins 3 caractères.
+ * - Utilise un délai de 300ms pour éviter les appels excessifs.
+ *
+ * @returns {void} Ne retourne rien, mais déclenche la recherche avec `Search()`.
  */
 export const handleSearch = debounce(async function () {
     try {
@@ -23,20 +30,29 @@ export const handleSearch = debounce(async function () {
 
         // Sélection de l'élément de saisie de recherche
         const searchInput = document.querySelector("#search");
+
+        // Vérification que l'élément existe dans le DOM
         if (!searchInput) {
-            throw new Error("handleSearch : Élément input de recherche introuvable.");
+            logEvent("error", "handleSearch : Élément input de recherche introuvable.");
+            return;
         }
 
         // Récupération et nettoyage de la requête utilisateur
-        const query = searchInput.value.trim();
+        const query = searchInput.value.trim().toLowerCase(); // Mise en minuscule et suppression des espaces inutiles
+
+        // Vérification de la longueur minimale de la requête
         if (query.length < 3) {
             logEvent("warn", "handleSearch : La requête est trop courte, minimum 3 caractères.");
             return;
         }
 
-        logEvent("info", `handleSearch : Recherche de "${query}".`);
+        logEvent("info", `handleSearch : Recherche en cours pour '${query}'.`);
 
-        logEvent("test_end", "handleSearch : Recherche terminée.");
+        // Déclenchement de la recherche avec la requête normalisée
+        Search(query);
+
+        logEvent("success", "handleSearch : Recherche exécutée avec succès.");
+        logEvent("test_end", "handleSearch : Fin du processus.");
     } catch (error) {
         logEvent("error", "handleSearch : Erreur lors de la recherche.", { error: error.message });
     }
@@ -97,7 +113,6 @@ export function handleDropdownClick(event, button) {
     logEvent("info", `handleDropdownClick : Dropdown "${button.dataset.filter}" ${dropdownContainer.classList.contains("active") ? "ouvert" : "fermé"}.`);
 }
 
-
 /* ====================================================================================
 /*                   WRAPPERS POUR ÉVITER LES DOUBLONS D'ÉVÉNEMENTS
 /* ==================================================================================== */
@@ -125,33 +140,27 @@ export function handleDropdownClickWrapper(event) {
  * @param {Event} event - L'événement du clic.
  */
 export function handleFilterSelectionWrapper(event) {
-    handleFilterSelection(event, event.currentTarget);
-}
+    console.log(" Événement reçu dans handleFilterSelectionWrapper :", event);
 
-/* ====================================================================================
-/*                       GESTION DE LA SÉLECTION DES FILTRES
-/* ==================================================================================== */
-/**
- * Gère la sélection d'un filtre depuis un dropdown.
- * Ajoute le filtre actif et met à jour l'affichage.
- *
- * @param {Event} event - L'événement de sélection.
- * @param {HTMLElement} option - Élément sélectionné dans le dropdown.
- */
-export function handleFilterSelection(event, option) {
-    // Récupération des données du filtre
-    const filterType = option.dataset.filter;
-    const filterValue = option.textContent.trim();
+    let {target} = event;
 
-    if (!filterType || !filterValue) {
-        logEvent("error", "handleFilterSelection : Paramètres invalides.");
+    // Vérifie que l'utilisateur clique bien sur un élément `<li>`, sinon remonte dans le DOM
+    while (target && !target.classList.contains("filter-option")) {
+        target = target.parentElement;
+    }
+
+    // Vérification de la validité de l'élément
+    if (!target || !target.dataset.filterType || !target.textContent.trim()) {
+        console.error("handleFilterSelectionWrapper : Élément cliqué invalide.", target);
         return;
     }
 
-    logEvent("info", `handleFilterSelection : Sélection de "${filterValue}" dans "${filterType}".`);
+    const {filterType} = target.dataset; // Récupère le type de filtre correct
+    const filterValue = target.textContent.trim();
 
-    // Appliquer le filtre et mettre à jour l'affichage
-    applyFilterSelection(filterType, filterValue);
+    console.log(`handleFilterSelectionWrapper - Appel avec : { filterType: ${filterType}, filterValue: ${filterValue} }`);
+
+    handleFilterSelection(filterType, filterValue);
 }
 
 /* ====================================================================================
