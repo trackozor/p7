@@ -36,55 +36,42 @@ const filterContainers = {}; // Stocke les éléments DOM des dropdowns
 export async function initFilters() {
     try {
         logEvent("test_start_filter", "initFilters : Début de l'initialisation des filtres.");
-
-        // Attendre que le conteneur des filtres soit chargé
+        
         const filtersContainer = await waitForElement("#filters .filter-dropdowns", 3000);
         if (!filtersContainer) {
             logEvent("error", "initFilters : Conteneur des filtres introuvable.");
-            throw new Error("Le conteneur des filtres (#filters .filter-dropdowns) est introuvable.");
+            console.warn("⚠️ Alerte : Impossible de charger les filtres.");
+            return;
         }
 
-        // Récupération des options de filtres depuis le cache
         const filterData = fetchFilterOptions();
         if (!filterData || !filterData.ingredients || !filterData.appliances || !filterData.ustensils) {
-            logEvent("warn", "initFilters : Aucune donnée de filtre disponible.");
+            logEvent("warn", "initFilters : Données de filtre manquantes.");
             return;
         }
 
-        // Vérifier si les filtres sont vides
-        if (
-            filterData.ingredients.length === 0 &&
-            filterData.appliances.length === 0 &&
-            filterData.ustensils.length === 0
-        ) {
-            logEvent("warn", "initFilters : Aucun filtre disponible, l'affichage est annulé.");
+        if (!Object.values(filterData).some(arr => arr.length > 0)) {
+            logEvent("warn", "initFilters : Aucun filtre disponible, affichage annulé.");
             return;
         }
 
-        logEvent("test_end_filter", "initFilters : Chargement des dropdowns...");
-
-        // Nettoyer le conteneur et préparer un fragment pour optimiser le DOM
         filtersContainer.innerHTML = "";
         const fragment = document.createDocumentFragment();
 
-        // Création et insertion des dropdowns dynamiquement
         ["ingredients", "appliances", "ustensils"].forEach(filterType => {
             if (filterData[filterType]?.length > 0) {
-                const dropdown = createFilterSection(
-                    filterType.charAt(0).toUpperCase() + filterType.slice(1), // Mise en forme du titre
+                fragment.appendChild(createFilterSection(
+                    filterType.charAt(0).toUpperCase() + filterType.slice(1),
                     filterType,
-                    new Set(filterData[filterType]) // Évite les doublons
-                );
-                fragment.appendChild(dropdown);
+                    new Set(filterData[filterType])
+                ));
             }
         });
 
-        // Insérer les dropdowns optimisés dans le DOM
         filtersContainer.appendChild(fragment);
-
-        logEvent("success", "initFilters : Dropdowns générés et insérés avec succès.");
+        logEvent("success", "initFilters : Filtres chargés avec succès.");
     } catch (error) {
-        logEvent("error", "initFilters : Erreur lors de l'affichage des filtres.", { error: error.message });
+        logEvent("error", "initFilters : Erreur", { error: error.message });
     }
 }
 

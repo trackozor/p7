@@ -8,7 +8,7 @@
  *                   - Mise à jour du compteur de recettes après filtrage.
  * ==================================================================================== */
 
-import { templateManager } from "../../data/templateManager.js";
+import { RecipeFactory } from "../factory/recipeFactory.js";
 import { updateCounter } from "../count/count.js";
 import { logEvent } from "../../utils/utils.js";
 
@@ -18,7 +18,7 @@ import { logEvent } from "../../utils/utils.js";
 export function updateRecipes(recipes) {
     try {
         logEvent("test_start", `updateRecipes : Début de la mise à jour avec ${recipes.length} recette(s).`);
-
+        
         // Vérification que la fonction est bien exécutée
         console.log("updateRecipes appelée avec :", recipes);
 
@@ -28,25 +28,26 @@ export function updateRecipes(recipes) {
         // Vérification que le conteneur existe dans le DOM
         if (!container) {
             logEvent("error", "updateRecipes : Conteneur de recettes introuvable.");
-            console.log("Erreur : Le conteneur #recipes-container est introuvable.");
+            console.error("Erreur : Le conteneur #recipes-container est introuvable.");
             return;
         }
         console.log("Conteneur trouvé :", container);
 
         // Nettoyer l'affichage avant d'ajouter les nouvelles recettes
         container.innerHTML = "";
+        container.offsetHeight; // Force un recalcul du DOM pour éviter des problèmes d'affichage
 
         // Vérification si aucune recette n'a été trouvée
         if (recipes.length === 0) {
             container.innerHTML = "<p class='no-recipes'>Aucune recette trouvée.</p>";
             logEvent("warn", "updateRecipes : Aucune recette trouvée.");
-            console.log("Aucune recette trouvée.");
+            console.warn("Aucune recette trouvée.");
         } else {
             // Vérification des recettes avant affichage
-            console.log("Recettes envoyées au templateManager :", recipes);
+            console.log("Recettes envoyées à displayFilteredRecipes :", recipes);
 
-            // Mise à jour dynamique des recettes dans le conteneur
-            templateManager.displayAllRecipes("#recipes-container", recipes);
+            // Appel de la fonction d'affichage spécifique aux recettes filtrées
+            displayFilteredRecipes("#recipes-container", recipes);
             logEvent("success", `updateRecipes : Affichage mis à jour avec ${recipes.length} recette(s).`);
         }
 
@@ -62,3 +63,56 @@ export function updateRecipes(recipes) {
     }
 }
 
+/**
+ * Affiche uniquement les recettes filtrées dans le conteneur donné.
+ *
+ * @param {string} containerSelector - Sélecteur du conteneur où afficher les recettes.
+ * @param {Array<Object>} recipes - Liste des recettes filtrées à afficher.
+ */
+export function displayFilteredRecipes(containerSelector, recipes) {
+    try {
+        logEvent("info", `displayFilteredRecipes : Début de l'affichage de ${recipes.length} recette(s).`);
+
+        const container = document.querySelector(containerSelector);
+
+        // Vérification si le conteneur est bien présent
+        if (!container) {
+            throw new Error(`Le conteneur ${containerSelector} est introuvable.`);
+        }
+
+        // Création d'un fragment pour optimiser l'insertion dans le DOM
+        const fragment = document.createDocumentFragment();
+
+        recipes.forEach(recipeData => {
+            try {
+                const recipe = RecipeFactory(recipeData);
+
+                // Vérifie si la fabrique de recette retourne un objet valide
+                if (!recipe || typeof recipe.generateCard !== "function") {
+                    logEvent("error", "RecipeFactory a retourné une valeur invalide.", { recipeData });
+                    return;
+                }
+
+                const recipeCard = recipe.generateCard();
+
+                // Vérifie si l'élément retourné est bien une carte HTML
+                if (!(recipeCard instanceof HTMLElement)) {
+                    logEvent("error", "generateCard() n'a pas retourné un élément valide.", { recipeData });
+                    return;
+                }
+
+                fragment.appendChild(recipeCard);
+            } catch (error) {
+                logEvent("error", "displayFilteredRecipes : Erreur lors de la création d'une recette.", { error: error.message, recipeData });
+            }
+        });
+
+        // Nettoyer le conteneur avant d'ajouter les nouvelles cartes
+        container.innerHTML = "";
+        container.appendChild(fragment);
+
+        logEvent("success", `displayFilteredRecipes : ${recipes.length} recettes affichées avec succès.`);
+    } catch (error) {
+        logEvent("error", "displayFilteredRecipes : Erreur lors de l'affichage des recettes filtrées.", { error: error.message });
+    }
+}

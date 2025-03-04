@@ -182,7 +182,6 @@ export function initEventListeners() {
         logEvent("info", "initEventListeners : Attachement des événements aux dropdowns...");
         attachFilterEvents();
         logEvent("success", "initEventListeners : Événements aux dropdowns attachés.");
-
         // Attachement des événements à la barre de recherche
         logEvent("info", "initEventListeners : Attachement des événements à la barre de recherche...");
         const searchSelectors = {
