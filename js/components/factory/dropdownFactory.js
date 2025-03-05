@@ -90,7 +90,7 @@ export function createFilterSection(title, filterType, dataSet) {
         dataSet.forEach(item => {
             const listItem = createDropdownOption(item, filterType);
             if (listItem) {
-              filterList.appendChild(listItem);
+                filterList.appendChild(listItem);
             }
         });
 
@@ -109,7 +109,7 @@ export function createFilterSection(title, filterType, dataSet) {
     }
 }
 
-/* ====================================================================================
+/** ====================================================================================
  * 2. CRÉATION DES OPTIONS DU DROPDOWN
  * ==================================================================================== */
 /**

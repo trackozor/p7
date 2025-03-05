@@ -13,7 +13,7 @@ import { searchRecipesLoopNative } from "./searchloopNative.js";
 import { logEvent } from "../../utils/utils.js";
 import { updateRecipes } from "./displayResults.js";
 import { normalizeText } from "../../utils/normalize.js";
-
+import { getAllRecipes } from "../../data/dataManager.js";
 /* ==================================================================================== */
 /*  MODES DE RECHERCHE                                                                 */
 /* ==================================================================================== */
