@@ -35,63 +35,51 @@ let searchMode = "functional";
  * @param {string} [searchType="default"] - Type de recherche ("searchBar" ou "filters").
  * @returns {Promise<Array>} Liste des recettes correspondant aux critères.
  */
-export async function Search(query, searchType = "default") {
+export async function Search(query = "", filtersArray = {}) {
     try {
-        logEvent("test_start", `🔍 Début de la recherche avec mode "${searchMode}" depuis "${searchType}".`);
+        logEvent("test_start", `🔍 Début de la recherche (query="${query}", filters=${JSON.stringify(filtersArray)})`);
 
-        // 📝 Vérification de la requête utilisateur
-        if (typeof query !== "string") {
-            logEvent("error", "❌ Search : Type de requête invalide (doit être une chaîne de caractères).", { receivedType: typeof query });
-            return [];
-        }
-
-        // 🛠 Nettoyage et mise en minuscule de la requête
         const sanitizedQuery = query.trim().toLowerCase();
-        logEvent("debug", `Query nettoyée : "${sanitizedQuery}"`);
-
-        // ⏳ Gestion des recherches depuis la barre de recherche
-        if (searchType === "searchBar" && sanitizedQuery.length < 3) {
-            logEvent("warn", " Search : Requête trop courte (minimum 3 caractères requis).");
-            updateRecipes([]); // Réinitialise l'affichage si la requête est invalide
-            return [];
-        }
+        const hasQuery = sanitizedQuery.length >= 3;
+        const hasTags = filtersArray && Object.values(filtersArray).some(tags => tags.length > 0);
 
         let results = [];
 
-        // 🔍 Sélection du mode de recherche
-        logEvent("info", `🔄 Mode de recherche sélectionné : "${searchMode}"`);
-        
-        if (searchMode === "native") {
-            logEvent("debug", "🚀 Utilisation de searchRecipesLoopNative()");
-            results = await searchRecipesLoopNative(sanitizedQuery);
-        } else {
-            logEvent("debug", "🛠 Utilisation de searchRecipesFunctional()");
-            results = await searchRecipesFunctional(sanitizedQuery);
+        if (hasQuery && !hasTags) {
+            logEvent("info", `Search : Recherche avec texte seul "${sanitizedQuery}".`);
+            results = await searchByQuery(sanitizedQuery);
+        } 
+        else if (!hasQuery && hasTags) {
+            logEvent("info", `Search : Recherche avec filtres seuls.`);
+            results = await searchByTags(filtersArray);
+        } 
+        else if (hasQuery && hasTags) {
+            logEvent("info", `Search : Recherche combinée avec texte "${sanitizedQuery}" et tags.`);
+            results = await searchCombined(sanitizedQuery, filtersArray);
+        } 
+        else {
+            logEvent("warn", "Search : Aucun critère spécifié, affichage de toutes les recettes.");
+            results = getAllRecipes();
         }
 
-        // ✅ Résultats de la recherche
-        logEvent("info", `🔎 ${results.length} recette(s) trouvée(s) pour "${sanitizedQuery}" via "${searchType}".`);
-
-        // 🖥 Mise à jour de la galerie avec les nouvelles recettes
+        logEvent("info", `Search : ${results.length} recette(s) trouvée(s).`);
         updateRecipes(results);
-        logEvent("success", "🎉 Affichage mis à jour avec les nouvelles recettes.");
 
         logEvent("test_end", "🏁 Search : Recherche terminée avec succès.");
         return results;
 
     } catch (error) {
-        // ❌ Gestion des erreurs
-        logEvent("error", "💥 Erreur lors de la recherche.", { 
-            searchType, 
-            query, 
-            errorMessage: error.message, 
-            stack: error.stack 
-        });
+        logEvent("error", "💥 Erreur lors de la recherche.", { error: error.message });
         return [];
     }
 }
 
-
+/** ==================================================================================== */
+/**  EXÉCUTION DE LA RECHERCHE SELON LE MODE ACTIF                                      */
+/** ==================================================================================== */
+async function executeSearch(query) {
+    return searchMode === "native" ? searchRecipesLoopNative(query) : searchRecipesFunctional(query);
+}
 /* ==================================================================================== */
 /*  CHANGEMENT DU MODE DE RECHERCHE                                                    */
 /* ==================================================================================== */
@@ -117,6 +105,31 @@ export function setSearchMode(mode, query = "") {
     if (query.length >= 3) {
         Search(query);
     }
+}
+/** ==================================================================================== */
+/**  RECHERCHE PAR TEXTE                                                                */
+/** ==================================================================================== */
+async function searchByQuery(query) {
+    logEvent("info", `searchByQuery : Recherche pour "${query}".`);
+    let recipes = await executeSearch(query);
+    return recipes.filter(recipe => matchesSearchCriteria(recipe, query));
+}
+
+/** ==================================================================================== */
+/**  RECHERCHE PAR TAGS SEULS                                                           */
+/** ==================================================================================== */
+async function searchByTags(activeTags) {
+    logEvent("info", `searchByTags : Filtrage avec tags ${JSON.stringify(activeTags)}`);
+    return getAllRecipes().filter(recipe => matchFilters(recipe, activeTags));
+}
+
+/** ==================================================================================== */
+/**  RECHERCHE COMBINÉE (TEXTE + TAGS)                                                  */
+/** ==================================================================================== */
+async function searchCombined(query, activeTags) {
+    logEvent("info", `searchCombined : Recherche "${query}" avec tags ${JSON.stringify(activeTags)}`);
+    let results = await executeSearch(query);
+    return results.filter(recipe => matchesSearchCriteria(recipe, query) && matchFilters(recipe, activeTags));
 }
 
 /* ==================================================================================== */

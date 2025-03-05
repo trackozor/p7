@@ -108,38 +108,48 @@ export function attachFilterEvents() {
  */
 export function attachTagEvents() {
     try {
-        logEvent("info", "attachTagEvents : Démarrage de l'attachement des événements aux tags...");
+        logEvent("info", "attachTagEvents : Activation de l'écoute des tags...");
 
-        // Sélectionne tous les tags actuellement affichés dans le DOM
-        const tagElements = document.querySelectorAll(".filter-tag");
+        // Sélection du conteneur où les tags seront ajoutés
+        const tagContainer = document.querySelector("#selected-filters");
 
-        // Vérifie s'il y a au moins un tag affiché avant d'attacher les événements
-        if (!tagElements.length) {
-            logEvent("warn", "attachTagEvents : Aucun tag de filtre trouvé.");
+        if (!tagContainer) {
+            logEvent("error", "attachTagEvents : Conteneur des tags introuvable.");
             return;
         }
 
-        // Parcourt chaque tag et attache un événement au bouton de suppression
-        tagElements.forEach(tag => {
-            // Sélection de l'icône "X" pour supprimer le tag
-            const removeIcon = tag.querySelector("i.fa-times");
+        // Observer les changements dans le DOM (ajout ou suppression de tags)
+        const observer = new MutationObserver(() => {
+            const tagElements = document.querySelectorAll(".filter-tag");
 
-            // Vérifie que l'icône existe avant d'attacher l'événement
-            if (removeIcon) {
-                // Supprime tout écouteur existant pour éviter les doublons
-                removeIcon.removeEventListener("click", handleTagRemovalWrapper);
-                // Ajoute un nouvel écouteur pour gérer la suppression du tag
-                removeIcon.addEventListener("click", handleTagRemovalWrapper);
+            if (tagElements.length === 0) {
+                logEvent("info", "attachTagEvents : Aucun tag actuellement sélectionné.");
+                return;
             }
+
+            // Attache un événement à chaque tag, mais uniquement si ce n'est pas déjà fait
+            tagElements.forEach(tag => {
+                const removeIcon = tag.querySelector("i.fa-times");
+
+                if (removeIcon && !removeIcon.dataset.eventAttached) {
+                    removeIcon.addEventListener("click", handleTagRemovalWrapper);
+                    removeIcon.dataset.eventAttached = "true"; // Évite les doublons
+                }
+            });
+
+            logEvent("success", `attachTagEvents : Événements attachés à ${tagElements.length} tag(s).`);
         });
 
-        // Enregistre un succès une fois tous les événements attachés
-        logEvent("success", `attachTagEvents : Événements attachés avec succès à ${tagElements.length} tags.`);
+        // Observe les ajouts et suppressions de tags dans le conteneur
+        observer.observe(tagContainer, { childList: true });
+
+        logEvent("info", "attachTagEvents : Observation des ajouts de tags activée.");
+
     } catch (error) {
-        // Capture et enregistre toute erreur survenue durant l'exécution
         logEvent("error", "attachTagEvents : Erreur lors de l'attachement des événements aux tags.", { error: error.message });
     }
 }
+
 /* ====================================================================================*/
 /*                     ATTACHEMENT DES ÉVÉNEMENTS CLAVIER                              */
 /* ==================================================================================== */
