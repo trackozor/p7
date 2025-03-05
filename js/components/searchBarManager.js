@@ -9,8 +9,8 @@
  *                     - Lancement de la recherche en temps réel.
  * ==================================================================================== */
 
-import { Search } from "./search.js";
-import { logEvent } from "../../utils/utils.js";
+import { Search } from "./search/search.js";
+import { logEvent } from "../utils/utils.js";
 import { getAllRecipes } from "../data/dataManager.js";
 import { normalizeText } from "../utils/normalize.js"; 
 
@@ -30,7 +30,7 @@ let suggestionList = [];  // Liste des suggestions disponibles
  * @param {Event} event - Événement déclenché lors de la saisie dans la barre de recherche.
  * @returns {void} Ne retourne rien, mais déclenche la recherche et l’auto-complétion.
  */
-export function handlebarSearch(event) {
+export function handleBarSearch(event) {
     try {
         logEvent("test_start", "handlebarSearch : Début de la gestion de la saisie utilisateur.");
 

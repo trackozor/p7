@@ -7,7 +7,8 @@
 
 import { logEvent, debounce } from "../utils/utils.js";
 import { safeQuerySelectorAll, waitForElement } from "../config/domSelectors.js";
-import { handleSearch, handleDropdownClickWrapper, handleFilterSelectionWrapper, handleTagRemovalWrapper, handleSearchWrapper,handleKeyboardNavigation } from "./eventHandler.js";
+import {  handleDropdownClickWrapper, handleFilterSelectionWrapper, handleTagRemovalWrapper, handleSearchWrapper,handleKeyboardNavigation } from "./eventHandler.js";
+import { handleBarSearch } from "../components/searchBarManager.js";
 
 /* ====================================================================================
 /*                            ATTACHEMENT DES ÉVÉNEMENTS DE RECHERCHE
@@ -38,11 +39,11 @@ export async function attachSearchListeners(searchSelectors) {
         logEvent("success", "attachSearchListeners : Éléments trouvés, attachement des écouteurs...");
 
         // Suppression des événements existants pour éviter les doublons
-        input.removeEventListener("input", debounce(handleSearch, 300));
+        input.removeEventListener("input", debounce(handleBarSearch, 300));
         form.removeEventListener("submit", handleSearchWrapper);
 
         // Ajout de l'écouteur sur l'input pour détecter la saisie utilisateur (avec debounce)
-        input.addEventListener("input", debounce(handleSearch, 300));
+        input.addEventListener("input", debounce(handleBarSearch, 300));
 
         // Ajout de l'écouteur sur le formulaire pour gérer la soumission et éviter le rechargement
         form.addEventListener("submit", handleSearchWrapper);

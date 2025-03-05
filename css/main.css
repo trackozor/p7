@@ -964,6 +964,11 @@ header {
     margin: 0.5%; /* Réduction de la marge pour optimiser l’espace */
   }
 }
+.search-bar button:hover {
+  color: #FFD15B;
+  background-color: black;
+  filter: none; /* Suppression de l'inversion des couleurs pour rendre le bouton plus visible */
+}
 
 /* ==================================================================================== */
 /*   Boutons de sélection des filtres - Dropdowns                                   */
@@ -1286,7 +1291,7 @@ footer {
 @media (min-width: 1024px) {
   #filters {
     width: 100%;
-    max-width: 1200px;
+    max-width: 1440px;
     margin: 1% auto;
     display: flex;
     justify-content: flex-start;
@@ -1307,7 +1312,7 @@ footer {
   display: flex;
   width: 90%;
   height: 5%;
-  gap: 15px;
+  gap: 2rem;
   justify-content: flex-start;
   flex-wrap: wrap;
 }
@@ -1327,10 +1332,9 @@ footer {
   width: 100%;
   background-color: white;
   color: #2C3E50;
-  font-weight: 600;
-  border: none;
-  padding: 5% 15px;
-  border-radius: 5px;
+  font-weight: bold;
+  padding: 0.7rem;
+  border-radius: 0.5rem;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -1338,7 +1342,9 @@ footer {
   transition: background-color 0.3s;
 }
 .filter-button:hover {
-  background-color: #ccac00;
+  background-color: white;
+  border: none;
+  border-radius: 0.5rem 0.5rem 0 0;
 }
 
 /* Conteneur du menu déroulant */
@@ -1346,19 +1352,21 @@ footer {
   position: absolute;
   top: 100%;
   left: 0;
+  width: 100%;
   max-height: 0;
   overflow: hidden;
   background-color: #FFF;
   border-radius: 0 0 0.5rem 0.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: max-height 0.3s ease-in-out;
-  z-index: 100;
+  transition: max-height 0.3s ease-in-out, visibility 0.2s;
+  visibility: hidden;
+  z-index: 200;
 }
-
-/* Style du dropdown lorsqu'il est actif */
 .dropdown-container.active {
-  max-height: 100px;
+  max-height: 10rem;
   overflow-y: auto;
+  visibility: visible;
+  padding-top: 0.2rem;
 }
 
 /* Champ de recherche à l'intérieur du dropdown */
@@ -1399,16 +1407,17 @@ li:hover {
    =================================================================================== */
 .selected-filters {
   display: flex;
-  gap: 10px;
-  width: 90%;
+  gap: 2rem;
+  width: 80vw;
   flex-wrap: wrap;
-  margin: 0 auto;
+  margin: 1% 5%;
 }
 
 /* Apparence des tags de filtres sélectionnés */
 .filter-tag {
   background-color: #FFD700;
   width: 150px;
+  min-height: 40px;
   display: flex;
   justify-content: space-between;
   color: #2C3E50;
@@ -1417,7 +1426,7 @@ li:hover {
   font-size: 14px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 0.5rem;
   font-weight: bold;
 }
 
@@ -1559,14 +1568,6 @@ li:hover {
     width: 90%; /* Largeur ajustée pour éviter les bords */
     margin: 0 auto; /* Centrage du conteneur */
     row-gap: 0.5%; /* Espacement entre les lignes pour une meilleure lisibilité */
-  }
-}
-@media (min-width: 1440px) {
-  #recipes-container {
-    grid-template-columns: repeat(4, 25vw); /* Remplissage automatique des colonnes */
-    width: 100%; /* Largeur ajustée pour éviter les bords */
-    margin: 0 auto; /* Centrage du conteneur */
-    row-gap: 1%; /* Espacement entre les lignes pour une meilleure lisibilité */
   }
 }
 

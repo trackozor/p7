@@ -239,76 +239,52 @@ export function updateTagDisplay() {
  *
  * @returns {void} Ne retourne rien, met à jour les options des dropdowns.
  */
-export function updateFilters() {
+
+export function updateFilters(filteredRecipes) {
     try {
-        logEvent("info", "updateFilters : Début de la mise à jour des dropdowns...");
+        logEvent("info", "updateFiltersDropdown : Mise à jour des options des dropdowns.");
 
-       
-
-        // Récupération des recettes filtrées
-        const filteredRecipes = searchRecipes([
-            ...Array.from(activeFilters.ingredients),
-            ...Array.from(activeFilters.appliances),
-            ...Array.from(activeFilters.ustensils)
-        ]);
-
-        if (!filteredRecipes || filteredRecipes.length === 0) {
-            logEvent("warn", "updateFilters : Aucune recette trouvée, désactivation des dropdowns.");
-            Object.values(filterContainers).forEach(container => container.classList.add("disabled"));
-            return;
-        }
-
-        // Création d'un nouvel ensemble de filtres dynamiques
         const newFilterData = {
             ingredients: new Set(),
             appliances: new Set(),
             ustensils: new Set()
         };
 
-        // Mise à jour des ensembles de filtres en fonction des recettes trouvées
+        // Remplit les ensembles dynamiques avec les nouvelles valeurs extraites des recettes filtrées
         filteredRecipes.forEach(recipe => {
             recipe.ingredients.forEach(ing => newFilterData.ingredients.add(ing.ingredient));
             newFilterData.appliances.add(recipe.appliance);
             recipe.ustensils.forEach(ust => newFilterData.ustensils.add(ust));
         });
 
-        // Mise à jour des dropdowns uniquement si les données ont changé
+        // Mise à jour des dropdowns uniquement si nécessaire
         Object.entries(filterContainers).forEach(([filterType, container]) => {
             const dropdownList = container?.querySelector("ul");
             if (!dropdownList) {
-                logEvent("warn", `updateFilters : Impossible de trouver la liste des options pour "${filterType}".`);
                 return;
             }
 
-            // Vérifier si la mise à jour est nécessaire pour éviter un re-render inutile
-            const previousFilterCount = dropdownList.dataset.lastFilterCount || "0";
-            if (previousFilterCount === String(newFilterData[filterType].size)) {
-                logEvent("info", `updateFilters : Aucun changement détecté pour "${filterType}", mise à jour annulée.`);
-                return;
-            }
-            dropdownList.dataset.lastFilterCount = String(newFilterData[filterType].size);
-
-            // Mise à jour du dropdown
-            dropdownList.innerHTML = "";
+            dropdownList.innerHTML = ""; // Nettoyage du dropdown avant mise à jour
             const fragment = document.createDocumentFragment();
 
-            newFilterData[filterType].forEach(option => {
-                const listItem = document.createElement("li");
-                listItem.classList.add("filter-option");
-                listItem.textContent = option;
-                listItem.dataset.filter = filterType;
-                fragment.appendChild(listItem);
-            });
+            [...newFilterData[filterType]]
+                .sort((a, b) => a.localeCompare(b)) // Tri alphabétique
+                .forEach(option => {
+                    const li = document.createElement("li");
+                    li.classList.add("filter-option");
+                    li.textContent = option;
+                    li.addEventListener("click", () => handleFilterSelection(filterType, option));
+                    fragment.appendChild(li);
+                });
 
             dropdownList.appendChild(fragment);
         });
 
-        logEvent("success", "updateFilters : Mise à jour terminée.");
+        logEvent("success", "updateFiltersDropdown : Mise à jour des dropdowns terminée.");
     } catch (error) {
-        logEvent("error", "updateFilters : Erreur lors de la mise à jour des dropdowns.", { error: error.message });
+        logEvent("error", "updateFiltersDropdown : Erreur lors de la mise à jour des options.", { error: error.message });
     }
 }
-
 /* ====================================================================================
 /*                   RÉINITIALISATION DES FILTRES
 /* ==================================================================================== */

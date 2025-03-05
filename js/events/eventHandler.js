@@ -5,58 +5,17 @@
 /*  DESCRIPTION      : Gère les événements de recherche et de filtres sur les recettes.
 /* ==================================================================================== */
 
-import { logEvent, debounce } from "../utils/utils.js";
-import { handleFilterSelection , removeTag } from "../components/filterManager.js";
+import { logEvent } from "../utils/utils.js";
+import { updateTagDisplay, activeFilters } from "../components/filterManager.js";
 import { trapFocus } from "../utils/accessibility.js";
 import { KEY_CODES } from "../config/constants.js";
 import { Search } from "../components/search/search.js"; 
+import { handleBarSearch } from "../components/searchBarManager.js";
 
 /* ====================================================================================
 /*                            GESTION DE LA RECHERCHE
 /* ==================================================================================== */
-/**
- * Gère la recherche en appliquant une temporisation (`debounce`).
- *
- * - Vérifie que l'élément de recherche existe dans le DOM.
- * - Nettoie et normalise la requête utilisateur.
- * - Déclenche `Search()` uniquement si la requête contient au moins 3 caractères.
- * - Utilise un délai de 300ms pour éviter les appels excessifs.
- *
- * @returns {void} Ne retourne rien, mais déclenche la recherche avec `Search()`.
- */
-export const handleSearch = debounce(async function () {
-    try {
-        logEvent("test_start", "handleSearch : Début de la recherche...");
 
-        // Sélection de l'élément de saisie de recherche
-        const searchInput = document.querySelector("#search");
-
-        // Vérification que l'élément existe dans le DOM
-        if (!searchInput) {
-            logEvent("error", "handleSearch : Élément input de recherche introuvable.");
-            return;
-        }
-
-        // Récupération et nettoyage de la requête utilisateur
-        const query = searchInput.value.trim().toLowerCase(); // Mise en minuscule et suppression des espaces inutiles
-
-        // Vérification de la longueur minimale de la requête
-        if (query.length < 3) {
-            logEvent("warn", "handleSearch : La requête est trop courte, minimum 3 caractères.");
-            return;
-        }
-
-        logEvent("info", `handleSearch : Recherche en cours pour '${query}'.`);
-
-        // Déclenchement de la recherche avec la requête normalisée
-        Search(query);
-
-        logEvent("success", "handleSearch : Recherche exécutée avec succès.");
-        logEvent("test_end", "handleSearch : Fin du processus.");
-    } catch (error) {
-        logEvent("error", "handleSearch : Erreur lors de la recherche.", { error: error.message });
-    }
-}, 300);
 
 /* ====================================================================================
 /*                            GESTION Du formulaire de la recherche
@@ -73,7 +32,7 @@ export function handleSearchWrapper(event) {
     event.preventDefault();
 
     // Déclenche la fonction de recherche
-    handleSearch();
+    handleBarSearch();
 }
 /* ====================================================================================
 /*                 GESTION DE L'OUVERTURE ET FERMETURE DES DROPDOWNS
@@ -84,18 +43,31 @@ export function handleSearchWrapper(event) {
  * @param {Event} event - Événement du clic sur le bouton de dropdown.
  * @param {HTMLElement} button - Bouton de dropdown cliqué.
  */
-export function handleDropdownClick(event, button) {
+/**
+ * Gère l'ouverture d'un dropdown et active le piégeage du focus.
+ *
+ * @param {Event} event - Événement du clic sur le bouton de dropdown.
+ */
+export function handleDropdownClick(event) {
     event.stopPropagation();
+    const button = event.currentTarget; // Récupère le bouton cliqué
+    const {filterType} = button.dataset; // Correction ici, utiliser "filterType"
 
-    const dropdownContainer = button.nextElementSibling;
-    const allDropdowns = document.querySelectorAll(".dropdown-container");
-
-    if (!dropdownContainer) {
-        logEvent("error", "handleDropdownClick : Aucun conteneur de dropdown trouvé.");
+    if (!filterType) {
+        logEvent("error", "handleDropdownClick : Le bouton cliqué ne contient pas de dataset.filterType.");
+        console.error("handleDropdownClick : Problème de dataset :", button);
         return;
     }
 
-    // Fermer tous les autres dropdowns
+    const dropdownContainer = button.nextElementSibling; // Sélectionne le container du dropdown
+    const allDropdowns = document.querySelectorAll(".dropdown-container");
+
+    if (!dropdownContainer) {
+        logEvent("error", `handleDropdownClick : Aucun conteneur de dropdown trouvé pour "${filterType}".`);
+        return;
+    }
+
+    // Fermer tous les autres dropdowns avant d'en ouvrir un
     allDropdowns.forEach(drop => {
         if (drop !== dropdownContainer) {
             drop.classList.remove("active");
@@ -106,11 +78,10 @@ export function handleDropdownClick(event, button) {
     dropdownContainer.classList.toggle("active");
 
     if (dropdownContainer.classList.contains("active")) {
-        // Activer le trap focus dans le dropdown ouvert
         trapFocus(dropdownContainer);
     }
 
-    logEvent("info", `handleDropdownClick : Dropdown "${button.dataset.filter}" ${dropdownContainer.classList.contains("active") ? "ouvert" : "fermé"}.`);
+    logEvent("info", `handleDropdownClick : Dropdown "${filterType}" ${dropdownContainer.classList.contains("active") ? "ouvert" : "fermé"}.`);
 }
 
 /* ====================================================================================
@@ -230,3 +201,73 @@ export function handleKeyboardNavigation(event) {
     }
 }
 
+/* ====================================================================================
+/*                        GESTION DES FILTRES SÉLECTIONNÉS (TAGS)
+/* ==================================================================================== */
+/*--------------- */
+/* Ajout         */
+/*---------------*/
+
+export function handleFilterSelection(filterType, filterValue) {
+    try {
+        if (!filterType || !filterValue) {
+            logEvent("warn", "handleFilterSelection : Paramètres invalides.");
+            return;
+        }
+
+        // Vérifier si le filtre est déjà actif pour éviter les doublons
+        if (activeFilters[filterType].has(filterValue)) {
+            logEvent("info", `handleFilterSelection : '${filterValue}' déjà actif, pas d'ajout.`);
+            return;
+        }
+
+        logEvent("info", `handleFilterSelection : Ajout du tag '${filterValue}' (${filterType}).`);
+        activeFilters[filterType].add(filterValue);
+
+        updateTagDisplay();
+
+        // ✅ Récupérer l'état des filtres sous forme de tableau
+        const filtersArray = {
+            ingredients: Array.from(activeFilters["ingredients"]),
+            appliances: Array.from(activeFilters["appliances"]),
+            ustensils: Array.from(activeFilters["ustensils"])
+        };
+
+        logEvent("debug", "Filtres actifs après ajout :", filtersArray);
+
+        // ✅ Vérification avant d’appeler Search() (éviter les appels inutiles)
+        if (filtersArray.ingredients.length > 0 || filtersArray.appliances.length > 0 || filtersArray.ustensils.length > 0) {
+            Search("", "filters", filtersArray);
+        }
+
+    } catch (error) {
+        logEvent("error", "handleFilterSelection : Erreur lors de l'ajout du filtre.", { error: error.message });
+    }
+}
+
+/*--------------- */
+/* Retrait        */
+/*--------------- */
+/**
+ * Supprime un filtre sélectionné et met à jour l'affichage et les résultats.
+ * - Vérifie si le filtre existe avant suppression.
+ * - Met à jour les tags et les options des dropdowns.
+ *
+ * @param {string} filterType - Type de filtre (ingredients, appliances, ustensils).
+ * @param {string} filterValue - Valeur du filtre à supprimer.
+ */
+export function removeTag(filterType, filterValue) {
+    try {
+        if (!activeFilters[filterType].has(filterValue)) {
+            return;
+        }
+
+        logEvent("info", `removeTag : Suppression de '${filterValue}' (${filterType}).`);
+        activeFilters[filterType].delete(filterValue);
+
+        updateTagDisplay();  // mise à jour affichage des tags
+        Search();     // Relance de la recherche pour mise à jour
+    } catch (error) {
+        logEvent("error", "removeTag : Erreur lors de la suppression du filtre.", { error: error.message });
+    }
+}
