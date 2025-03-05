@@ -20,9 +20,9 @@ import { normalizeText } from "../../utils/normalize.js";
 // Le mode actif peut être "native" (boucles for) ou "functional" (filter()).
 let searchMode = "functional"; 
 
-/* ==================================================================================== */
+/** ==================================================================================== */
 /*  FONCTION PRINCIPALE DE RECHERCHE                                                   */
-/* ==================================================================================== *
+/* ==================================================================================== */
 /**
  * Exécute la recherche en fonction du mode sélectionné et de l'origine de l'appel.
  *
@@ -37,39 +37,60 @@ let searchMode = "functional";
  */
 export async function Search(query, searchType = "default") {
     try {
-        logEvent("test_start", `Search : Début de la recherche avec mode "${searchMode}" depuis "${searchType}".`);
+        logEvent("test_start", `🔍 Début de la recherche avec mode "${searchMode}" depuis "${searchType}".`);
 
-        // Vérification et nettoyage de la requête utilisateur
+        // 📝 Vérification de la requête utilisateur
+        if (typeof query !== "string") {
+            logEvent("error", "❌ Search : Type de requête invalide (doit être une chaîne de caractères).", { receivedType: typeof query });
+            return [];
+        }
+
+        // 🛠 Nettoyage et mise en minuscule de la requête
         const sanitizedQuery = query.trim().toLowerCase();
+        logEvent("debug", `Query nettoyée : "${sanitizedQuery}"`);
 
-        // Si la recherche vient de la barre de recherche, on impose un minimum de 3 caractères
+        // ⏳ Gestion des recherches depuis la barre de recherche
         if (searchType === "searchBar" && sanitizedQuery.length < 3) {
-            logEvent("warn", "Search : Requête trop courte (minimum 3 caractères).");
+            logEvent("warn", " Search : Requête trop courte (minimum 3 caractères requis).");
             updateRecipes([]); // Réinitialise l'affichage si la requête est invalide
             return [];
         }
 
         let results = [];
 
-        // Sélection du mode de recherche
+        // 🔍 Sélection du mode de recherche
+        logEvent("info", `🔄 Mode de recherche sélectionné : "${searchMode}"`);
+        
         if (searchMode === "native") {
+            logEvent("debug", "🚀 Utilisation de searchRecipesLoopNative()");
             results = await searchRecipesLoopNative(sanitizedQuery);
         } else {
+            logEvent("debug", "🛠 Utilisation de searchRecipesFunctional()");
             results = await searchRecipesFunctional(sanitizedQuery);
         }
 
-        logEvent("info", `Search : ${results.length} recette(s) trouvée(s) pour "${sanitizedQuery}" depuis "${searchType}".`);
+        // ✅ Résultats de la recherche
+        logEvent("info", `🔎 ${results.length} recette(s) trouvée(s) pour "${sanitizedQuery}" via "${searchType}".`);
 
-        // Mise à jour de la galerie avec les nouvelles recettes
+        // 🖥 Mise à jour de la galerie avec les nouvelles recettes
         updateRecipes(results);
+        logEvent("success", "🎉 Affichage mis à jour avec les nouvelles recettes.");
 
-        logEvent("test_end", "Search : Recherche terminée.");
+        logEvent("test_end", "🏁 Search : Recherche terminée avec succès.");
         return results;
+
     } catch (error) {
-        logEvent("error", `Search : Erreur lors de la recherche depuis "${searchType}".`, { error: error.message });
+        // ❌ Gestion des erreurs
+        logEvent("error", "💥 Erreur lors de la recherche.", { 
+            searchType, 
+            query, 
+            errorMessage: error.message, 
+            stack: error.stack 
+        });
         return [];
     }
 }
+
 
 /* ==================================================================================== */
 /*  CHANGEMENT DU MODE DE RECHERCHE                                                    */

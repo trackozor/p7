@@ -192,13 +192,14 @@ export function getIndexSelectors() {
         /* Barre de Recherche          */
         search: {
             form: safeQuerySelector(".search-bar"),
-            input: safeQuerySelector("#search"),
+            searchInput: safeQuerySelector("#search"),
             button: safeQuerySelector("#search-btn"),
         },
 
         /* Filtres Dynamiques          */
         filters: {
             container: safeQuerySelector("#filters") || waitForElement("#filters"),
+            filterButton: safeQuerySelectorAll(".filter-dropdowns"),
 
         // Attente correcte des filtres si non disponibles immédiatement
         ingredients: safeQuerySelector('[data-filter-type="ingredients"]') ||  waitForElement('[data-filter-type="ingredients"]'),

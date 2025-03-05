@@ -15,25 +15,48 @@ import { handleBarSearch } from "../components/searchBarManager.js";
 /* ====================================================================================
 /*                            GESTION DE LA RECHERCHE
 /* ==================================================================================== */
-
-
-/* ====================================================================================
-/*                            GESTION Du formulaire de la recherche
-/* ==================================================================================== */
 /**
  * Gère l'événement de soumission du formulaire de recherche.
- * Empêche le rechargement de la page et déclenche la recherche via `handleSearch()`.
+ * - Empêche le rechargement de la page.
+ * - Vérifie la présence d'un `event` avant d'appeler `preventDefault()`.
+ * - Vérifie que `handleBarSearch()` reçoit bien un `event`.
  *
  * @param {Event} event - Événement déclenché lors de la soumission du formulaire.
  * @returns {void} Ne retourne rien, empêche le rechargement et exécute la recherche.
  */
 export function handleSearchWrapper(event) {
-    // Empêche le rechargement de la page lors de la soumission du formulaire
-    event.preventDefault();
+    // Vérifie si l'événement est défini avant d'appeler `preventDefault()`
+    if (event && event.preventDefault) {
+        event.preventDefault();
+    } else {
+        console.warn(" handleSearchWrapper a été appelé sans événement.");
+    }
 
-    // Déclenche la fonction de recherche
-    handleBarSearch();
+    // Vérification que l'élément de recherche existe avant d'exécuter la recherche
+    const searchInput = document.querySelector("#searchInput");
+    if (!searchInput) {
+        console.error(" Erreur : L'élément de recherche #searchInput est introuvable !");
+        return;
+    }
+
+    // Récupération de la valeur de la recherche
+    const query = searchInput.value.trim();
+
+    // Vérification si la recherche a au moins 3 caractères (si nécessaire)
+    if (query.length < 3) {
+        console.warn(" Recherche ignorée : la requête doit contenir au moins 3 caractères.");
+        return;
+    }
+
+    // Appel de la fonction de recherche avec l'événement et la requête
+    handleBarSearch(event);
 }
+
+
+/* ====================================================================================
+/*                            GESTION Du formulaire de la recherche
+/* ==================================================================================== */
+
 /* ====================================================================================
 /*                 GESTION DE L'OUVERTURE ET FERMETURE DES DROPDOWNS
 /* ==================================================================================== */

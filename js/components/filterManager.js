@@ -6,7 +6,7 @@
 /* ==================================================================================== */
 
 import { createFilterSection } from "./factory/dropdownFactory.js";
-import {  fetchFilterOptions, searchRecipes, clearSearchCache } from "../data/dataManager.js";
+import {  fetchFilterOptions, clearSearchCache } from "../data/dataManager.js";
 import { logEvent, waitForElement } from "../utils/utils.js";
 
 

@@ -82,6 +82,7 @@ export function handleBarSearch(event) {
  * @param {string} query - Texte entré par l'utilisateur.
  * @returns {void} Ne retourne rien, mais met à jour la liste des suggestions affichées.
  */
+
 function generateAutoCompletion(query) {
     try {
         logEvent("test_start", `generateAutoCompletion : Début pour '${query}'`);
@@ -90,37 +91,69 @@ function generateAutoCompletion(query) {
         const searchInput = document.querySelector("#search");
         const suggestionBox = document.querySelector("#autocomplete-suggestions");
 
-        // Vérification que les éléments existent
         if (!searchInput || !suggestionBox) {
             logEvent("error", "generateAutoCompletion : Élément(s) DOM introuvable(s).");
             return;
         }
 
-        // Normalisation de la requête utilisateur (supprime accents, espaces inutiles, met en minuscule)
+        // Normalisation de la requête utilisateur
         const normalizedQuery = normalizeText(query.trim());
 
-        // Vérification de la longueur minimale de la requête (évite d'afficher des résultats inutiles)
         if (normalizedQuery.length < 3) {
             suggestionBox.innerHTML = "";
             logEvent("warn", "generateAutoCompletion : Requête trop courte (<3 caractères).");
             return;
         }
 
-        // Récupération des recettes disponibles
+        // 🔹 Récupération des recettes disponibles
         const recipes = getAllRecipes();
-
-        // Vérification que des recettes sont bien disponibles
         if (!Array.isArray(recipes) || recipes.length === 0) {
             logEvent("warn", "generateAutoCompletion : Aucune recette disponible.");
             suggestionBox.innerHTML = "<p class='no-suggestion'>Aucune suggestion</p>";
             return;
         }
 
-        // Filtrer les recettes dont le nom contient la requête normalisée
-        suggestionList = recipes
-            .filter(recipe => normalizeText(recipe.name).includes(normalizedQuery))
-            .map(recipe => recipe.name)
-            .slice(0, 10); // Limite à 10 suggestions max
+        // 🔹 Récupération du cache des filtres
+        const activeTags = getActiveTags();
+        
+        // 🔹 Génération de la liste des suggestions enrichies
+        const suggestionSet = new Set();
+
+        recipes.forEach(recipe => {
+            // Ajout du nom de la recette si elle correspond à la recherche
+            if (normalizeText(recipe.name).includes(normalizedQuery)) {
+                suggestionSet.add(recipe.name);
+            }
+
+            // Ajout des ingrédients qui correspondent
+            recipe.ingredients.forEach(ing => {
+                if (normalizeText(ing.ingredient).includes(normalizedQuery)) {
+                    suggestionSet.add(ing.ingredient);
+                }
+            });
+
+            // Ajout de l'appareil si correspondant
+            if (normalizeText(recipe.appliance).includes(normalizedQuery)) {
+                suggestionSet.add(recipe.appliance);
+            }
+
+            // Ajout des ustensiles correspondants
+            recipe.ustensils.forEach(ust => {
+                if (normalizeText(ust).includes(normalizedQuery)) {
+                    suggestionSet.add(ust);
+                }
+            });
+
+            // Ajout des tags actifs (cache de filtres)
+            Object.values(activeTags).flat().forEach(tag => {
+                if (normalizeText(tag).includes(normalizedQuery)) {
+                    suggestionSet.add(tag);
+                }
+            });
+        });
+
+        // 🔹 Limite à 10 suggestions max
+        suggestionList = Array.from(suggestionSet).slice(0, 10);
 
         // Vérification si des suggestions ont été trouvées
         if (suggestionList.length === 0) {
@@ -129,7 +162,7 @@ function generateAutoCompletion(query) {
             return;
         }
 
-        // Générer la liste des suggestions en HTML
+        // 🔹 Mise à jour dynamique des suggestions affichées
         suggestionBox.innerHTML = suggestionList
             .map((suggestion, index) => 
                 `<li class="suggestion-item ${index === suggestionIndex ? 'selected' : ''}" data-index="${index}">
@@ -140,7 +173,7 @@ function generateAutoCompletion(query) {
 
         logEvent("info", `generateAutoCompletion : ${suggestionList.length} suggestion(s) générée(s) pour '${query}'.`);
 
-        // Ajout d'un écouteur d'événement `click` sur chaque suggestion pour permettre la sélection
+        // Ajout des événements de sélection
         document.querySelectorAll(".suggestion-item").forEach(item => {
             item.addEventListener("click", () => selectSuggestion(item.textContent));
         });
@@ -226,4 +259,11 @@ function clearSuggestions() {
     } catch (error) {
         logEvent("error", "clearSuggestions : Erreur inattendue.", { error: error.message });
     }
+}
+function getActiveTags() {
+    return {
+        ingredients: [...document.querySelectorAll('.filter-tag[data-filter-type="ingredients"]')].map(tag => tag.textContent.trim().toLowerCase()),
+        appliances: [...document.querySelectorAll('.filter-tag[data-filter-type="appliances"]')].map(tag => tag.textContent.trim().toLowerCase()),
+        ustensils: [...document.querySelectorAll('.filter-tag[data-filter-type="ustensils"]')].map(tag => tag.textContent.trim().toLowerCase())
+    };
 }
