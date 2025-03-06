@@ -16,10 +16,9 @@ import { normalizeText } from "../utils/normalize.js";
 
 let suggestionIndex = -1; // Index de la suggestion sélectionnée
 let suggestionList = [];  // Liste des suggestions disponibles
-
-/** ====================================================================================
- *  SECTION 1 : GESTION DE LA SAISIE UTILISATEUR
- * ==================================================================================== */
+/* ==================================================================================== */
+/*                        SECTION 1 : GESTION DE LA SAISIE UTILISATEUR                  */
+/* ==================================================================================== */
 /**
  * Gère la saisie utilisateur dans la barre de recherche.
  *
@@ -32,40 +31,39 @@ let suggestionList = [];  // Liste des suggestions disponibles
  */
 export function handleBarSearch(event) {
     try {
-        logEvent("test_start", "handlebarSearch : Début de la gestion de la saisie utilisateur.");
+        logEvent("test_start", "handleBarSearch : Début de la gestion de la saisie utilisateur.");
 
         // Vérifie que l'élément `event.target` est valide et contient bien une valeur
         const searchInput = event.target;
         if (!searchInput || typeof searchInput.value !== "string") {
-            logEvent("error", "handlebarSearch : Élément input introuvable ou valeur non valide.");
+            logEvent("error", "handleBarSearch : Élément input introuvable ou valeur non valide.");
             return;
         }
 
         // Nettoyage et normalisation de la requête utilisateur (suppression des espaces inutiles, mise en minuscules)
         const query = searchInput.value.trim().toLowerCase();
 
-        // Si l'utilisateur tape 3 caractères ou plus, on active l'auto-complétion
+        // Vérifie si l'utilisateur a tapé 3 caractères ou plus pour activer l'auto-complétion
         if (query.length >= 3) {
-            logEvent("info", `handlebarSearch : Activation de l'auto-complétion pour '${query}'.`);
+            logEvent("info", `handleBarSearch : Activation de l'auto-complétion pour '${query}'.`);
             generateAutoCompletion(query);
         } else {
             // Si moins de 3 caractères, on efface la liste des suggestions
-            logEvent("info", "handlebarSearch : Effacement des suggestions (moins de 3 caractères).");
+            logEvent("info", "handleBarSearch : Effacement des suggestions (moins de 3 caractères).");
             clearSuggestions();
         }
 
-        // Si la requête est valide (au moins 3 caractères), on exécute la recherche avec le type `searchBar`
+        // Vérifie si la requête est valide (au moins 3 caractères) avant d'exécuter la recherche
         if (query.length >= 3) {
-            logEvent("info", `handlebarSearch : Recherche déclenchée pour '${query}' depuis la barre de recherche.`);
+            logEvent("info", `handleBarSearch : Recherche déclenchée pour '${query}' depuis la barre de recherche.`);
             Search(query, "searchBar");  // On passe "searchBar" comme type de recherche
         }
 
-        logEvent("test_end", "handlebarSearch : Gestion de la saisie utilisateur terminée.");
+        logEvent("test_end", "handleBarSearch : Gestion de la saisie utilisateur terminée.");
     } catch (error) {
-        logEvent("error", "handlebarSearch : Erreur lors du traitement de la recherche.", { error: error.message });
+        logEvent("error", "handleBarSearch : Erreur lors du traitement de la recherche.", { error: error.message });
     }
 }
-
 
 /** ====================================================================================
  *  SECTION 2 : AUTO-COMPLÉTION ET SUGGESTIONS
@@ -105,7 +103,7 @@ function generateAutoCompletion(query) {
             return;
         }
 
-        // 🔹 Récupération des recettes disponibles
+        //  Récupération des recettes disponibles
         const recipes = getAllRecipes();
         if (!Array.isArray(recipes) || recipes.length === 0) {
             logEvent("warn", "generateAutoCompletion : Aucune recette disponible.");
@@ -113,10 +111,10 @@ function generateAutoCompletion(query) {
             return;
         }
 
-        // 🔹 Récupération du cache des filtres
+        //  Récupération du cache des filtres
         const activeTags = getActiveTags();
         
-        // 🔹 Génération de la liste des suggestions enrichies
+        //  Génération de la liste des suggestions enrichies
         const suggestionSet = new Set();
 
         recipes.forEach(recipe => {
@@ -152,7 +150,7 @@ function generateAutoCompletion(query) {
             });
         });
 
-        // 🔹 Limite à 10 suggestions max
+        // Limite à 10 suggestions max
         suggestionList = Array.from(suggestionSet).slice(0, 10);
 
         // Vérification si des suggestions ont été trouvées
@@ -162,7 +160,7 @@ function generateAutoCompletion(query) {
             return;
         }
 
-        // 🔹 Mise à jour dynamique des suggestions affichées
+        //  Mise à jour dynamique des suggestions affichées
         suggestionBox.innerHTML = suggestionList
             .map((suggestion, index) => 
                 `<li class="suggestion-item ${index === suggestionIndex ? 'selected' : ''}" data-index="${index}">
@@ -234,24 +232,33 @@ function selectSuggestion(suggestion) {
     }
 }
 
-/** ====================================================================================
- *  SECTION 4 : NETTOYAGE DES SUGGESTIONS
- * ==================================================================================== */
+/* ==================================================================================== */
+/*                        SECTION 4 : NETTOYAGE DES SUGGESTIONS                        */
+/* ==================================================================================== */
 /**
  * Efface la liste des suggestions d'auto-complétion.
+ *
+ * - Sélectionne l'élément contenant les suggestions.
+ * - Vérifie sa présence avant de vider son contenu.
+ * - Réinitialise l'index de sélection des suggestions.
  */
 function clearSuggestions() {
     try {
         logEvent("test_start", "clearSuggestions : Début de la suppression des suggestions.");
 
+        // Sélectionne l'élément contenant la liste des suggestions
         const suggestionBox = document.querySelector("#autocomplete-suggestions");
 
+        // Vérifie que l'élément existe avant d'effectuer l'opération
         if (!suggestionBox) {
             logEvent("error", "clearSuggestions : Élément 'autocomplete-suggestions' introuvable.");
             return;
         }
 
+        // Efface le contenu des suggestions
         suggestionBox.innerHTML = "";
+
+        // Réinitialise l'index de la suggestion sélectionnée
         suggestionIndex = -1;
 
         logEvent("success", "clearSuggestions : Liste des suggestions effacée avec succès.");
@@ -260,10 +267,33 @@ function clearSuggestions() {
         logEvent("error", "clearSuggestions : Erreur inattendue.", { error: error.message });
     }
 }
+
+/* ==================================================================================== */
+/*              SECTION 5: RÉCUPÉRATION DES TAGS ACTIFS                                 */
+/* ==================================================================================== */
+/**
+ * Récupère les tags de filtres actuellement sélectionnés dans l'interface utilisateur.
+ *
+ * - Sélectionne les tags affichés dans le DOM.
+ * - Convertit leur texte en minuscules et supprime les espaces inutiles.
+ * - Retourne un objet contenant les filtres actifs classés par type.
+ *
+ * @returns {Object} Un objet contenant les tags actifs classés par catégories :
+ *                   - `ingredients` : Liste des ingrédients sélectionnés.
+ *                   - `appliances` : Liste des appareils sélectionnés.
+ *                   - `ustensils` : Liste des ustensiles sélectionnés.
+ */
 function getActiveTags() {
     return {
-        ingredients: [...document.querySelectorAll('.filter-tag[data-filter-type="ingredients"]')].map(tag => tag.textContent.trim().toLowerCase()),
-        appliances: [...document.querySelectorAll('.filter-tag[data-filter-type="appliances"]')].map(tag => tag.textContent.trim().toLowerCase()),
-        ustensils: [...document.querySelectorAll('.filter-tag[data-filter-type="ustensils"]')].map(tag => tag.textContent.trim().toLowerCase())
+        // Récupère tous les tags actifs pour chaque catégorie et normalise le texte
+        ingredients: [...document.querySelectorAll('.filter-tag[data-filter-type="ingredients"]')]
+            .map(tag => tag.textContent.trim().toLowerCase()),
+
+        appliances: [...document.querySelectorAll('.filter-tag[data-filter-type="appliances"]')]
+            .map(tag => tag.textContent.trim().toLowerCase()),
+
+        ustensils: [...document.querySelectorAll('.filter-tag[data-filter-type="ustensils"]')]
+            .map(tag => tag.textContent.trim().toLowerCase())
     };
 }
+

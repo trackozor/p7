@@ -13,7 +13,6 @@
 
 import { logEvent } from "../../utils/utils.js";
 
-
 /*------------------------------------------------------------------
 /*   Initialisation du compteur
 /*------------------------------------------------------------------*/
@@ -54,7 +53,6 @@ export function initCount() {
     }
 }
 
-
 /*----------------------------------------------------------------
 /*   Mise à jour du compteur
 /*----------------------------------------------------------------*/
@@ -64,9 +62,6 @@ export function initCount() {
  * - Vérifie l'existence de l'élément du compteur avant la mise à jour.
  * - Récupère et affiche le nombre actuel de recettes via `templateManager.displayAllRecipes()`.
  * - Assure une gestion des erreurs robuste pour éviter tout blocage de l'UI.
- */
-/**
- * Met à jour dynamiquement le compteur de recettes affichées.
  */
 export function updateCounter() {
     try {

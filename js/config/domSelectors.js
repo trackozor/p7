@@ -37,8 +37,8 @@ const domCache = new Map();
 /**
  * ---------------------------------------------------------------------------------------------------
  *  Vide intégralement le cache des sélections DOM pour garantir une mise à jour fiable des éléments.
- * ---------------------------------------------------------------------------------------------------
- * 
+ * ---------------------------------------------------------------------------------------------------*/
+/** 
  * 
  * @function clearDomCache
  * @returns {void} Aucune valeur retournée, mais purge le cache interne.
@@ -137,8 +137,8 @@ export function safeQuerySelectorAll(selector) {
 /**
  * ---------------------------------------------------------------------------------------------------
  *  Détecte la page active en analysant l’URL actuelle du navigateur et retourne son type.
- * ---------------------------------------------------------------------------------------------------
- * 
+ * ---------------------------------------------------------------------------------------------------*/
+/** 
  * 
  * @function getCurrentPage
  * @returns {string} Le nom de la page détectée parmi les valeurs suivantes :
@@ -194,12 +194,16 @@ export function getIndexSelectors() {
             form: safeQuerySelector(".search-bar"),
             searchInput: safeQuerySelector("#search"),
             button: safeQuerySelector("#search-btn"),
+            
         },
 
         /* Filtres Dynamiques          */
         filters: {
             container: safeQuerySelector("#filters") || waitForElement("#filters"),
             filterButton: safeQuerySelectorAll(".filter-dropdowns"),
+            dropdownOptions: safeQuerySelectorAll(".filter-option"),
+            searchInputs: safeQuerySelectorAll(".dropdown-search"),
+            searchIcons: safeQuerySelectorAll(".search-icon-button"),
 
         // Attente correcte des filtres si non disponibles immédiatement
         ingredients: safeQuerySelector('[data-filter-type="ingredients"]') ||  waitForElement('[data-filter-type="ingredients"]'),
@@ -258,7 +262,6 @@ export function waitForElement(selector, timeout = 5000) {
         checkElement();
     });
 }
-
 
 /*==============================================*/
 /*    Vérification de la Présence des Éléments  */
@@ -389,6 +392,7 @@ export function loadSelectorsForCurrentPage() {
 
     return selectors;
 }
+
 /*==============================================*/
 /*        Rafraîchissement des Sélecteurs       */
 /*==============================================*/

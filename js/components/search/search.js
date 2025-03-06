@@ -84,80 +84,133 @@ export async function Search(query = "", filtersArray = {}) {
         return [];
     }
 }
-/** ==================================================================================== */
-/**  EXÉCUTION DE LA RECHERCHE SELON LE MODE ACTIF                                      */
-/** ==================================================================================== */
+
+/* ====================================================================================
+/*             EXÉCUTION DE LA RECHERCHE SELON LE MODE ACTIF
+/* ==================================================================================== */
+/**
+ * Exécute la recherche en fonction du mode actif sélectionné.
+ * - Utilise une recherche basée sur des boucles (`native`) ou sur `filter()` (`functional`).
+ * - Retourne une liste de recettes correspondant à la requête.
+ *
+ * @async
+ * @param {string} query - Texte recherché par l'utilisateur.
+ * @returns {Promise<Array>} Liste des recettes correspondant aux critères de recherche.
+ */
 async function executeSearch(query) {
     return searchMode === "native" ? searchRecipesLoopNative(query) : searchRecipesFunctional(query);
 }
-/* ==================================================================================== */
-/*  CHANGEMENT DU MODE DE RECHERCHE                                                    */
+
+/* ====================================================================================
+/*                  CHANGEMENT DU MODE DE RECHERCHE
 /* ==================================================================================== */
 /**
  * Change dynamiquement la méthode de recherche utilisée.
- *
  * - Vérifie que le mode est valide avant d'appliquer le changement.
- * - Relance une recherche si une requête est déjà en cours.
+ * - Relance une recherche si une requête est déjà en cours et contient au moins 3 caractères.
  *
- * @param {string} mode - "native" ou "functional".
+ * @param {string} mode - Mode de recherche à activer, "native" (boucles for) ou "functional" (filter()).
  * @param {string} [query=""] - Requête en cours (si existante).
+ * @returns {void} Ne retourne rien, met à jour le mode de recherche et relance la recherche si nécessaire.
  */
 export function setSearchMode(mode, query = "") {
+    // Vérification que le mode est bien valide
     if (mode !== "native" && mode !== "functional") {
         logEvent("error", "setSearchMode : Mode invalide, utilisez 'native' ou 'functional'.");
         return;
     }
 
+    // Mise à jour du mode de recherche
     searchMode = mode;
     logEvent("success", `setSearchMode : Mode de recherche changé en "${mode}"`);
 
-    // Si une requête est déjà en cours et contient au moins 3 caractères, relancer la recherche
+    // Si une requête est en cours et a au moins 3 caractères, relancer la recherche
     if (query.length >= 3) {
         Search(query);
     }
 }
-/** ==================================================================================== */
-/**  RECHERCHE PAR TEXTE                                                                */
-/** ==================================================================================== */
+
+/** ====================================================================================
+*                        RECHERCHE PAR TEXTE
+* ==================================================================================== */
+/**
+ * Effectue une recherche basée uniquement sur le texte saisi par l'utilisateur.
+ * - Exécute la recherche selon le mode actif ("native" ou "functional").
+ * - Filtre les recettes en fonction des critères de correspondance.
+ *
+ * @async
+ * @param {string} query - Texte recherché par l'utilisateur.
+ * @returns {Promise<Array>} Liste des recettes correspondant aux critères de recherche.
+ */
 async function searchByQuery(query) {
     logEvent("info", `searchByQuery : Recherche pour "${query}".`);
+
+    // Exécute la recherche en fonction du mode actif (boucles for ou filter())
     let recipes = await executeSearch(query);
+
+    // Filtre les recettes en fonction des critères de recherche
     return recipes.filter(recipe => matchesSearchCriteria(recipe, query));
 }
 
-/** ==================================================================================== */
-/**  RECHERCHE PAR TAGS SEULS                                                           */
-/** ==================================================================================== */
+/* ====================================================================================
+/*                        RECHERCHE PAR TAGS SEULS
+/* ==================================================================================== */
+/**
+ * Effectue une recherche en filtrant uniquement par les tags sélectionnés.
+ * - Récupère toutes les recettes disponibles.
+ * - Applique un filtrage basé sur les tags actifs.
+ *
+ * @async
+ * @param {Object} activeTags - Objet contenant les filtres actifs (ingredients, appliances, ustensils).
+ * @returns {Promise<Array>} Liste des recettes correspondant aux tags sélectionnés.
+ */
 async function searchByTags(activeTags) {
     logEvent("info", `searchByTags : Filtrage avec tags ${JSON.stringify(activeTags)}`);
+
+    // Récupère toutes les recettes disponibles et filtre celles qui correspondent aux tags actifs
     return getAllRecipes().filter(recipe => matchFilters(recipe, activeTags));
 }
 
-/** ==================================================================================== */
-/**  RECHERCHE COMBINÉE (TEXTE + TAGS)                                                  */
-/** ==================================================================================== */
+/* ====================================================================================
+/*                   RECHERCHE COMBINÉE (TEXTE + TAGS)
+/* ==================================================================================== */
+/**
+ * Effectue une recherche combinée en filtrant à la fois par texte et par tags sélectionnés.
+ * - Exécute une recherche textuelle sur les recettes disponibles.
+ * - Filtre ensuite les résultats en fonction des tags actifs.
+ *
+ * @async
+ * @param {string} query - Requête de recherche saisie par l'utilisateur.
+ * @param {Object} activeTags - Objet contenant les filtres actifs (ingredients, appliances, ustensils).
+ * @returns {Promise<Array>} Liste des recettes correspondant à la recherche combinée.
+ */
 async function searchCombined(query, activeTags) {
     logEvent("info", `searchCombined : Recherche "${query}" avec tags ${JSON.stringify(activeTags)}`);
+
+    // Exécute la recherche textuelle pour récupérer une première liste de résultats
     let results = await executeSearch(query);
+
+    // Applique un filtrage supplémentaire basé sur les tags actifs
     return results.filter(recipe => matchesSearchCriteria(recipe, query) && matchFilters(recipe, activeTags));
 }
 
-/* ==================================================================================== */
-/*  FILTRAGE DES RECETTES SELON LES TAGS                                              */
+/* ====================================================================================
+/*                   FILTRAGE DES RECETTES SELON LES TAGS
 /* ==================================================================================== */
 /**
  * Vérifie si une recette correspond aux filtres actifs (tags sélectionnés).
+ * 
+ * - Vérifie que tous les ingrédients sélectionnés sont dans la recette.
+ * - Vérifie que l’appareil sélectionné correspond.
+ * - Vérifie que tous les ustensiles sélectionnés sont présents dans la recette.
+ * - Utilise `normalizeText` pour éviter les erreurs liées à la casse et aux accents.
  *
- * - Vérifie que tous les ingrédients tagués sont dans la recette.
- * - Vérifie que l’appareil tagué correspond.
- * - Vérifie que tous les ustensiles tagués sont dans la recette.
- * - Utilise `normalizeText` pour éviter les erreurs de casse et d’accents.
- *
- * @param {Object} recipe - La recette à tester.
- * @returns {boolean} True si la recette correspond aux tags sélectionnés, False sinon.
+ * @param {Object} recipe - Objet représentant une recette.
+ * @returns {boolean} `true` si la recette correspond aux filtres actifs, sinon `false`.
  */
 export function matchFilters(recipe) {
     try {
+        // Vérifie si la recette est définie avant de continuer
         if (!recipe) {
             logEvent("error", "matchFilters : Recette non définie.");
             return false;
@@ -165,7 +218,7 @@ export function matchFilters(recipe) {
 
         logEvent("info", `matchFilters : Vérification des tags pour la recette "${recipe.name}"`);
 
-        // Récupération des tags actifs sélectionnés dans l'interface utilisateur
+        // Récupère les tags actifs sélectionnés dans l'interface utilisateur
         const activeTags = {
             ingredients: Array.from(document.querySelectorAll('.filter-tag[data-filter-type="ingredients"]'))
                 .map(tag => normalizeText(tag.textContent.trim())),
@@ -177,20 +230,20 @@ export function matchFilters(recipe) {
 
         logEvent("info", `matchFilters : Tags actifs détectés : ${JSON.stringify(activeTags)}`);
 
-        // Vérification des ingrédients (tous les ingrédients tagués doivent être présents dans la recette)
+        // Vérifie si tous les ingrédients sélectionnés sont présents dans la recette
         const ingredientsMatch = activeTags.ingredients.every(taggedIngredient =>
             recipe.ingredients.some(ing => normalizeText(ing.ingredient).includes(taggedIngredient))
         );
 
-        // Vérification de l’appareil (si un appareil est tagué, il doit correspondre)
+        // Vérifie si l’appareil sélectionné correspond à celui de la recette
         const applianceMatch = !activeTags.appliances.length || activeTags.appliances.includes(normalizeText(recipe.appliance));
 
-        // Vérification des ustensiles (tous les ustensiles tagués doivent être dans la recette)
+        // Vérifie si tous les ustensiles sélectionnés sont présents dans la recette
         const ustensilsMatch = activeTags.ustensils.every(taggedUstensil =>
             recipe.ustensils.some(ust => normalizeText(ust).includes(taggedUstensil))
         );
 
-        // Retourne vrai si tous les critères sont validés
+        // Retourne `true` uniquement si tous les critères sont remplis
         const isMatch = ingredientsMatch && applianceMatch && ustensilsMatch;
         logEvent("success", `matchFilters : Résultat pour "${recipe.name}" → ${isMatch ? "Match" : "Non-match"}`);
 
@@ -201,9 +254,10 @@ export function matchFilters(recipe) {
         return false;
     }
 }
-/** ====================================================================================
- *  AJOUT DE `matchesSearchCriteria` POUR VÉRIFIER LES CRITÈRES DE RECHERCHE
- * ==================================================================================== */
+
+/* ==================================================================================== */
+/*                      VÉRIFICATION DES CRITÈRES DE RECHERCHE                          */
+/* ==================================================================================== */
 /**
  * Vérifie si une recette correspond aux critères de recherche.
  *
@@ -217,11 +271,13 @@ export function matchFilters(recipe) {
  */
 export function matchesSearchCriteria(recipe, query) {
     try {
+        // Vérifie si la recette est un objet valide
         if (!recipe || typeof recipe !== "object") {
             logEvent("error", "matchesSearchCriteria : Recette invalide.");
             return false;
         }
 
+        // Vérifie si la requête est une chaîne de caractères valide
         if (!query || typeof query !== "string") {
             logEvent("error", "matchesSearchCriteria : Requête invalide.");
             return false;
@@ -229,21 +285,26 @@ export function matchesSearchCriteria(recipe, query) {
 
         logEvent("info", `matchesSearchCriteria : Vérification de la recette "${recipe.name}" avec la requête '${query}'`);
 
+        // Normalise la requête pour éviter les erreurs de casse et d’accents
         const normalizedQuery = normalizeText(query);
 
-        // Vérifie si le nom de la recette correspond
+        // Vérifie si le nom de la recette correspond à la requête
         const nameMatch = normalizeText(recipe.name).includes(normalizedQuery);
 
-        // Vérifie si un ingrédient correspond
-        const ingredientMatch = recipe.ingredients.some(ing => normalizeText(ing.ingredient).includes(normalizedQuery));
+        // Vérifie si un des ingrédients de la recette correspond à la requête
+        const ingredientMatch = recipe.ingredients.some(ing => 
+            normalizeText(ing.ingredient).includes(normalizedQuery)
+        );
 
-        // Vérifie si l’appareil correspond
+        // Vérifie si l’appareil utilisé dans la recette correspond à la requête
         const applianceMatch = normalizeText(recipe.appliance).includes(normalizedQuery);
 
-        // Vérifie si un ustensile correspond
-        const ustensilMatch = recipe.ustensils.some(ust => normalizeText(ust).includes(normalizedQuery));
+        // Vérifie si un des ustensiles utilisés dans la recette correspond à la requête
+        const ustensilMatch = recipe.ustensils.some(ust => 
+            normalizeText(ust).includes(normalizedQuery)
+        );
 
-        // Si l'un des critères correspond, retourne `true`
+        // Retourne `true` si l'un des critères de recherche est validé
         const isMatch = nameMatch || ingredientMatch || applianceMatch || ustensilMatch;
 
         logEvent("success", `matchesSearchCriteria : Résultat pour "${recipe.name}" → ${isMatch ? "Match" : "Non-match"}`);
@@ -254,3 +315,4 @@ export function matchesSearchCriteria(recipe, query) {
         return false;
     }
 }
+

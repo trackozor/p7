@@ -11,80 +11,99 @@ import { trapFocus } from "../utils/accessibility.js";
 import { KEY_CODES } from "../config/constants.js";
 import { Search } from "../components/search/search.js"; 
 import { handleBarSearch } from "../components/searchBarManager.js";
-
-/* ====================================================================================
-/*                            GESTION DE LA RECHERCHE
 /* ==================================================================================== */
-
-
-
+/*                            GESTION DE LA RECHERCHE                                  */
+/* ==================================================================================== */
 /**
  * Gère l'événement de soumission du formulaire de recherche.
- * - Empêche le rechargement de la page.
- * - Vérifie la présence d'un `event` avant d'appeler `preventDefault()`.
- * - Vérifie que `handleBarSearch()` reçoit bien un `event`.
- * - Affiche un message d'erreur si la requête est trop courte.
+ *
+ * - Empêche le rechargement de la page pour éviter une perte de données.
+ * - Vérifie que `event` est bien défini avant d'appeler `preventDefault()`.
+ * - Vérifie que `handleBarSearch()` reçoit bien un `event` valide.
+ * - Affiche un message d'erreur si la requête est trop courte (moins de 3 caractères).
  *
  * @param {Event} event - Événement déclenché lors de la soumission du formulaire.
  */
 export function handleSearchWrapper(event) {
+    // Vérification et prévention du rechargement de page
     if (event && event.preventDefault) {
         event.preventDefault();
     } else {
         console.warn("handleSearchWrapper a été appelé sans événement.");
     }
 
+    // Sélection du champ de recherche
     const searchInput = document.querySelector("#search");
+
+    // Vérifie si l'élément du champ de recherche est présent dans le DOM
+    if (!searchInput) {
+        console.error("handleSearchWrapper : Élément de recherche introuvable.");
+        return;
+    }
+
+    // Récupération et nettoyage de la requête utilisateur
     const query = searchInput.value.trim();
 
-    // ✅ Vérification si la recherche a au moins 3 caractères
+    // Vérification si la recherche est suffisamment longue (3 caractères minimum)
     if (query.length < 3) {
         displayErrorMessage("Veuillez entrer au moins 3 caractères pour rechercher.");
         return;
     }
 
-    // ✅ Lancer la recherche si tout est correct
+    // Exécute la recherche avec la requête validée
     handleBarSearch(event);
 }
 
-
-/* ====================================================================================
-/*                 GESTION DE L'OUVERTURE ET FERMETURE DES DROPDOWNS
+/* ==================================================================================== */
+/*                 GESTION DE L'OUVERTURE ET FERMETURE DES DROPDOWNS                   */
 /* ==================================================================================== */
 /**
- * Gère l'ouverture d'un dropdown et active le piégeage du focus.
+ * Gère l'ouverture et la fermeture d'un dropdown.
+ *
+ * - Empêche la propagation de l'événement pour éviter la fermeture immédiate.
+ * - Récupère le bouton cliqué et son type de filtre associé.
+ * - Vérifie la présence du `filterType` avant d'exécuter l'action.
+ * - Ferme tous les autres dropdowns avant d'en ouvrir un nouveau.
+ * - Active le piégeage du focus pour une meilleure accessibilité.
  *
  * @param {Event} event - Événement du clic sur le bouton de dropdown.
  */
 export function handleDropdownClick(event) {
+    // Empêche la propagation pour éviter les fermetures accidentelles
     event.stopPropagation();
-    const button = event.currentTarget; // Récupère le bouton cliqué
-    const {filterType} = button.dataset; // Correction ici, utiliser "filterType"
 
+    // Récupère le bouton cliqué et son type de filtre
+    const button = event.currentTarget;
+    const { filterType } = button.dataset;
+
+    // Vérifie que `filterType` est bien défini
     if (!filterType) {
         logEvent("error", "handleDropdownClick : Le bouton cliqué ne contient pas de dataset.filterType.");
         console.error("handleDropdownClick : Problème de dataset :", button);
         return;
     }
 
-    const dropdownContainer = button.nextElementSibling; // Sélectionne le container du dropdown
+    // Sélectionne le conteneur du dropdown associé
+    const dropdownContainer = button.nextElementSibling;
     const allDropdowns = document.querySelectorAll(".dropdown-container");
 
+    // Vérifie si le conteneur du dropdown est bien trouvé
     if (!dropdownContainer) {
         logEvent("error", `handleDropdownClick : Aucun conteneur de dropdown trouvé pour "${filterType}".`);
         return;
     }
 
-    // Fermer tous les autres dropdowns avant d'en ouvrir un
+    // Ferme tous les autres dropdowns avant d'en ouvrir un
     allDropdowns.forEach(drop => {
         if (drop !== dropdownContainer) {
             drop.classList.remove("active");
         }
     });
 
-    // Basculer l'état du dropdown
+    // Basculer l'état du dropdown (ouverture/fermeture)
     dropdownContainer.classList.toggle("active");
 
+    // Si le dropdown est ouvert, active le piégeage du focus
     if (dropdownContainer.classList.contains("active")) {
         trapFocus(dropdownContainer);
     }
@@ -92,8 +111,8 @@ export function handleDropdownClick(event) {
     logEvent("info", `handleDropdownClick : Dropdown "${filterType}" ${dropdownContainer.classList.contains("active") ? "ouvert" : "fermé"}.`);
 }
 
-/* ====================================================================================
-/*                   WRAPPERS POUR ÉVITER LES DOUBLONS D'ÉVÉNEMENTS
+/* ==================================================================================== */
+/*                   WRAPPERS POUR ÉVITER LES DOUBLONS D'ÉVÉNEMENTS                    */
 /* ==================================================================================== */
 
 /* ------------------------------- */
@@ -101,7 +120,9 @@ export function handleDropdownClick(event) {
 /* ------------------------------- */
 /**
  * Wrapper pour la gestion du clic sur un bouton de dropdown.
- * Permet d'éviter les doublons d'événements en s'assurant que la cible est correcte.
+ *
+ * - Permet d'éviter les doublons d'événements en s'assurant que la cible est correcte.
+ * - Passe l'événement au gestionnaire principal `handleDropdownClick()`.
  *
  * @param {Event} event - L'événement du clic.
  */
@@ -114,31 +135,36 @@ export function handleDropdownClickWrapper(event) {
 /* ------------------------------- */
 /**
  * Wrapper pour la gestion du clic sur une option de dropdown.
- * Permet d'éviter les doublons d'événements en ciblant précisément l'option cliquée.
+ *
+ * - Permet d'éviter les doublons d'événements en ciblant précisément l'option cliquée.
+ * - Vérifie que l'élément cliqué est bien une option valide.
+ * - Appelle la fonction `handleFilterSelection()` avec le type et la valeur du filtre sélectionné.
  *
  * @param {Event} event - L'événement du clic.
  */
 export function handleFilterSelectionWrapper(event) {
-    console.log(" Événement reçu dans handleFilterSelectionWrapper :", event);
+    console.log("Événement reçu dans handleFilterSelectionWrapper :", event);
 
-    let {target} = event;
+    let { target } = event;
 
     // Vérifie que l'utilisateur clique bien sur un élément `<li>`, sinon remonte dans le DOM
     while (target && !target.classList.contains("filter-option")) {
         target = target.parentElement;
     }
 
-    // Vérification de la validité de l'élément
+    // Vérification de la validité de l'élément sélectionné
     if (!target || !target.dataset.filterType || !target.textContent.trim()) {
         console.error("handleFilterSelectionWrapper : Élément cliqué invalide.", target);
         return;
     }
 
-    const {filterType} = target.dataset; // Récupère le type de filtre correct
+    // Extraction du type et de la valeur du filtre sélectionné
+    const { filterType } = target.dataset;
     const filterValue = target.textContent.trim();
 
     console.log(`handleFilterSelectionWrapper - Appel avec : { filterType: ${filterType}, filterValue: ${filterValue} }`);
 
+    // Appel de la gestion de la sélection de filtre
     handleFilterSelection(filterType, filterValue);
 }
 
@@ -147,23 +173,29 @@ export function handleFilterSelectionWrapper(event) {
 /* ==================================================================================== */
 /**
  * Gère la suppression d'un tag de filtre lorsqu'on clique sur son bouton de fermeture.
- * Récupère dynamiquement l'élément du tag et supprime le filtre correspondant.
+ *
+ * - Récupère dynamiquement l'élément du tag supprimé.
+ * - Extrait le type et la valeur du filtre associé.
+ * - Vérifie la validité des paramètres avant suppression.
+ * - Supprime le tag et met à jour l'affichage des filtres actifs.
  *
  * @param {Event} event - L'événement déclenché par le clic sur le bouton de suppression du tag.
  */
 export function handleTagRemovalWrapper(event) {
-    // Récupération du tag parent depuis l'élément cliqué (le bouton "X")
+    // Récupération du tag parent à partir de l'élément cliqué (icône "X")
     const tagElement = event.currentTarget.closest(".filter-tag");
 
+    // Vérifie que l'élément existe avant de continuer
     if (!tagElement) {
         logEvent("warn", "handleTagRemovalWrapper : Aucun tag trouvé pour la suppression.");
         return;
     }
 
-    // Extraction des données du tag
+    // Extraction des données du tag (type et valeur du filtre)
     const { filterType } = tagElement.dataset;
     const filterValue = tagElement.textContent.trim();
 
+    // Vérifie la validité des paramètres avant suppression
     if (!filterType || !filterValue) {
         logEvent("error", "handleTagRemovalWrapper : Paramètres invalides.");
         return;
@@ -171,42 +203,8 @@ export function handleTagRemovalWrapper(event) {
 
     logEvent("info", `handleTagRemovalWrapper : Suppression du tag "${filterValue}" (${filterType}).`);
 
-    // Suppression du filtre correspondant et mise à jour de l'affichage
+    // Suppression du filtre sélectionné et mise à jour de l'affichage
     removeTag(filterType, filterValue);
-}
-
-/**
- * Gère les interactions clavier pour la navigation et l'accessibilité.
- * - Tabulation : Maintient le focus dans les dropdowns et modales.
- * - Échap : Ferme les dropdowns ouverts.
- * - Entrée / Espace : Active les filtres ou déclenche des actions.
- *
- * @param {KeyboardEvent} event - Événement clavier déclenché.
- */
-export function handleKeyboardNavigation(event) {
-    const {activeElement} = document;
-
-    // Gestion de la touche Échap pour fermer les dropdowns actifs
-    if (event.key === KEY_CODES.ESCAPE) {
-        const openDropdowns = document.querySelectorAll(".dropdown-container.active");
-        openDropdowns.forEach(dropdown => dropdown.classList.remove("active"));
-        logEvent("info", "handleKeyboardNavigation : Fermeture des dropdowns avec ESC.");
-    }
-
-    // Gestion de la touche Tab pour restreindre le focus
-    if (event.key === KEY_CODES.TAB) {
-        const openDropdown = document.querySelector(".dropdown-container.active");
-        if (openDropdown) {
-            trapFocus(openDropdown);
-            logEvent("info", "handleKeyboardNavigation : Focus piégé dans un dropdown.");
-        }
-    }
-
-    // Gestion de la touche Entrée pour sélectionner une option de filtre
-    if ((event.key === KEY_CODES.ENTER || event.key === KEY_CODES.SPACE) && activeElement.classList.contains("filter-option")) {
-        activeElement.click(); // Simule un clic sur l'option
-        logEvent("success", `handleKeyboardNavigation : Option sélectionnée "${activeElement.textContent}".`);
-    }
 }
 
 /* ====================================================================================
@@ -215,7 +213,6 @@ export function handleKeyboardNavigation(event) {
 /*--------------- */
 /* Ajout         */
 /*---------------*/
-
 export function handleFilterSelection(filterType, filterValue) {
     try {
         if (!filterType || !filterValue) {
@@ -234,7 +231,7 @@ export function handleFilterSelection(filterType, filterValue) {
 
         updateTagDisplay();
 
-        // ✅ Récupérer l'état des filtres sous forme de tableau
+        // Récupérer l'état des filtres sous forme de tableau
         const filtersArray = {
             ingredients: Array.from(activeFilters["ingredients"]),
             appliances: Array.from(activeFilters["appliances"]),
@@ -243,7 +240,7 @@ export function handleFilterSelection(filterType, filterValue) {
 
         logEvent("debug", "Filtres actifs après ajout :", filtersArray);
 
-        // ✅ Vérification avant d’appeler Search() (éviter les appels inutiles)
+        //  Vérification avant d’appeler Search() (éviter les appels inutiles)
         if (filtersArray.ingredients.length > 0 || filtersArray.appliances.length > 0 || filtersArray.ustensils.length > 0) {
             Search("", "filters", filtersArray);
         }
@@ -315,4 +312,46 @@ function restoreOptionInDropdown(filterType, filterValue) {
     li.addEventListener("click", () => handleFilterSelection(filterType, filterValue));
 
     dropdown.appendChild(li);
+}
+/* ==================================================================================== */
+/*               GESTION  DU FOCUS (PIÉGEAGE)                                          */
+/* ==================================================================================== */
+/**
+ * Gère les interactions clavier pour la navigation et l'accessibilité.
+ *
+ * - Tabulation : Maintient le focus dans les dropdowns et modales.
+ * - Échap : Ferme les dropdowns ouverts et libère le focus.
+ * - Entrée / Espace : Active les filtres ou déclenche des actions.
+ *
+ * @param {KeyboardEvent} event - Événement clavier déclenché.
+ */
+export function handleKeyboardNavigation(event) {
+    const { activeElement } = document; // Récupère l'élément actuellement sélectionné
+
+    // Gestion de la touche Échap (Escape) pour fermer les dropdowns actifs
+    if (event.key === KEY_CODES.ESCAPE) {
+        const openDropdowns = document.querySelectorAll(".dropdown-container.active");
+
+        // Parcours et fermeture de tous les dropdowns ouverts
+        openDropdowns.forEach(dropdown => dropdown.classList.remove("active"));
+
+        logEvent("info", "handleKeyboardNavigation : Fermeture des dropdowns avec ESC.");
+    }
+
+    // Gestion de la touche Tab pour restreindre le focus dans le dropdown actif
+    if (event.key === KEY_CODES.TAB) {
+        const openDropdown = document.querySelector(".dropdown-container.active");
+
+        // Si un dropdown est actif, on applique le piège du focus
+        if (openDropdown) {
+            trapFocus(openDropdown);
+            logEvent("info", "handleKeyboardNavigation : Focus piégé dans un dropdown.");
+        }
+    }
+
+    // Gestion de la touche Entrée ou Espace pour sélectionner une option de filtre
+    if ((event.key === KEY_CODES.ENTER || event.key === KEY_CODES.SPACE) && activeElement.classList.contains("filter-option")) {
+        activeElement.click(); // Simule un clic sur l'option sélectionnée
+        logEvent("success", `handleKeyboardNavigation : Option sélectionnée "${activeElement.textContent}".`);
+    }
 }

@@ -13,29 +13,6 @@ import { logEvent } from "../../utils/utils.js";
 /**
  * Crée dynamiquement un dropdown de filtre avec un champ de recherche et des options.
  *
- * - Affiche les titres en français tout en conservant `filterType` en anglais.
- * - Vérifie les paramètres pour éviter les erreurs.
- * - Génère dynamiquement les options et le champ de recherche.
- * - Ajoute des `id`, `name` et `label` pour l’accessibilité.
- * - Journalise chaque étape avec `logEvent()`.
- *
- * @param {string} title - Titre du filtre (ex: "Ingrédients", "Appareils").
- * @param {string} filterType - Identifiant du filtre utilisé en interne (ex: "ingredients", "appliances").
- * @param {Set<string>} dataSet - Ensemble des options disponibles.
- * @returns {HTMLElement|null} Retourne le conteneur du dropdown ou `null` en cas d'erreur.
- */
-/**
- * Crée dynamiquement un dropdown de filtre avec un champ de recherche et des options.
- *
- * @param {string} title - Titre du filtre affiché.
- * @param {string} filterType - Type de filtre interne (ex: "ingredients", "appliances").
- * @param {Set<string>} dataSet - Ensemble des options du filtre.
- * @returns {HTMLElement|null} Retourne le dropdown généré ou `null` en cas d'erreur.
- */
-
-/**
- * Crée dynamiquement un dropdown de filtre avec un champ de recherche et des options.
- *
  * @param {string} title - Titre du filtre affiché.
  * @param {string} filterType - Type de filtre interne.
  * @param {Set<string>} dataSet - Ensemble des options du filtre.
@@ -69,7 +46,7 @@ export function createFilterSection(title, filterType, dataSet) {
         const dropdownContainer = document.createElement("div");
         dropdownContainer.classList.add("dropdown-container");
 
-        // ✅ Conteneur englobant pour bien positionner la loupe dans l'input
+        //  Conteneur englobant pour bien positionner la loupe dans l'input
         const searchContainer = document.createElement("div");
         searchContainer.classList.add("dropdown-search-container");
 
@@ -78,7 +55,7 @@ export function createFilterSection(title, filterType, dataSet) {
         searchLabel.classList.add("sr-only");
         searchLabel.textContent = `Rechercher dans ${translatedTitle}`;
 
-        // ✅ Input avec espace à droite pour la loupe
+        //  Input avec espace à droite pour la loupe
         const searchInput = document.createElement("input");
         searchInput.type = "text";
         searchInput.classList.add("dropdown-search");
@@ -86,17 +63,16 @@ export function createFilterSection(title, filterType, dataSet) {
         searchInput.id = `search-${filterType}`;
         searchInput.name = `search-${filterType}`;
 
-        // ✅ Bouton loupe placé dans l'input
+        //  Bouton loupe placé dans l'input
         const searchButton = document.createElement("button");
         searchButton.classList.add("search-icon-button");
         searchButton.setAttribute("aria-label", `Lancer la recherche dans ${translatedTitle}`);
         searchButton.innerHTML = `<i class="fas fa-search"></i>`; 
 
-        // ✅ Ajout de la loupe DANS l'input
+        //  Ajout de la loupe DANS l'input
         searchContainer.appendChild(searchLabel);
         searchContainer.appendChild(searchInput);
-        searchContainer.appendChild(searchButton); // La loupe sera bien intégrée à droite
-
+        searchContainer.appendChild(searchButton); 
         const filterList = document.createElement("ul");
         filterList.classList.add(`${filterType}-list`);
 
