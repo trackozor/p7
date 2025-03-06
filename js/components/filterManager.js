@@ -6,9 +6,9 @@
 /* ==================================================================================== */
 
 import { createFilterSection } from "./factory/dropdownFactory.js";
-import { fetchFilterOptions, clearSearchCache } from "../data/dataManager.js";
+import { fetchFilterOptions } from "../data/dataManager.js";
 import { logEvent, waitForElement } from "../utils/utils.js";
-
+import { removeTag , handleFilterSelection} from "../events/eventHandler.js"
 /* ==================================================================================== */
 /*  VARIABLES GLOBALES ET ÉTAT DES FILTRES                                             */
 /* ==================================================================================== */
@@ -63,83 +63,30 @@ export async function initFilters() {
     }
 }
 
-/* ==================================================================================== */
-/*  GESTION DES FILTRES SÉLECTIONNÉS (TAGS)                                            */
-/* ==================================================================================== */
-/**
- * Ajoute un filtre et met à jour l'affichage.
- */
-export function handleFilterSelection(filterType, filterValue) {
-    try {
-        if (!filterType || !filterValue) {
-            logEvent("error", "handleFilterSelection : Paramètres invalides.");
-            return;
-        }
-
-        if (!activeFilters[filterType]) {
-            logEvent("error", `handleFilterSelection : Type de filtre "${filterType}" inconnu.`);
-            return;
-        }
-
-        if (activeFilters[filterType].has(filterValue)) {
-            logEvent("warn", `handleFilterSelection : Le filtre "${filterValue}" (${filterType}) est déjà actif.`);
-            return;
-        }
-
-        activeFilters[filterType].add(filterValue);
-        logEvent("success", `handleFilterSelection : "${filterValue}" ajouté à "${filterType}".`);
-
-        updateTagDisplay();
-        updateFilters();
-        removeSelectedOption(filterType, filterValue);
-    } catch (error) {
-        logEvent("error", "handleFilterSelection : Erreur lors de l'ajout du filtre.", { error: error.message });
-    }
-}
-
-/**
- * Supprime un filtre et met à jour l'affichage.
- */
-export function removeTag(filterType, filterValue) {
-    try {
-        if (!filterType || !filterValue) {
-            logEvent("error", "removeTag : Paramètres invalides.");
-            return;
-        }
-
-        if (!activeFilters[filterType].has(filterValue)) {
-            logEvent("warn", `removeTag : Le filtre "${filterValue}" (${filterType}) n'est pas actif.`);
-            return;
-        }
-
-        activeFilters[filterType].delete(filterValue);
-        logEvent("success", `removeTag : "${filterValue}" supprimé de "${filterType}".`);
-
-        updateTagDisplay();
-        updateFilters();
-        restoreRemovedOption(filterType, filterValue);
-    } catch (error) {
-        logEvent("error", "removeTag : Erreur lors de la suppression du filtre.", { error: error.message });
-    }
-}
 
 /**
  * Supprime une option du dropdown une fois sélectionnée.
  */
-function removeSelectedOption(filterType, filterValue) {
+export function removeSelectedOption(filterType, filterValue) {
     const dropdown = document.querySelector(`#${filterType} ul`);
-    if (!dropdown) return;
+    if (!dropdown) {
+        return;
+    }
 
     const option = [...dropdown.children].find(li => li.textContent === filterValue);
-    if (option) option.remove();
+    if (option) {
+        option.remove();
+    }
 }
 
 /**
  * Réintroduit une option dans le dropdown après suppression d'un tag.
  */
-function restoreRemovedOption(filterType, filterValue) {
+export function restoreRemovedOption(filterType, filterValue) {
     const dropdown = document.querySelector(`#${filterType} ul`);
-    if (!dropdown) return;
+    if (!dropdown) {
+        return;
+    }
 
     const li = document.createElement("li");
     li.classList.add("filter-option");
@@ -155,7 +102,9 @@ function restoreRemovedOption(filterType, filterValue) {
 export function updateTagDisplay() {
     try {
         const tagsContainer = document.querySelector("#selected-filters");
-        if (!tagsContainer) return;
+        if (!tagsContainer) {
+            return;
+        }
 
         tagsContainer.innerHTML = "";
         const fragment = document.createDocumentFragment();
@@ -198,8 +147,10 @@ export function updateFilters(filteredRecipes = []) {
 
         Object.entries(filterContainers).forEach(([filterType, container]) => {
             const dropdownList = container?.querySelector("ul");
-// sourcery skip: use-braces
-            if (!dropdownList) return;
+
+            if (!dropdownList) {
+                return;
+            }
 
             dropdownList.innerHTML = "";
             const fragment = document.createDocumentFragment();

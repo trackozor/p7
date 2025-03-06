@@ -253,7 +253,7 @@ export function waitForElement(selector, timeout = 5000) {
         // Vérifie d'abord si l'élément est déjà disponible grâce au cache
         const cachedElement = safeQuerySelector(selector, true);
         if (cachedElement) {
-          return resolve(cachedElement);
+            return resolve(cachedElement);
         }
 
         // Création de l'observateur pour surveiller les ajouts d'éléments
@@ -297,7 +297,7 @@ export function debounce(func, delay = 300) {
 
 export function sanitizeText(text) {
     if (typeof text !== "string") {
-      return "";
+        return "";
     }
     
     return text.replace(/[&<>"'/]/g, (char) => {
@@ -312,3 +312,46 @@ export function sanitizeText(text) {
         return charMap[char] || char;
     });
 }
+/**
+ * Affiche un message d'erreur à l'écran.
+ * - Ajoute dynamiquement un conteneur si nécessaire.
+ * - Le message s'affiche en haut de l'écran avec un effet visuel.
+ * - Disparaît après 3 secondes automatiquement.
+ *
+ * @param {string} message - Le message d'erreur à afficher.
+ */
+export function displayErrorMessage(message) {
+    // Vérifier si un conteneur d'erreur existe, sinon le créer
+    let errorContainer = document.querySelector("#error-container");
+
+    if (!errorContainer) {
+        errorContainer = document.createElement("div");
+        errorContainer.id = "error-container";
+        errorContainer.style.position = "fixed";
+        errorContainer.style.top = "20px";
+        errorContainer.style.left = "50%";
+        errorContainer.style.transform = "translateX(-50%)";
+        errorContainer.style.zIndex = "1000";
+        document.body.appendChild(errorContainer);
+    }
+
+    // Vérifier si un message est déjà affiché
+    let existingError = document.querySelector(".error-message");
+    if (existingError) {
+        existingError.remove();
+    }
+
+    // Création de l'élément de message d'erreur
+    const errorDiv = document.createElement("div");
+    errorDiv.classList.add("error-message");
+    errorDiv.textContent = message;
+
+    // Ajout du message dans le conteneur des erreurs
+    errorContainer.appendChild(errorDiv);
+
+    // Disparition automatique après 3 secondes
+    setTimeout(() => {
+        errorDiv.remove();
+    }, 3000);
+}
+

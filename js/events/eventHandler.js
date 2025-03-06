@@ -5,7 +5,7 @@
 /*  DESCRIPTION      : Gère les événements de recherche et de filtres sur les recettes.
 /* ==================================================================================== */
 
-import { logEvent } from "../utils/utils.js";
+import { logEvent, displayErrorMessage } from "../utils/utils.js";
 import { updateTagDisplay, activeFilters } from "../components/filterManager.js";
 import { trapFocus } from "../utils/accessibility.js";
 import { KEY_CODES } from "../config/constants.js";
@@ -15,57 +15,42 @@ import { handleBarSearch } from "../components/searchBarManager.js";
 /* ====================================================================================
 /*                            GESTION DE LA RECHERCHE
 /* ==================================================================================== */
+
+
+
 /**
  * Gère l'événement de soumission du formulaire de recherche.
  * - Empêche le rechargement de la page.
  * - Vérifie la présence d'un `event` avant d'appeler `preventDefault()`.
  * - Vérifie que `handleBarSearch()` reçoit bien un `event`.
+ * - Affiche un message d'erreur si la requête est trop courte.
  *
  * @param {Event} event - Événement déclenché lors de la soumission du formulaire.
- * @returns {void} Ne retourne rien, empêche le rechargement et exécute la recherche.
  */
 export function handleSearchWrapper(event) {
-    // Vérifie si l'événement est défini avant d'appeler `preventDefault()`
     if (event && event.preventDefault) {
         event.preventDefault();
     } else {
-        console.warn(" handleSearchWrapper a été appelé sans événement.");
+        console.warn("handleSearchWrapper a été appelé sans événement.");
     }
 
-    // Vérification que l'élément de recherche existe avant d'exécuter la recherche
-    const searchInput = document.querySelector("#searchInput");
-    if (!searchInput) {
-        console.error(" Erreur : L'élément de recherche #searchInput est introuvable !");
-        return;
-    }
-
-    // Récupération de la valeur de la recherche
+    const searchInput = document.querySelector("#search");
     const query = searchInput.value.trim();
 
-    // Vérification si la recherche a au moins 3 caractères (si nécessaire)
+    // ✅ Vérification si la recherche a au moins 3 caractères
     if (query.length < 3) {
-        console.warn(" Recherche ignorée : la requête doit contenir au moins 3 caractères.");
+        displayErrorMessage("Veuillez entrer au moins 3 caractères pour rechercher.");
         return;
     }
 
-    // Appel de la fonction de recherche avec l'événement et la requête
+    // ✅ Lancer la recherche si tout est correct
     handleBarSearch(event);
 }
 
 
 /* ====================================================================================
-/*                            GESTION Du formulaire de la recherche
-/* ==================================================================================== */
-
-/* ====================================================================================
 /*                 GESTION DE L'OUVERTURE ET FERMETURE DES DROPDOWNS
 /* ==================================================================================== */
-/**
- * Gère l'ouverture d'un dropdown et active le piégeage du focus.
- *
- * @param {Event} event - Événement du clic sur le bouton de dropdown.
- * @param {HTMLElement} button - Bouton de dropdown cliqué.
- */
 /**
  * Gère l'ouverture d'un dropdown et active le piégeage du focus.
  *
@@ -272,25 +257,62 @@ export function handleFilterSelection(filterType, filterValue) {
 /* Retrait        */
 /*--------------- */
 /**
- * Supprime un filtre sélectionné et met à jour l'affichage et les résultats.
- * - Vérifie si le filtre existe avant suppression.
- * - Met à jour les tags et les options des dropdowns.
+ * Supprime un filtre actif et met à jour l'affichage.
  *
- * @param {string} filterType - Type de filtre (ingredients, appliances, ustensils).
+ * @param {string} filterType - Type de filtre.
  * @param {string} filterValue - Valeur du filtre à supprimer.
  */
 export function removeTag(filterType, filterValue) {
     try {
-        if (!activeFilters[filterType].has(filterValue)) {
+        if (!filterType || !filterValue) {
+            logEvent("warn", "removeTag : Paramètres invalides.");
             return;
         }
 
-        logEvent("info", `removeTag : Suppression de '${filterValue}' (${filterType}).`);
+        logEvent("info", `removeTag : Suppression du tag '${filterValue}' (${filterType}).`);
+
+        if (!activeFilters[filterType].has(filterValue)) {
+            logEvent("warn", `removeTag : Le filtre '${filterValue}' (${filterType}) n'est pas actif.`);
+            return;
+        }
+
+        //  Supprime le tag de la liste active
         activeFilters[filterType].delete(filterValue);
 
-        updateTagDisplay();  // mise à jour affichage des tags
-        Search();     // Relance de la recherche pour mise à jour
+        updateTagDisplay();
+        restoreOptionInDropdown(filterType, filterValue);
+
+        //  Recherche avec les filtres restants après suppression
+        const filtersArray = {
+            ingredients: Array.from(activeFilters["ingredients"]),
+            appliances: Array.from(activeFilters["appliances"]),
+            ustensils: Array.from(activeFilters["ustensils"])
+        };
+
+        logEvent("debug", "Filtres actifs après suppression :", filtersArray);
+        Search("", filtersArray);
+        
     } catch (error) {
         logEvent("error", "removeTag : Erreur lors de la suppression du filtre.", { error: error.message });
     }
+}
+
+/**
+ * Restaure une option supprimée dans le dropdown quand un tag est retiré.
+ *
+ * @param {string} filterType - Type de filtre.
+ * @param {string} filterValue - Valeur du filtre à réintégrer.
+ */
+function restoreOptionInDropdown(filterType, filterValue) {
+    const dropdown = document.querySelector(`#${filterType} ul`);
+    if (!dropdown) {
+        return;
+    }
+
+    const li = document.createElement("li");
+    li.classList.add("filter-option");
+    li.textContent = filterValue;
+    li.addEventListener("click", () => handleFilterSelection(filterType, filterValue));
+
+    dropdown.appendChild(li);
 }

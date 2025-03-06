@@ -10,10 +10,12 @@
 
 import { searchRecipesFunctional } from "./searchFunctional.js";
 import { searchRecipesLoopNative } from "./searchloopNative.js"; 
-import { logEvent } from "../../utils/utils.js";
+import { logEvent,displayErrorMessage } from "../../utils/utils.js";
 import { updateRecipes } from "./displayResults.js";
 import { normalizeText } from "../../utils/normalize.js";
 import { getAllRecipes } from "../../data/dataManager.js";
+
+
 /* ==================================================================================== */
 /*  MODES DE RECHERCHE                                                                 */
 /* ==================================================================================== */
@@ -37,7 +39,7 @@ let searchMode = "functional";
  */
 export async function Search(query = "", filtersArray = {}) {
     try {
-        logEvent("test_start", `🔍 Début de la recherche (query="${query}", filters=${JSON.stringify(filtersArray)})`);
+        logEvent("test_start", ` Début de la recherche (query="${query}", filters=${JSON.stringify(filtersArray)})`);
 
         const sanitizedQuery = query.trim().toLowerCase();
         const hasQuery = sanitizedQuery.length >= 3;
@@ -62,6 +64,11 @@ export async function Search(query = "", filtersArray = {}) {
             results = getAllRecipes();
         }
 
+        // ✅ Affichage d'un message si aucune recette n'est trouvée
+        if (results.length === 0) {
+            displayErrorMessage("Aucune recette trouvée pour cette recherche.");
+        }
+
         logEvent("info", `Search : ${results.length} recette(s) trouvée(s).`);
         updateRecipes(results);
 
@@ -69,11 +76,14 @@ export async function Search(query = "", filtersArray = {}) {
         return results;
 
     } catch (error) {
-        logEvent("error", "💥 Erreur lors de la recherche.", { error: error.message });
+        logEvent("error", "Erreur lors de la recherche.", { error: error.message });
+
+        // ✅ Affichage d'une erreur si un problème technique survient
+        displayErrorMessage("Une erreur est survenue lors de la recherche.");
+        
         return [];
     }
 }
-
 /** ==================================================================================== */
 /**  EXÉCUTION DE LA RECHERCHE SELON LE MODE ACTIF                                      */
 /** ==================================================================================== */

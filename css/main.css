@@ -1369,18 +1369,47 @@ footer {
   padding-top: 0.2rem;
 }
 
-/* Champ de recherche à l'intérieur du dropdown */
+/* Conteneur englobant l'input et la loupe */
+.dropdown-search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+/* ✅ Champ de recherche avec espace pour la loupe */
 .dropdown-search {
-  width: calc(100% - 20px);
-  padding: 0 8px;
+  width: 100%;
+  padding: 8px 35px 8px 10px; /* Espace à droite pour la loupe */
   margin: 2% 10px;
-  border: 1px solid #2C3E50;
+  border: 1px solid var(--secondary-color);
   border-radius: 4px;
   outline: none;
-  transition: border-color 0.3s;
+  transition: border-color var(--transition-speed);
 }
 .dropdown-search:focus {
   border-color: #FFD700;
+}
+
+/* ✅ Bouton loupe bien aligné DANS l'input */
+.search-icon-button {
+  position: absolute;
+  right: 18px; /* Ajustement pour bien l'aligner */
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: var(--primary-color);
+}
+
+/* ✅ Empêche la loupe de gêner la saisie */
+.search-icon-button i {
+  pointer-events: none;
+}
+
+/* ✅ Effet au focus pour améliorer l'expérience */
+.dropdown-search:focus {
+  border-color: var(--primary-color);
 }
 
 /* Liste des options de filtres */
@@ -1431,111 +1460,34 @@ li:hover {
 }
 
 /* Composants des filtres de recherche */
-/* ==================================================================================== */
-/*  Nom du fichier    : _password-modal.scss                                            */
-/*  Auteur           : Trackozor                                                       */
-/*  Date de création : 10/02/25                                                        */
-/*  Dernière mise à jour : 10/02/25                                                   */
-/*  Description      : Styles pour la modale de saisie du mot de passe Admin.         */
-/*                     La modale s'affiche en overlay et permet à l'administrateur    */
-/*                     de valider ou d'annuler l'action nécessitant une authentification. */
-/* ==================================================================================== */
-/* ==================================================================================== */
-/*  Définition du conteneur principal de la modale                                     */
-/* ==================================================================================== */
-#password-modal {
-  position: fixed; /* Fixe la modale sur l'écran pour qu'elle ne bouge pas */
-  top: 0; /* Positionnée en haut de l'écran */
-  left: 0; /* Positionnée à gauche de l'écran */
-  width: 100%; /* Largeur à 100% pour recouvrir toute la fenêtre */
-  height: 100%; /* Hauteur à 100% pour couvrir toute la page */
-  background: rgba(0, 0, 0, 0.5); /* Fond semi-transparent pour effet d'overlay */
-  display: flex; /* Utilisation de flexbox pour centrer le contenu */
-  justify-content: center; /* Centrage horizontal de la modale */
-  align-items: center; /* Centrage vertical de la modale */
-  visibility: hidden; /* Par défaut, la modale est cachée */
-  opacity: 0; /* Totalement transparente au départ */
-  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out; /* Transition fluide sur l'apparition */
-  /* -------------------------------------------------------------- */
-  /*  Affichage de la modale lorsqu'elle est active                 */
-  /* -------------------------------------------------------------- */
-  /* ==================================================================================== */
-  /*  Définition du contenu interne de la modale                                          */
-  /* ==================================================================================== */
-}
-#password-modal.active {
-  visibility: visible; /* Rend la modale visible */
-  opacity: 1; /* Rend la modale opaque */
-}
-#password-modal .modal-content {
-  background: #fff; /* Fond blanc pour contraster avec l'overlay */
-  padding: 20px; /* Espacement interne pour aérer le contenu */
-  border-radius: 8px; /* Arrondi des coins pour un design plus moderne */
-  text-align: center; /* Alignement du texte au centre */
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); /* Ombre portée pour un effet de profondeur */
-  width: 350px; /* Largeur fixe de la boîte de dialogue */
-  /* -------------------------------------------------------------- */
-  /*  Style du titre de la modale                                    */
-  /* -------------------------------------------------------------- */
-  /* ==================================================================================== */
-  /*  Définition du champ de saisie du mot de passe                                       */
-  /* ==================================================================================== */
-  /* ==================================================================================== */
-  /*  Définition des boutons d'action dans la modale                                     */
-  /* ==================================================================================== */
-}
-#password-modal .modal-content h2 {
-  font-size: 20px; /* Définition de la taille de police */
-  margin-bottom: 15px; /* Espacement sous le titre */
-  font-weight: bold; /* Texte en gras pour mise en avant */
-}
-#password-modal .modal-content .password-input {
-  width: 90%; /* Largeur relative au conteneur */
-  padding: 8px; /* Espacement interne pour faciliter la saisie */
-  border: 1px solid #ccc; /* Bordure fine et grise pour démarquer le champ */
-  border-radius: 4px; /* Coins légèrement arrondis */
-  margin-bottom: 10px; /* Espacement sous le champ */
-  font-size: 16px; /* Taille de police */
-}
-#password-modal .modal-content .modal-buttons {
-  display: flex; /* Utilisation de flexbox pour aligner les boutons */
-  justify-content: space-between; /* Espacement entre les boutons */
-  margin-top: 10px; /* Ajout d'un espacement entre le champ de saisie et les boutons */
-  /* -------------------------------------------------------------- */
-  /*  Styles communs aux boutons                                    */
-  /* -------------------------------------------------------------- */
-  /* -------------------------------------------------------------- */
-  /*  Définition du bouton de validation                            */
-  /* -------------------------------------------------------------- */
-  /* -------------------------------------------------------------- */
-  /*  Définition du bouton d'annulation                             */
-  /* -------------------------------------------------------------- */
-}
-#password-modal .modal-content .modal-buttons button {
-  padding: 10px 15px; /* Ajout de padding pour une meilleure ergonomie */
-  border: none; /* Suppression des bordures */
-  cursor: pointer; /* Curseur pointeur pour l'interactivité */
-  border-radius: 4px; /* Coins arrondis pour un aspect plus doux */
-  font-weight: bold; /* Texte en gras */
-  font-size: 14px; /* Taille de police */
-}
-#password-modal .modal-content .modal-buttons .validate-btn {
-  background-color: #28a745; /* Couleur verte pour action positive */
-  color: white; /* Texte blanc pour un bon contraste */
-  transition: background 0.3s ease-in-out; /* Transition fluide au survol */
-}
-#password-modal .modal-content .modal-buttons .validate-btn:hover {
-  background-color: #218838; /* Assombrissement au survol */
-}
-#password-modal .modal-content .modal-buttons .cancel-btn {
-  background-color: #dc3545; /* Couleur rouge pour indiquer une annulation */
-  color: white; /* Texte blanc */
-  transition: background 0.3s ease-in-out; /* Animation fluide au survol */
-}
-#password-modal .modal-content .modal-buttons .cancel-btn:hover {
-  background-color: #c82333; /* Assombrissement au survol */
+/* Message d'erreur visuel */
+.error-message {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #ff4d4d;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  font-size: 16px;
+  font-weight: bold;
+  z-index: 1000;
+  animation: fadeIn 0.5s ease-in-out;
 }
 
+/* Animation d'apparition */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
 /* Styles des modales utilisées dans l'application */
 /* ==================================================================================== */
 /*  Nom du fichier    : _grid.scss                                                      */
@@ -1584,7 +1536,6 @@ li:hover {
 }
 @media (min-width: 1024px) {
   #recipe-count-container {
-    display: flex; /* Utilisation de flexbox par défaut */
     position: absolute;
     right: 7%;
     top: 54.5%;
