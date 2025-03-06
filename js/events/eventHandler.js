@@ -210,11 +210,26 @@ export function handleTagRemovalWrapper(event) {
 /* ====================================================================================
 /*                        GESTION DES FILTRES SÉLECTIONNÉS (TAGS)
 /* ==================================================================================== */
-/*--------------- */
-/* Ajout         */
-/*---------------*/
+/** ====================================================================================
+ *  AJOUT D'UN FILTRE À LA LISTE DES FILTRES ACTIFS
+ * ==================================================================================== */
+/**
+ * Gère la sélection d'un filtre et l'ajoute aux filtres actifs.
+ *
+ * - Vérifie la validité des paramètres avant de poursuivre.
+ * - Empêche l'ajout en double si le filtre est déjà actif.
+ * - Ajoute le filtre sélectionné à `activeFilters`.
+ * - Met à jour l'affichage des tags avec `updateTagDisplay()`.
+ * - Convertit l'état actuel des filtres en tableau pour un traitement ultérieur.
+ * - Déclenche `Search()` si au moins un filtre est actif pour mettre à jour les résultats.
+ * - Journalise chaque étape pour le suivi et le debugging.
+ *
+ * @param {string} filterType - Type de filtre sélectionné (ingredients, appliances, ustensils).
+ * @param {string} filterValue - Valeur du filtre sélectionné.
+ */
 export function handleFilterSelection(filterType, filterValue) {
     try {
+        // Vérification de la validité des paramètres
         if (!filterType || !filterValue) {
             logEvent("warn", "handleFilterSelection : Paramètres invalides.");
             return;
@@ -226,12 +241,12 @@ export function handleFilterSelection(filterType, filterValue) {
             return;
         }
 
+        // Ajout du filtre sélectionné et mise à jour de l'affichage
         logEvent("info", `handleFilterSelection : Ajout du tag '${filterValue}' (${filterType}).`);
         activeFilters[filterType].add(filterValue);
-
         updateTagDisplay();
 
-        // Récupérer l'état des filtres sous forme de tableau
+        // Conversion de l'état des filtres en tableaux pour traitement
         const filtersArray = {
             ingredients: Array.from(activeFilters["ingredients"]),
             appliances: Array.from(activeFilters["appliances"]),
@@ -240,27 +255,37 @@ export function handleFilterSelection(filterType, filterValue) {
 
         logEvent("debug", "Filtres actifs après ajout :", filtersArray);
 
-        //  Vérification avant d’appeler Search() (éviter les appels inutiles)
+        // Vérification avant d’appeler `Search()` pour éviter les appels inutiles
         if (filtersArray.ingredients.length > 0 || filtersArray.appliances.length > 0 || filtersArray.ustensils.length > 0) {
             Search("", "filters", filtersArray);
         }
 
     } catch (error) {
+        // Gestion et journalisation des erreurs
         logEvent("error", "handleFilterSelection : Erreur lors de l'ajout du filtre.", { error: error.message });
     }
 }
 
-/*--------------- */
-/* Retrait        */
-/*--------------- */
+
+/** ====================================================================================
+ *  SUPPRESSION D'UN FILTRE ACTIF ET MISE À JOUR DE L'AFFICHAGE
+ * ==================================================================================== */
 /**
- * Supprime un filtre actif et met à jour l'affichage.
+ * Supprime un filtre actif et met à jour dynamiquement l'affichage.
  *
- * @param {string} filterType - Type de filtre.
- * @param {string} filterValue - Valeur du filtre à supprimer.
+ * - Vérifie la validité des paramètres avant d'exécuter l'opération.
+ * - Empêche la suppression d'un filtre qui n'est pas actif.
+ * - Supprime le filtre de `activeFilters` et met à jour les tags affichés.
+ * - Réintroduit l'option dans le dropdown correspondant.
+ * - Met à jour les résultats en appelant `Search()` avec les filtres restants.
+ * - Journalise chaque étape pour assurer un suivi et faciliter le debugging.
+ *
+ * @param {string} filterType - Type de filtre à supprimer (ingredients, appliances, ustensils).
+ * @param {string} filterValue - Valeur spécifique du filtre à supprimer.
  */
 export function removeTag(filterType, filterValue) {
     try {
+        // Vérification de la validité des paramètres
         if (!filterType || !filterValue) {
             logEvent("warn", "removeTag : Paramètres invalides.");
             return;
@@ -268,18 +293,20 @@ export function removeTag(filterType, filterValue) {
 
         logEvent("info", `removeTag : Suppression du tag '${filterValue}' (${filterType}).`);
 
+        // Vérifie que le filtre est bien actif avant de le supprimer
         if (!activeFilters[filterType].has(filterValue)) {
             logEvent("warn", `removeTag : Le filtre '${filterValue}' (${filterType}) n'est pas actif.`);
             return;
         }
 
-        //  Supprime le tag de la liste active
+        // Suppression du filtre de la liste des filtres actifs
         activeFilters[filterType].delete(filterValue);
 
+        // Mise à jour de l'affichage des tags et réintégration de l'option dans le dropdown
         updateTagDisplay();
         restoreOptionInDropdown(filterType, filterValue);
 
-        //  Recherche avec les filtres restants après suppression
+        // Conversion de l'état des filtres actifs en tableaux pour traitement
         const filtersArray = {
             ingredients: Array.from(activeFilters["ingredients"]),
             appliances: Array.from(activeFilters["appliances"]),
@@ -287,32 +314,53 @@ export function removeTag(filterType, filterValue) {
         };
 
         logEvent("debug", "Filtres actifs après suppression :", filtersArray);
+
+        // Mise à jour des résultats en fonction des nouveaux filtres actifs
         Search("", filtersArray);
         
     } catch (error) {
+        // Gestion et journalisation des erreurs
         logEvent("error", "removeTag : Erreur lors de la suppression du filtre.", { error: error.message });
     }
 }
 
+/** ====================================================================================
+ *  RÉINTRODUCTION D'UNE OPTION DANS LE DROPDOWN APRÈS SUPPRESSION D'UN TAG
+ * ==================================================================================== */
 /**
- * Restaure une option supprimée dans le dropdown quand un tag est retiré.
+ * Restaure une option précédemment supprimée dans le dropdown lorsque l'utilisateur 
+ * retire un tag.
  *
- * @param {string} filterType - Type de filtre.
- * @param {string} filterValue - Valeur du filtre à réintégrer.
+ * - Sélectionne le dropdown correspondant au `filterType`.
+ * - Vérifie si le dropdown existe avant d'ajouter l'option.
+ * - Crée un nouvel élément `<li>` représentant l'option supprimée.
+ * - Ajoute un écouteur d'événement permettant de la sélectionner à nouveau.
+ * - Insère l'option restaurée dans le dropdown.
+ *
+ * @param {string} filterType - Type de filtre concerné (ingredients, appliances, ustensils).
+ * @param {string} filterValue - Valeur spécifique du filtre à réintroduire.
  */
 function restoreOptionInDropdown(filterType, filterValue) {
+    // Sélection du dropdown correspondant au type de filtre
     const dropdown = document.querySelector(`#${filterType} ul`);
+
+    // Vérification de l'existence du dropdown avant d'y ajouter l'option
     if (!dropdown) {
         return;
     }
 
+    // Création d'un nouvel élément `<li>` pour la réintégration de l'option
     const li = document.createElement("li");
     li.classList.add("filter-option");
     li.textContent = filterValue;
+
+    // Ajoute un événement permettant de re-sélectionner l'option restaurée
     li.addEventListener("click", () => handleFilterSelection(filterType, filterValue));
 
+    // Ajout de l'option restaurée dans la liste du dropdown
     dropdown.appendChild(li);
 }
+
 /* ==================================================================================== */
 /*               GESTION  DU FOCUS (PIÉGEAGE)                                          */
 /* ==================================================================================== */
