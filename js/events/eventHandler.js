@@ -6,11 +6,13 @@
 /* ==================================================================================== */
 
 import { logEvent, displayErrorMessage } from "../utils/utils.js";
-import { updateTagDisplay, activeFilters } from "../components/filterManager.js";
+import { updateTagDisplay, activeFilters, resetAllTags } from "../components/filterManager.js";
 import { trapFocus } from "../utils/accessibility.js";
 import { KEY_CODES } from "../config/constants.js";
 import { Search } from "../components/search/search.js"; 
 import { handleBarSearch } from "../components/searchBarManager.js";
+
+
 /* ==================================================================================== */
 /*                            GESTION DE LA RECHERCHE                                  */
 /* ==================================================================================== */
@@ -44,6 +46,13 @@ export function handleSearchWrapper(event) {
     // Récupération et nettoyage de la requête utilisateur
     const query = searchInput.value.trim();
 
+    // Vérification si l’input est vide → Afficher toutes les recettes
+    if (query === "") {
+        logEvent("info", "handleSearchWrapper : Champ vide, affichage de toutes les recettes.");
+        handleBarSearch(event)
+        return;
+    }
+
     // Vérification si la recherche est suffisamment longue (3 caractères minimum)
     if (query.length < 3) {
         displayErrorMessage("Veuillez entrer au moins 3 caractères pour rechercher.");
@@ -53,6 +62,7 @@ export function handleSearchWrapper(event) {
     // Exécute la recherche avec la requête validée
     handleBarSearch(event);
 }
+
 
 /* ==================================================================================== */
 /*                 GESTION DE L'OUVERTURE ET FERMETURE DES DROPDOWNS                   */
@@ -360,6 +370,42 @@ function restoreOptionInDropdown(filterType, filterValue) {
     // Ajout de l'option restaurée dans la liste du dropdown
     dropdown.appendChild(li);
 }
+/* ==================================================================================== */
+/*               GESTION DU BOUTON DE RÉINITIALISATION DES FILTRES                      */
+/* ==================================================================================== */
+/**
+ * Gère dynamiquement l'affichage du bouton de réinitialisation des filtres.
+ * - Ajoute le bouton si au moins 2 tags sont présents.
+ * - Supprime le bouton si moins de 2 tags sont affichés.
+ *
+ * @param {number} totalTags - Nombre total de tags actuellement affichés.
+ */
+/**
+ * Vérifie le nombre de tags actifs et affiche le bouton reset si nécessaire.
+ */
+export function handleResetButton() {
+    const tagsContainer = document.querySelector("#selected-filters");
+    let resetButton = document.querySelector("#reset-tags-btn");
+
+    // Compte le nombre total de tags actifs
+    const totalTags = Object.values(activeFilters).reduce((sum, set) => sum + set.size, 0);
+
+    if (totalTags >= 2) {
+        if (!resetButton) {
+            resetButton = document.createElement("button");
+            resetButton.id = "reset-tags-btn";
+            resetButton.classList.add("filter-reset");
+            resetButton.textContent = "Réinitialiser les filtres";
+            resetButton.addEventListener("click", resetAllTags);
+            tagsContainer.appendChild(resetButton);
+            logEvent("info", "handleResetButton : Bouton de réinitialisation ajouté.");
+        }
+    } else if (resetButton) {
+        resetButton.remove();
+        logEvent("info", "handleResetButton : Bouton de réinitialisation supprimé.");
+    }
+}
+
 
 /* ==================================================================================== */
 /*               GESTION  DU FOCUS (PIÉGEAGE)                                          */

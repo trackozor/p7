@@ -8,8 +8,8 @@
 import { createFilterSection } from "./factory/dropdownFactory.js";
 import { fetchFilterOptions } from "../data/dataManager.js";
 import { logEvent, waitForElement } from "../utils/utils.js";
-import { removeTag , handleFilterSelection} from "../events/eventHandler.js"
-
+import { removeTag , handleFilterSelection, handleResetButton } from "../events/eventHandler.js"
+import { Search } from "./search/search.js";
 /* ==================================================================================== */
 /*  VARIABLES GLOBALES ET ÉTAT DES FILTRES                                             */
 /* ==================================================================================== */
@@ -97,23 +97,34 @@ export async function initFilters() {
  * @param {string} filterType - Type de filtre (ingredients, appliances, ustensils).
  * @param {string} filterValue - Valeur de l'option à supprimer.
  */
+/* ==================================================================================== */
+/*               SUPPRESSION D'UNE OPTION DANS LE DROPDOWN                             */
+/* ==================================================================================== */
+/**
+ * Supprime une option du dropdown une fois sélectionnée.
+ * - Vérifie si le bouton de réinitialisation doit être mis à jour.
+ *
+ * @param {string} filterType - Type de filtre (ingredients, appliances, ustensils).
+ * @param {string} filterValue - Valeur du filtre sélectionné.
+ */
 export function removeSelectedOption(filterType, filterValue) {
-    // Sélectionne le dropdown en fonction du type de filtre
     const dropdown = document.querySelector(`#${filterType} ul`);
     
-    // Vérifie que le dropdown existe avant d'effectuer une modification
     if (!dropdown) {
         return;
     }
 
-    // Trouve l'option correspondant à la valeur donnée dans la liste des éléments
     const option = [...dropdown.children].find(li => li.textContent === filterValue);
 
-    // Supprime l'option si elle est présente dans le dropdown
     if (option) {
         option.remove();
     }
+
+    // ✅ Vérification du nombre de tags après suppression d'une option
+    const totalTags = Object.values(activeFilters).reduce((sum, set) => sum + set.size, 0);
+    handleResetButton(totalTags);
 }
+
 
 /** ====================================================================================
  *  RÉINTRODUCTION D'UNE OPTION DANS LE DROPDOWN APRÈS SUPPRESSION D'UN TAG
@@ -164,54 +175,84 @@ export function restoreRemovedOption(filterType, filterValue) {
  * - Ajoute un bouton de suppression sur chaque tag pour permettre son retrait.
  * - Insère les tags mis à jour dans le DOM.
  */
+/* ==================================================================================== */
+/*               GESTION DE L'AFFICHAGE DES TAGS                                        */
+/* ==================================================================================== */
+/**
+ * Met à jour dynamiquement l'affichage des tags sous les dropdowns.
+ * - Ne gère que l'affichage des tags (sans le bouton de réinitialisation).
+ * - Appelle `handleResetButton()` si au moins 2 tags sont actifs.
+ *
+ * @returns {void} Ne retourne rien, met à jour l'affichage des tags dans le DOM.
+ */
 export function updateTagDisplay() {
     try {
-        // Sélectionne le conteneur des tags dans le DOM
-        const tagsContainer = document.querySelector("#selected-filters");
+        logEvent("info", "updateTagDisplay : Vérification et mise à jour des tags...");
 
-        // Vérifie que le conteneur des tags est présent avant de poursuivre
+        const tagsContainer = document.querySelector("#selected-filters");
         if (!tagsContainer) {
+            logEvent("error", "updateTagDisplay : Conteneur des tags introuvable.");
             return;
         }
 
-        // Nettoie le contenu actuel pour éviter les doublons de tags
+        // Nettoyage avant de recréer les tags
         tagsContainer.innerHTML = "";
-
-        // Crée un fragment pour améliorer les performances lors de l'ajout des éléments
         const fragment = document.createDocumentFragment();
+        let totalTags = 0; // Compteur du nombre de tags affichés
 
-        // Parcourt les filtres actifs et génère les tags correspondants
         Object.entries(activeFilters).forEach(([filterType, values]) => {
             values.forEach(filterValue => {
-                // Crée un élément `span` pour représenter le tag
                 const tagElement = document.createElement("span");
                 tagElement.classList.add("filter-tag");
                 tagElement.textContent = filterValue;
                 tagElement.dataset.filterType = filterType;
 
-                // Crée une icône pour supprimer le tag
                 const removeIcon = document.createElement("i");
                 removeIcon.classList.add("fas", "fa-times");
                 removeIcon.setAttribute("role", "button");
+                removeIcon.addEventListener("click", () => {
+                    removeTag(filterType, filterValue);
+                    updateTagDisplay(); // Réafficher les tags après suppression
+                    updateFilters(); // Réactualiser les dropdowns après suppression
+                });
 
-                // Ajoute un écouteur d'événement pour la suppression du tag au clic
-                removeIcon.addEventListener("click", () => removeTag(filterType, filterValue));
-
-                // Ajoute l'icône de suppression au tag
                 tagElement.appendChild(removeIcon);
-
-                // Ajoute le tag généré au fragment
                 fragment.appendChild(tagElement);
+                totalTags++;
             });
         });
 
-        // Insère les tags mis à jour dans le conteneur principal
         tagsContainer.appendChild(fragment);
+
+        //  Vérifie si 2 tags ou plus sont actifs et gère le bouton
+        handleResetButton(totalTags);
+
+        logEvent("success", "updateTagDisplay : Tags mis à jour avec succès.");
     } catch (error) {
-        // Capture et journalise toute erreur survenue lors de l'exécution
         logEvent("error", "updateTagDisplay : Erreur lors de la mise à jour des tags.", { error: error.message });
     }
 }
+
+/* ==================================================================================== */
+/*               GESTION DE LA RÉINITIALISATION DES FILTRES                            */
+/* ==================================================================================== */
+/**
+ * Supprime tous les tags sélectionnés et met à jour l'affichage.
+ */
+export function resetAllTags() {
+    logEvent("info", "resetAllTags : Suppression de tous les filtres actifs.");
+
+    Object.keys(activeFilters).forEach(filterType => {
+        activeFilters[filterType].clear();
+    });
+
+    updateTagDisplay();
+    updateFilters();
+    Search("", {}); // Relance la recherche sans filtre
+
+    logEvent("success", "resetAllTags : Tous les filtres ont été supprimés.");
+}
+
 
 /** ====================================================================================
  *  MISE À JOUR DES OPTIONS DANS LES DROPDOWNS SELON LES RECETTES FILTRÉES

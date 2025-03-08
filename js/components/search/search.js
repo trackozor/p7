@@ -64,7 +64,7 @@ export async function Search(query = "", filtersArray = {}) {
             results = getAllRecipes();
         }
 
-        // ✅ Affichage d'un message si aucune recette n'est trouvée
+        //  Affichage d'un message si aucune recette n'est trouvée
         if (results.length === 0) {
             displayErrorMessage("Aucune recette trouvée pour cette recherche.");
         }
@@ -78,7 +78,7 @@ export async function Search(query = "", filtersArray = {}) {
     } catch (error) {
         logEvent("error", "Erreur lors de la recherche.", { error: error.message });
 
-        // ✅ Affichage d'une erreur si un problème technique survient
+        //  Affichage d'une erreur si un problème technique survient
         displayErrorMessage("Une erreur est survenue lors de la recherche.");
         
         return [];
