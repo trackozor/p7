@@ -79,47 +79,40 @@ export function handleSearchWrapper(event) {
  * @param {Event} event - Événement du clic sur le bouton de dropdown.
  */
 export function handleDropdownClick(event) {
-    // Empêche la propagation pour éviter les fermetures accidentelles
     event.stopPropagation();
 
-    // Récupère le bouton cliqué et son type de filtre
     const button = event.currentTarget;
     const { filterType } = button.dataset;
-
-    // Vérifie que `filterType` est bien défini
     if (!filterType) {
         logEvent("error", "handleDropdownClick : Le bouton cliqué ne contient pas de dataset.filterType.");
-        console.error("handleDropdownClick : Problème de dataset :", button);
         return;
     }
 
-    // Sélectionne le conteneur du dropdown associé
     const dropdownContainer = button.nextElementSibling;
-    const allDropdowns = document.querySelectorAll(".dropdown-container");
-
-    // Vérifie si le conteneur du dropdown est bien trouvé
     if (!dropdownContainer) {
         logEvent("error", `handleDropdownClick : Aucun conteneur de dropdown trouvé pour "${filterType}".`);
         return;
     }
 
-    // Ferme tous les autres dropdowns avant d'en ouvrir un
-    allDropdowns.forEach(drop => {
+    // Ferme tous les autres dropdowns avant d'ouvrir un nouveau
+    document.querySelectorAll(".dropdown-container").forEach(drop => {
         if (drop !== dropdownContainer) {
             drop.classList.remove("active");
         }
     });
 
     // Basculer l'état du dropdown (ouverture/fermeture)
-    dropdownContainer.classList.toggle("active");
+    const isOpening = !dropdownContainer.classList.contains("active");
+    dropdownContainer.classList.toggle("active", isOpening);
 
-    // Si le dropdown est ouvert, active le piégeage du focus
-    if (dropdownContainer.classList.contains("active")) {
-        trapFocus(dropdownContainer);
+    // Si on ferme le dropdown, on efface les options visibles
+    if (!isOpening) {
+        dropdownContainer.innerHTML = ""; // Efface le contenu des options
     }
 
-    logEvent("info", `handleDropdownClick : Dropdown "${filterType}" ${dropdownContainer.classList.contains("active") ? "ouvert" : "fermé"}.`);
+    logEvent("info", `handleDropdownClick : Dropdown "${filterType}" ${isOpening ? "ouvert" : "fermé"}.`);
 }
+
 
 /* ==================================================================================== */
 /*                   WRAPPERS POUR ÉVITER LES DOUBLONS D'ÉVÉNEMENTS                    */
@@ -449,3 +442,19 @@ export function handleKeyboardNavigation(event) {
         logEvent("success", `handleKeyboardNavigation : Option sélectionnée "${activeElement.textContent}".`);
     }
 }
+/**
+ * Ferme tous les dropdowns ouverts si l'utilisateur clique en dehors
+ */
+function closeDropdownsOnClickOutside(event) {
+    const openDropdowns = document.querySelectorAll(".dropdown-container.active");
+    
+    openDropdowns.forEach(dropdown => {
+        // Vérifie si l'élément cliqué n'est pas à l'intérieur d'un dropdown
+        if (!dropdown.contains(event.target) && !event.target.closest(".dropdown-button")) {
+            dropdown.classList.remove("active");
+        }
+    });
+}
+
+// Ajout d'un écouteur global sur les clics
+document.addEventListener("click", closeDropdownsOnClickOutside);
