@@ -15,7 +15,7 @@ import { getAllRecipes } from "../data/dataManager.js";
 import { normalizeText } from "../utils/normalize.js"; 
 
 let suggestionIndex = -1; // Index de la suggestion sélectionnée
-let suggestionList = [];  // Liste des suggestions disponibles
+
 /* ==================================================================================== */
 /*                        SECTION 1 : GESTION DE LA SAISIE UTILISATEUR                  */
 /* ==================================================================================== */
@@ -29,12 +29,13 @@ let suggestionList = [];  // Liste des suggestions disponibles
  * @param {Event} event - Événement déclenché lors de la saisie dans la barre de recherche.
  * @returns {void} Ne retourne rien, mais déclenche la recherche et l’auto-complétion.
  */
-export function handleBarSearch(event) {
+export function handleBarSearch() {
     try {
         logEvent("test_start", "handleBarSearch : Début de la gestion de la saisie utilisateur.");
 
-        // Vérifie que l'élément `event.target` est valide et contient bien une valeur
-        const searchInput = event.target;
+        // Récupérer l'élément input correctement
+        const searchInput = document.querySelector("#search");
+        
         if (!searchInput || typeof searchInput.value !== "string") {
             logEvent("error", "handleBarSearch : Élément input introuvable ou valeur non valide.");
             return;
@@ -43,27 +44,28 @@ export function handleBarSearch(event) {
         // Nettoyage et normalisation de la requête utilisateur (suppression des espaces inutiles, mise en minuscules)
         const query = searchInput.value.trim().toLowerCase();
 
-        // Vérifie si l'utilisateur a tapé 3 caractères ou plus pour activer l'auto-complétion
         if (query.length >= 3) {
             logEvent("info", `handleBarSearch : Activation de l'auto-complétion pour '${query}'.`);
             generateAutoCompletion(query);
         } else {
-            // Si moins de 3 caractères, on efface la liste des suggestions
             logEvent("info", "handleBarSearch : Effacement des suggestions (moins de 3 caractères).");
             clearSuggestions();
         }
 
-        // Vérifie si la requête est valide (au moins 3 caractères) avant d'exécuter la recherche
         if (query.length >= 3) {
             logEvent("info", `handleBarSearch : Recherche déclenchée pour '${query}' depuis la barre de recherche.`);
-            Search(query, "searchBar");  // On passe "searchBar" comme type de recherche
+            Search(query, "searchBar");  
+        } else if (query.length === 0) {
+            logEvent("info", "handleBarSearch : Champ vide, affichage de toutes les recettes.");
+            Search("", {}); 
         }
 
-        logEvent("test_end", "handleBarSearch : Gestion de la saisie utilisateur terminée.");
+        logEvent("test_end", " handleBarSearch : Gestion de la saisie utilisateur terminée.");
     } catch (error) {
         logEvent("error", "handleBarSearch : Erreur lors du traitement de la recherche.", { error: error.message });
     }
 }
+
 
 /** ====================================================================================
  *  SECTION 2 : AUTO-COMPLÉTION ET SUGGESTIONS
@@ -80,12 +82,10 @@ export function handleBarSearch(event) {
  * @param {string} query - Texte entré par l'utilisateur.
  * @returns {void} Ne retourne rien, mais met à jour la liste des suggestions affichées.
  */
-
-function generateAutoCompletion(query) {
+export function generateAutoCompletion(query) {
     try {
         logEvent("test_start", `generateAutoCompletion : Début pour '${query}'`);
 
-        // Sélection des éléments DOM nécessaires
         const searchInput = document.querySelector("#search");
         const suggestionBox = document.querySelector("#autocomplete-suggestions");
 
@@ -94,8 +94,7 @@ function generateAutoCompletion(query) {
             return;
         }
 
-        // Normalisation de la requête utilisateur
-        const normalizedQuery = normalizeText(query.trim());
+        const normalizedQuery = normalizeText(query.trim().toLowerCase());
 
         if (normalizedQuery.length < 3) {
             suggestionBox.innerHTML = "";
@@ -103,64 +102,48 @@ function generateAutoCompletion(query) {
             return;
         }
 
-        //  Récupération des recettes disponibles
         const recipes = getAllRecipes();
         if (!Array.isArray(recipes) || recipes.length === 0) {
             logEvent("warn", "generateAutoCompletion : Aucune recette disponible.");
-            suggestionBox.innerHTML = "<p class='no-suggestion'>Aucune suggestion</p>";
+            suggestionBox.innerHTML = "<li class='no-suggestion'>Aucune suggestion</li>";
             return;
         }
 
-        //  Récupération du cache des filtres
         const activeTags = getActiveTags();
-        
-        //  Génération de la liste des suggestions enrichies
         const suggestionSet = new Set();
 
         recipes.forEach(recipe => {
-            // Ajout du nom de la recette si elle correspond à la recherche
-            if (normalizeText(recipe.name).includes(normalizedQuery)) {
-                suggestionSet.add(recipe.name);
+            if (normalizeText(recipe.name.toLowerCase()).includes(normalizedQuery)) {
+                suggestionSet.add(recipe.name.toLowerCase());
             }
-
-            // Ajout des ingrédients qui correspondent
             recipe.ingredients.forEach(ing => {
-                if (normalizeText(ing.ingredient).includes(normalizedQuery)) {
-                    suggestionSet.add(ing.ingredient);
+                if (normalizeText(ing.ingredient.toLowerCase()).includes(normalizedQuery)) {
+                    suggestionSet.add(ing.ingredient.toLowerCase());
                 }
             });
-
-            // Ajout de l'appareil si correspondant
-            if (normalizeText(recipe.appliance).includes(normalizedQuery)) {
-                suggestionSet.add(recipe.appliance);
+            if (normalizeText(recipe.appliance.toLowerCase()).includes(normalizedQuery)) {
+                suggestionSet.add(recipe.appliance.toLowerCase());
             }
-
-            // Ajout des ustensiles correspondants
             recipe.ustensils.forEach(ust => {
-                if (normalizeText(ust).includes(normalizedQuery)) {
-                    suggestionSet.add(ust);
+                if (normalizeText(ust.toLowerCase()).includes(normalizedQuery)) {
+                    suggestionSet.add(ust.toLowerCase());
                 }
             });
-
-            // Ajout des tags actifs (cache de filtres)
             Object.values(activeTags).flat().forEach(tag => {
-                if (normalizeText(tag).includes(normalizedQuery)) {
-                    suggestionSet.add(tag);
+                if (normalizeText(tag.toLowerCase()).includes(normalizedQuery)) {
+                    suggestionSet.add(tag.toLowerCase());
                 }
             });
         });
 
-        // Limite à 10 suggestions max
-        suggestionList = Array.from(suggestionSet).slice(0, 10);
+        const suggestionList = [...suggestionSet].sort().slice(0, 10);
 
-        // Vérification si des suggestions ont été trouvées
         if (suggestionList.length === 0) {
-            suggestionBox.innerHTML = "<p class='no-suggestion'>Aucune suggestion</p>";
+            suggestionBox.innerHTML = "<li class='no-suggestion'>Aucune suggestion</li>";
             logEvent("warn", `generateAutoCompletion : Aucune suggestion trouvée pour '${query}'`);
             return;
         }
 
-        //  Mise à jour dynamique des suggestions affichées
         suggestionBox.innerHTML = suggestionList
             .map((suggestion, index) => 
                 `<li class="suggestion-item ${index === suggestionIndex ? 'selected' : ''}" data-index="${index}">
@@ -171,7 +154,6 @@ function generateAutoCompletion(query) {
 
         logEvent("info", `generateAutoCompletion : ${suggestionList.length} suggestion(s) générée(s) pour '${query}'.`);
 
-        // Ajout des événements de sélection
         document.querySelectorAll(".suggestion-item").forEach(item => {
             item.addEventListener("click", () => selectSuggestion(item.textContent));
         });
