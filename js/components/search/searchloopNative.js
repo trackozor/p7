@@ -17,17 +17,18 @@ import { updateFilters } from "../filterManager.js";
 import { matchesSearchCriteria, matchFilters } from "./search.js"; 
 
 
-/*===================================================================*/
-/*   Recherche avec une boucle `for`                               */
-/*===================================================================*/
+/* ==================================================================================== */
+/*    Recherche avec une boucle `for`                                                 */
+/* ==================================================================================== */
 /**
- * Recherche des recettes en parcourant la liste avec une boucle `for`.
+ * Effectue une recherche parmi les recettes en utilisant des boucles `for` au lieu de méthodes fonctionnelles.
  *
- * - Normalise la requête avant de comparer les données.
- * - Applique les critères de recherche et met à jour les filtres actifs.
- *
- * @param {string} query - Texte recherché.
- * @returns {Promise<Array>} Liste des recettes correspondant aux critères.
+ * Cette implémentation se veut optimisée pour comparer les performances avec la version fonctionnelle.
+ * 
+ * @async
+ * @function searchRecipesLoopNative
+ * @param {string} query - La chaîne de texte saisie par l'utilisateur pour la recherche.
+ * @returns {Promise<Array>} Liste des recettes correspondant aux critères de recherche.
  */
 export async function searchRecipesLoopNative(query) {
     try {
@@ -46,17 +47,21 @@ export async function searchRecipesLoopNative(query) {
             return [];
         }
 
-        const results = [];
-
-        for (const recipe of recipes) {
-            if (matchesSearchCriteria(recipe, normalizedQuery) || matchFilters(recipe)) {
-                results.push(recipe);
+        let results = [];
+        let mappedResults = []; // Regroupe extraction des noms et filtrage en une seule boucle
+        for (let i = 0; i < recipes.length; i++) {
+            if (matchesSearchCriteria(recipes[i], normalizedQuery) || matchFilters(recipes[i])) {
+                results.push(recipes[i]);
+                mappedResults.push(recipes[i].name);
             }
         }
 
         logEvent("success", `searchRecipesLoopNative : ${results.length} recette(s) trouvée(s) pour "${query}".`);
 
-        updateFilters(results);
+        for (let i = 0; i < results.length; i++) {
+            updateFilters(results[i]); 
+        }
+
         return results;
     } catch (error) {
         logEvent("error", "searchRecipesLoopNative : Erreur lors de la recherche.", { error: error.message });

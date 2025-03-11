@@ -14,51 +14,48 @@ import { logEvent } from "../../utils/utils.js";
 import { getAllRecipes } from "../../data/dataManager.js";
 import { normalizeText } from "../../utils/normalize.js";
 import { updateFilters } from "../filterManager.js";
-import { matchesSearchCriteria, matchFilters } from "./search.js";
+import {  matchFilters } from "./search.js";
 
 /* ====================================================================================
 /*                     RECHERCHE DES RECETTES AVEC PROGRAMMATION FONCTIONNELLE
 /* ==================================================================================== */
+
 /**
- * Recherche des recettes en utilisant `.filter()`.
- *
- * - Normalise la requête avant de comparer les données.
- * - Vérifie que la recherche contient au moins 3 caractères.
- * - Applique les critères de recherche et met à jour les filtres.
- *
+ * Recherche des recettes en mode fonctionnel avec `.filter()`.
+ * - Supprime les redondances dans la normalisation des textes.
+ * - Regroupe les vérifications en une seule boucle pour réduire les parcours.
+ * 
  * @param {string} query - Texte recherché.
  * @returns {Promise<Array>} Liste des recettes correspondant aux critères.
  */
 export async function searchRecipesFunctional(query) {
     try {
-        logEvent("info", `searchRecipesFunctional : Début de la recherche pour '${query}'.`);
-
-        // Vérifie si la requête est valide
         if (!query || typeof query !== "string" || query.trim().length < 3) {
             logEvent("warning", "searchRecipesFunctional : Requête trop courte, minimum 3 caractères requis.");
             return [];
         }
 
-        // Normalisation de la requête pour éviter les différences de casse et d'accents
+        logEvent("info", `searchRecipesFunctional : Début de la recherche pour '${query}'.`);
+
+        // Normalisation unique de la requête
         const normalizedQuery = normalizeText(query.trim());
 
-        // Récupération de toutes les recettes en base de données
+        // Récupération des recettes
         const recipes = await getAllRecipes();
-
-        // Vérifie que la base de données contient bien des recettes
         if (!Array.isArray(recipes) || recipes.length === 0) {
-            logEvent("error", "searchRecipesFunctional : Aucune recette disponible en base de données.");
+            logEvent("error", "searchRecipesFunctional : Aucune recette disponible.");
             return [];
         }
 
-        // Application des critères de recherche et des filtres actifs
-        const results = recipes.filter(recipe =>
-            matchesSearchCriteria(recipe, normalizedQuery) || matchFilters(recipe)
-        );
+        // 🔥 Optimisation : Regroupement des vérifications en une seule boucle `.filter()`
+        const results = recipes.filter(recipe => {
+            const normalizedRecipeName = normalizeText(recipe.name);
+            return normalizedRecipeName.includes(normalizedQuery) || matchFilters(recipe);
+        });
 
         logEvent("success", `searchRecipesFunctional : ${results.length} recette(s) trouvée(s) pour '${query}'.`);
 
-        // Mise à jour des filtres disponibles après la recherche
+        // Mise à jour des filtres après la recherche
         updateFilters(results);
 
         return results;

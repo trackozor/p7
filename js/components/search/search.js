@@ -39,7 +39,7 @@ let searchMode = "functional";
  */
 export async function Search(query = "", filtersArray = {}) {
     try {
-        logEvent("test_start", ` Début de la recherche (query="${query}", filters=${JSON.stringify(filtersArray)})`);
+        logEvent("test_start", `Début de la recherche (query="${query}", filters=${JSON.stringify(filtersArray)})`);
 
         const sanitizedQuery = query.trim().toLowerCase();
         const hasQuery = sanitizedQuery.length >= 3;
@@ -47,21 +47,34 @@ export async function Search(query = "", filtersArray = {}) {
 
         let results = [];
 
+        //  Cas 1 : Recherche uniquement via la barre de recherche
         if (hasQuery && !hasTags) {
             logEvent("info", `Search : Recherche avec texte seul "${sanitizedQuery}".`);
             results = await searchByQuery(sanitizedQuery);
         } 
+        
+        //  Cas 2 : Recherche uniquement via les filtres (dropdowns)
         else if (!hasQuery && hasTags) {
             logEvent("info", `Search : Recherche avec filtres seuls.`);
             results = await searchByTags(filtersArray);
         } 
+        
+        //  Cas 3 : Recherche combinée (barre de recherche + filtres actifs)
         else if (hasQuery && hasTags) {
             logEvent("info", `Search : Recherche combinée avec texte "${sanitizedQuery}" et tags.`);
             results = await searchCombined(sanitizedQuery, filtersArray);
         } 
+        
+        //  Cas 4 : Aucun critère actif (afficher toutes les recettes)
         else {
             logEvent("warn", "Search : Aucun critère spécifié, affichage de toutes les recettes.");
             results = getAllRecipes();
+        }
+
+        // Vérifie que la recherche est bien mise à jour après suppression d’un tag
+        if (!hasTags && hasQuery) {
+            logEvent("info", "Search : Suppression d’un filtre, recalcul de la recherche avec texte.");
+            results = await searchByQuery(sanitizedQuery);
         }
 
         //  Affichage d'un message si aucune recette n'est trouvée
@@ -78,12 +91,13 @@ export async function Search(query = "", filtersArray = {}) {
     } catch (error) {
         logEvent("error", "Erreur lors de la recherche.", { error: error.message });
 
-        //  Affichage d'une erreur si un problème technique survient
+        // Affichage d'une erreur si un problème technique survient
         displayErrorMessage("Une erreur est survenue lors de la recherche.");
         
         return [];
     }
 }
+
 
 /* ====================================================================================
 /*             EXÉCUTION DE LA RECHERCHE SELON LE MODE ACTIF
@@ -145,12 +159,20 @@ export function setSearchMode(mode, query = "") {
 async function searchByQuery(query) {
     logEvent("info", `searchByQuery : Recherche pour "${query}".`);
 
-    // Exécute la recherche en fonction du mode actif (boucles for ou filter())
     let recipes = await executeSearch(query);
 
-    // Filtre les recettes en fonction des critères de recherche
-    return recipes.filter(recipe => matchesSearchCriteria(recipe, query));
+    // Vérification que les filtres ne sont plus actifs
+    const hasActiveTags = document.querySelectorAll('.filter-tag').length > 0;
+
+    if (!hasActiveTags) {
+        logEvent("info", "searchByQuery : Aucun filtre actif, mise à jour avec la recherche texte seule.");
+        return recipes;
+    }
+
+    // Si des tags sont encore actifs, appliquer le filtrage combiné
+    return recipes.filter(recipe => matchesSearchCriteria(recipe, query) && matchFilters(recipe));
 }
+
 
 /* ====================================================================================
 /*                        RECHERCHE PAR TAGS SEULS

@@ -205,13 +205,13 @@ export function getIndexSelectors() {
             searchInputs: safeQuerySelectorAll(".dropdown-search"),
             searchIcons: safeQuerySelectorAll(".search-icon-button"),
 
-        // Attente correcte des filtres si non disponibles immédiatement
-        ingredients: safeQuerySelector('[data-filter-type="ingredients"]') ||  waitForElement('[data-filter-type="ingredients"]'),
-        appliances: safeQuerySelector('[data-filter-type="appliances"]') ||  waitForElement('[data-filter-type="appliances"]'),
-        ustensils: safeQuerySelector('[data-filter-type="ustensils"]') ||  waitForElement('[data-filter-type="ustensils"]'),
+            // Attente correcte des filtres si non disponibles immédiatement
+            ingredients: safeQuerySelector('[data-filter-type="ingredients"]') ||  waitForElement('[data-filter-type="ingredients"]'),
+            appliances: safeQuerySelector('[data-filter-type="appliances"]') ||  waitForElement('[data-filter-type="appliances"]'),
+            ustensils: safeQuerySelector('[data-filter-type="ustensils"]') ||  waitForElement('[data-filter-type="ustensils"]'),
         },
 
-        /* Recettes                    */
+        /* Recettes */
         recipes: {
             recipeCards: safeQuerySelector(".recipe-card", true) || null,
         },
