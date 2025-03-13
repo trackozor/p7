@@ -111,10 +111,6 @@ export function handleDropdownClick(event) {
     const isOpening = !dropdownContainer.classList.contains("active");
     dropdownContainer.classList.toggle("active", isOpening);
 
-    // Si on ferme le dropdown, on efface les options visibles
-    if (!isOpening) {
-        dropdownContainer.innerHTML = ""; // Efface le contenu des options
-    }
 
     logEvent("info", `handleDropdownClick : Dropdown "${filterType}" ${isOpening ? "ouvert" : "fermé"}.`);
 }
