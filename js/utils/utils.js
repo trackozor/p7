@@ -237,6 +237,10 @@ export function removeClass(element, className) {
         return false; // Retourne `false` en cas d'erreur
     }
 }
+
+/**=============================================================================
+ *  3.1 : DÉTECTION DE LA PAGE ACTUELLE
+ *================================================================================ */
 /**
  * Attend qu'un élément spécifique apparaisse dans le DOM avant de l’utiliser.
  * 

@@ -6,12 +6,14 @@
 /* ==================================================================================== */
 
 import { logEvent, displayErrorMessage } from "../utils/utils.js";
-import { updateTagDisplay, updateFilters, activeFilters, resetAllTags} from "../components/filterManager.js";
+import {  updateFilters, activeFilters} from "../components/filterManager.js";
 import { trapFocus } from "../utils/accessibility.js";
 import { KEY_CODES } from "../config/constants.js";
 import { Search } from "../components/search/search.js"; 
 import { handleBarSearch } from "../components/searchBarManager.js";
 import {restoreRemovedOption} from "../components/dropdownManager.js";
+import { resetAllTags, updateTagDisplay } from "../components/tagManager.js";
+
 // Déclaration globale de filtersArray pour utilisation dans tout le fichier
 export let filtersArray = {
     ingredients: [],
@@ -356,28 +358,28 @@ export function removeTag(filterType, filterValue) {
 /**
  * Vérifie le nombre de tags actifs et affiche le bouton reset si nécessaire.
  */
+
 export function handleResetButton() {
     const tagsContainer = document.querySelector("#selected-filters");
     let resetButton = document.querySelector("#reset-tags-btn");
 
-    // Compte le nombre total de tags actifs
-    const totalTags = Object.values(activeFilters).reduce((sum, set) => sum + set.size, 0);
-
-    if (totalTags >= 2) {
-        if (!resetButton) {
-            resetButton = document.createElement("button");
-            resetButton.id = "reset-tags-btn";
-            resetButton.classList.add("filter-reset");
-            resetButton.textContent = "Réinitialiser les filtres";
-            resetButton.addEventListener("click", resetAllTags);
-            tagsContainer.appendChild(resetButton);
-            logEvent("info", "handleResetButton : Bouton de réinitialisation ajouté.");
-        }
-    } else if (resetButton) {
-        resetButton.remove();
-        logEvent("info", "handleResetButton : Bouton de réinitialisation supprimé.");
+    // Vérifie si le bouton existe déjà
+    if (!resetButton) {
+        resetButton = document.createElement("button");
+        resetButton.id = "reset-tags-btn";
+        resetButton.classList.add("filter-reset");
+        resetButton.textContent = "Réinitialiser les filtres";
+        resetButton.addEventListener("click", resetAllTags);
+        tagsContainer.appendChild(resetButton);
     }
+
+    // Affichage du bouton uniquement si 2 tags ou plus sont actifs
+    const totalTags = Object.values(activeFilters).reduce((sum, set) => sum + set.size, 0);
+    resetButton.style.display = totalTags >= 2 ? "block" : "none";
+
+    logEvent("info", `handleResetButton : ${totalTags >= 2 ? "Affiché" : "Caché"}`);
 }
+
 
 /* ==================================================================================== */
 /*               GESTION  DU FOCUS (PIÉGEAGE)                                          */

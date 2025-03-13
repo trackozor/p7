@@ -8,21 +8,21 @@
 import { createFilterSection } from "./factory/dropdownFactory.js";
 import { fetchFilterOptions } from "../data/dataManager.js";
 import { logEvent, waitForElement, removeDuplicates } from "../utils/utils.js";
-import { removeTag , handleFilterSelection, handleResetButton } from "../events/eventHandler.js"
-import { Search } from "./search/search.js";
-import { safeQuerySelector } from "../config/domSelectors.js";
 import { removeSelectedOption, restoreRemovedOption } from "./dropdownManager.js";
 import { normalizeText } from "../utils/normalize.js";
+import { handleFilterSelection } from "../events/eventHandler.js";
 
 /* ==================================================================================== */
 /*  VARIABLES GLOBALES ET ÉTAT DES FILTRES                                             */
 /* ==================================================================================== */
+
 export let activeFilters = {
     ingredients: new Set(),
     appliances: new Set(),
     ustensils: new Set()
 };
-let displayedTags = new Map();
+
+
 const filterContainers = {}; // Stocke les éléments DOM des dropdowns
 
 /* ==================================================================================== */
@@ -83,7 +83,6 @@ export async function initFilters() {
     // Journalisation de la fin de l'initialisation des filtres
     logEvent("success", "Filtres chargés.");
 }
-
 
 /** ====================================================================================
  *  MISE À JOUR DES FILTRES
@@ -162,100 +161,7 @@ export function updateFilters(filteredRecipes = []) {
     }
 }
 
-/* ==================================================================================== */
-/*               GESTION DE LA RÉINITIALISATION DES FILTRES                            */
-/* ==================================================================================== */
-/**
- * Supprime tous les tags sélectionnés et met à jour l'affichage.
- */
-export function resetAllTags() {
-    logEvent("info", "resetAllTags : Suppression de tous les filtres actifs.");
 
-    Object.keys(activeFilters).forEach(filterType => {
-        activeFilters[filterType].clear();
-    });
-
-    updateTagDisplay();
-    updateFilters();
-    Search("", {}); // Relance la recherche sans filtre
-
-    logEvent("success", "resetAllTags : Tous les filtres ont été supprimés.");
-}
-
-/* ==================================================================================== */
-/*               GESTION DE L'AFFICHAGE DES TAGS                                        */
-/* ==================================================================================== */
-/**
- * Met à jour dynamiquement l'affichage des tags sous les dropdowns.
- * - Ne gère que l'affichage des tags (sans le bouton de réinitialisation).
- * - Appelle `handleResetButton()` si au moins 2 tags sont actifs.
- *
- * @returns {void} Ne retourne rien, met à jour l'affichage des tags dans le DOM.
- */
-export function updateTagDisplay() {
-    try {
-        logEvent("info", "updateTagDisplay : Vérification et mise à jour des tags...");
-
-        const tagsContainer = safeQuerySelector("#selected-filters");
-        if (!tagsContainer) {
-            logEvent("error", "updateTagDisplay : Conteneur des tags introuvable.");
-            return;
-        }
-
-        const newTags = new Map();
-        let totalTags = 0;
-
-        //  Mise à jour du cache au lieu de tout supprimer
-        Object.entries(activeFilters).forEach(([filterType, values]) => {
-            values.forEach(filterValue => {
-                const tagKey = `${filterType}-${filterValue}`;
-
-                // Si le tag est déjà affiché, on le garde
-                if (displayedTags.has(tagKey)) {
-                    newTags.set(tagKey, displayedTags.get(tagKey));
-                } else {
-                    //  Création d'un nouveau tag
-                    const tagElement = document.createElement("span");
-                    tagElement.classList.add("filter-tag");
-                    tagElement.textContent = filterValue;
-                    tagElement.dataset.filterType = filterType;
-
-                    //  Icône pour supprimer le tag
-                    const removeIcon = document.createElement("i");
-                    removeIcon.classList.add("fas", "fa-times");
-                    removeIcon.setAttribute("role", "button");
-                    removeIcon.addEventListener("click", () => {
-                        removeTag(filterType, filterValue);
-                        updateFilters(); // Mise à jour des dropdowns
-                        updateTagDisplay(); // Rafraîchit l'affichage des tags
-                    });
-
-                    tagElement.appendChild(removeIcon);
-                    newTags.set(tagKey, tagElement);
-                }
-                totalTags++;
-            });
-        });
-
-        //  On vide uniquement ce qui doit être mis à jour (meilleure perf)
-        tagsContainer.innerHTML = "";
-        newTags.forEach(tag => tagsContainer.appendChild(tag));
-
-        //  Gestion du bouton de réinitialisation dès 2 tags affichés
-            handleResetButton(totalTags, tagsContainer);
-
-        // Mise à jour du cache
-        displayedTags = newTags;
-
-        //  Lance la recherche avec les nouveaux filtres actifs
-        Search("", activeFilters);
-
-        logEvent("success", "updateTagDisplay : Tags mis à jour avec succès.");
-
-    } catch (error) {
-        logEvent("error", "updateTagDisplay : Erreur lors de la mise à jour des tags.", { error: error.message });
-    }
-}
 
 
 
