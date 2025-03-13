@@ -11,8 +11,7 @@ import { trapFocus } from "../utils/accessibility.js";
 import { KEY_CODES } from "../config/constants.js";
 import { Search } from "../components/search/search.js"; 
 import { handleBarSearch } from "../components/searchBarManager.js";
-import {restoreRemovedOption} from "../components/dropdownManager.js";
-import { resetAllTags, updateTagDisplay } from "../components/tagManager.js";
+import { resetAllTags, updateTagDisplay, removeTag } from "../components/tagManager.js";
 
 // Déclaration globale de filtersArray pour utilisation dans tout le fichier
 export let filtersArray = {
@@ -236,7 +235,6 @@ export function handleTagRemovalWrapper(event) {
  * @param {string} filterType - Type de filtre sélectionné (ingredients, appliances, ustensils).
  * @param {string} filterValue - Valeur du filtre sélectionné.
  */
-
 export function handleFilterSelection(filterType, filterValue) {
     logEvent("info", `handleFilterSelection : Sélection de "${filterValue}" pour "${filterType}".`);
 
@@ -285,63 +283,6 @@ export function handleTagAddition(filterType, filterValue) {
         Search("", filtersArray);
     } else {
         logEvent("info", "handleTagAddition : Aucun filtre actif, pas de recherche lancée.");
-    }
-}
-
-/** ====================================================================================
- *  SUPPRESSION D' UN TAG LORS DU CLIQUE SUR LE BOUTON DE FERMETURE
- * ==================================================================================== */
-/**
- * Supprime un filtre actif et met à jour dynamiquement l'affichage.
- *
- * - Vérifie la validité des paramètres avant d'exécuter l'opération.
- * - Empêche la suppression d'un filtre qui n'est pas actif.
- * - Supprime le filtre de `activeFilters` et met à jour les tags affichés.
- * - Réintroduit l'option dans le dropdown correspondant.
- * - Met à jour les résultats en appelant `Search()` avec les filtres restants.
- * - Journalise chaque étape pour assurer un suivi et faciliter le debugging.
- *
- * @param {string} filterType - Type de filtre à supprimer (ingredients, appliances, ustensils).
- * @param {string} filterValue - Valeur spécifique du filtre à supprimer.
- */
-export function removeTag(filterType, filterValue) {
-    try {
-        // Vérification de la validité des paramètres
-        if (!filterType || !filterValue) {
-            logEvent("warn", "removeTag : Paramètres invalides.");
-            return;
-        }
-
-        logEvent("info", `removeTag : Suppression du tag '${filterValue}' (${filterType}).`);
-
-        // Vérifie que le filtre est bien actif avant de le supprimer
-        if (!activeFilters[filterType].has(filterValue)) {
-            logEvent("warn", `removeTag : Le filtre '${filterValue}' (${filterType}) n'est pas actif.`);
-            return;
-        }
-
-        // Suppression du filtre de la liste des filtres actifs
-        activeFilters[filterType].delete(filterValue);
-
-        // Mise à jour de l'affichage des tags et réintégration de l'option dans le dropdown
-        updateTagDisplay();
-        restoreRemovedOption(filterType, filterValue);
-
-        // Conversion de l'état des filtres actifs en tableaux pour traitement
-        const filtersArray = {
-            ingredients: Array.from(activeFilters["ingredients"]),
-            appliances: Array.from(activeFilters["appliances"]),
-            ustensils: Array.from(activeFilters["ustensils"])
-        }
-
-        logEvent("debug", "Filtres actifs après suppression :", filtersArray);
-
-        // Mise à jour des résultats en fonction des nouveaux filtres actifs
-        Search("", filtersArray);
-        
-    } catch (error) {
-        // Gestion et journalisation des erreurs
-        logEvent("error", "removeTag : Erreur lors de la suppression du filtre.", { error: error.message });
     }
 }
 

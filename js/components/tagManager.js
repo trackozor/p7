@@ -6,19 +6,16 @@
 /* ==================================================================================== */
 
 import { logEvent} from "../utils/utils.js";
-import { removeTag } from "../events/eventHandler.js";
 import { updateFilters } from "../components/filterManager.js";
 import { Search } from "../components/search/search.js";
 import { safeQuerySelector } from "../config/domSelectors.js";
 import { activeFilters } from "../components/filterManager.js";
-
+import {restoreRemovedOption} from "../components/dropdownManager.js";
 export let totalTags = 0;
 
 /**================================================================================
  * GESTION DES TAGS
  * =================================================================================*/
-
-
 /**
  * Met à jour dynamiquement l'affichage des tags sous les dropdowns.
  *
@@ -65,6 +62,32 @@ export function updateTagDisplay() {
     logEvent("success", "updateTagDisplay : Tags mis à jour.");
 }
 
+/** ====================================================================================
+ *  SUPPRESSION D' UN TAG LORS DU CLIQUE SUR LE BOUTON DE FERMETURE
+ * ==================================================================================== */
+/**
+ * Supprime un filtre actif et met à jour l'affichage.
+ *
+ * @param {string} filterType - Type du filtre à supprimer (ingredients, appliances, ustensils).
+ * @param {string} filterValue - Valeur du filtre à supprimer.
+ */
+export function removeTag(filterType, filterValue) {
+    logEvent("info", `removeTag : Suppression du filtre '${filterValue}' (${filterType}).`);
+
+    // Suppression du filtre actif
+    activeFilters[filterType].delete(filterValue);
+
+    // Mise à jour de l'affichage des tags et du dropdown
+    updateTagDisplay();
+    restoreRemovedOption(filterType, filterValue);
+
+    // Relance la recherche avec les nouveaux filtres actifs
+    Search("", activeFilters);
+}
+
+/**====================================================================================
+ * REINITIALISATION  DES TAGS
+ * ====================================================================================*/
 /**
  * Supprime tous les tags sélectionnés et met à jour l'affichage.
  */
