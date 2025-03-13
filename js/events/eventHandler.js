@@ -6,12 +6,12 @@
 /* ==================================================================================== */
 
 import { logEvent, displayErrorMessage } from "../utils/utils.js";
-import { updateTagDisplay, updateFilters, activeFilters, resetAllTags, restoreRemovedOption} from "../components/filterManager.js";
+import { updateTagDisplay, updateFilters, activeFilters, resetAllTags} from "../components/filterManager.js";
 import { trapFocus } from "../utils/accessibility.js";
 import { KEY_CODES } from "../config/constants.js";
 import { Search } from "../components/search/search.js"; 
 import { handleBarSearch } from "../components/searchBarManager.js";
-
+import {restoreRemovedOption} from "../components/dropdownManager.js";
 // Déclaration globale de filtersArray pour utilisation dans tout le fichier
 export let filtersArray = {
     ingredients: [],

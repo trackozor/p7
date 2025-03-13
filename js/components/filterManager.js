@@ -7,11 +7,12 @@
 
 import { createFilterSection } from "./factory/dropdownFactory.js";
 import { fetchFilterOptions } from "../data/dataManager.js";
-import { logEvent, waitForElement, removeDuplicates, capitalize } from "../utils/utils.js";
+import { logEvent, waitForElement, removeDuplicates } from "../utils/utils.js";
 import { removeTag , handleFilterSelection, handleResetButton } from "../events/eventHandler.js"
 import { Search } from "./search/search.js";
-import { safeQuerySelector } from "../config/domSelectors.js"; 
-
+import { safeQuerySelector } from "../config/domSelectors.js";
+import { removeSelectedOption, restoreRemovedOption } from "./dropdownManager.js";
+import { normalizeText } from "../utils/normalize.js";
 
 /* ==================================================================================== */
 /*  VARIABLES GLOBALES ET ÉTAT DES FILTRES                                             */
@@ -28,42 +29,58 @@ const filterContainers = {}; // Stocke les éléments DOM des dropdowns
 /*  INITIALISATION DES FILTRES                                                         */
 /* ==================================================================================== */
 /**
- * Charge les options des filtres et les insère dynamiquement dans le DOM.
+ * Initialise les filtres de recherche et les insère dans le DOM.
  *
- * - Récupère les options des filtres disponibles via `fetchFilterOptions()`.
- * - Vérifie que le conteneur des filtres est présent avant de le manipuler.
- * - Nettoie le conteneur existant avant d'insérer de nouveaux éléments.
+ * - Attend la disponibilité du conteneur des filtres avant d'agir.
+ * - Récupère les options de filtres via `fetchFilterOptions()`.
+ * - Supprime les doublons en utilisant `removeDuplicates()`.
+ * - Normalise les noms de filtres avec `normalizeText()`.
  * - Génère dynamiquement les sections de filtres avec `createFilterSection()`.
- * - Insère les filtres dans le DOM pour permettre leur utilisation.
- * - Journalise chaque étape pour le suivi et la gestion des erreurs.
+ * - Insère les sections filtrées dans le DOM.
+ * - Journalise chaque étape pour faciliter le débogage.
  *
  * @async
- * @returns {Promise<void>} Ne retourne rien, mais met à jour le DOM avec les filtres.
+ * @returns {Promise<void>} Ne retourne rien mais met à jour l'affichage des filtres dans le DOM.
  */
 export async function initFilters() {
+    // Enregistre le début de l'initialisation des filtres pour le suivi
     logEvent("test_start_filter", "Init des filtres...");
 
+    // Attend la présence du conteneur des filtres dans le DOM
     const filtersContainer = await waitForElement("#filters .filter-dropdowns", 3000);
     if (!filtersContainer) {
-        return logEvent("error", "Aucun conteneur de filtres trouvé.");
+        logEvent("error", "Aucun conteneur de filtres trouvé.");
+        return;
     }
 
+    // Récupération des options de filtres (ingrédients, appareils, ustensiles)
     const rawData = fetchFilterOptions();
     if (!rawData || Object.values(rawData).every(arr => arr.length === 0)) {
-        return logEvent("warn", "Aucun filtre disponible.");
+        logEvent("warn", "Aucun filtre disponible.");
+        return;
     }
 
+    // Suppression des doublons dans les filtres
     const filterData = removeDuplicates(rawData);
     
+    // Vide le conteneur des filtres avant d'insérer de nouvelles options
     filtersContainer.innerHTML = "";
+
+    // Création d'un fragment pour optimiser les manipulations DOM
     const fragment = document.createDocumentFragment();
+
+    // Boucle sur chaque catégorie de filtres (ingrédients, appareils, ustensiles)
     Object.entries(filterData).forEach(([type, values]) => {
         if (values.size) {
-          fragment.appendChild(createFilterSection(capitalize(type), type, values));
+            // Utilisation de normalizeText() au lieu de capitalize()
+            fragment.appendChild(createFilterSection(normalizeText(type), type, values));
         }
     });
 
+    // Insère les sections filtrées dans le conteneur principal des filtres
     filtersContainer.appendChild(fragment);
+
+    // Journalisation de la fin de l'initialisation des filtres
     logEvent("success", "Filtres chargés.");
 }
 
@@ -163,70 +180,6 @@ export function resetAllTags() {
     Search("", {}); // Relance la recherche sans filtre
 
     logEvent("success", "resetAllTags : Tous les filtres ont été supprimés.");
-}
-
-/* ==================================================================================== */
-/*               SUPPRESSION D'UNE OPTION DANS LE DROPDOWN                             */
-/* ==================================================================================== */
-/**
- * Supprime une option du dropdown une fois sélectionnée.
- * - Vérifie si le bouton de réinitialisation doit être mis à jour.
- *
- * @param {string} filterType - Type de filtre (ingredients, appliances, ustensils).
- * @param {string} filterValue - Valeur du filtre sélectionné.
- */
-export function removeSelectedOption(filterType, filterValue) {
-    const dropdown = document.querySelector(`#${filterType} ul`);
-    
-    if (!dropdown) {
-        return;
-    }
-
-    const option = [...dropdown.children].find(li => li.textContent === filterValue);
-
-    if (option) {
-        option.remove();
-    }
-
-    //  Vérification du nombre de tags après suppression d'une option
-    const totalTags = Object.values(activeFilters).reduce((sum, set) => sum + set.size, 0);
-    handleResetButton(totalTags);
-}
-
-/** ====================================================================================
- *  RÉINTRODUCTION D'UNE OPTION DANS LE DROPDOWN APRÈS SUPPRESSION D'UN TAG
- * ==================================================================================== */
-/**
- * Réintroduit une option dans le dropdown après suppression d'un tag.
- *
- * - Sélectionne le dropdown correspondant au `filterType`.
- * - Vérifie si le dropdown existe avant d'ajouter l'option.
- * - Crée un nouvel élément `<li>` représentant l'option supprimée.
- * - Ajoute un écouteur d'événement pour permettre à l'utilisateur de la sélectionner à nouveau.
- * - Insère l'option réintroduite dans le dropdown.
- *
- * @param {string} filterType - Type de filtre (ingredients, appliances, ustensils).
- * @param {string} filterValue - Valeur de l'option à réintroduire.
- */
-export function restoreRemovedOption(filterType, filterValue) {
-    // Sélectionne le dropdown correspondant au type de filtre
-    const dropdown = document.querySelector(`#${filterType} ul`);
-
-    // Vérifie que le dropdown existe avant de procéder
-    if (!dropdown) {
-        return;
-    }
-
-    // Création d'un nouvel élément de liste pour réintroduire l'option
-    const li = document.createElement("li");
-    li.classList.add("filter-option");
-    li.textContent = filterValue;
-
-    // Ajoute un écouteur d'événement permettant de sélectionner l'option réintroduite
-    li.addEventListener("click", () => handleFilterSelection(filterType, filterValue));
-
-    // Ajoute l'élément à la fin du dropdown
-    dropdown.appendChild(li);
 }
 
 /* ==================================================================================== */

@@ -295,23 +295,7 @@ export function debounce(func, delay = 300) {
     };
 }
 
-export function sanitizeText(text) {
-    if (typeof text !== "string") {
-        return "";
-    }
-    
-    return text.replace(/[&<>"'/]/g, (char) => {
-        const charMap = {
-            "&": "&amp;",
-            "<": "&lt;",
-            ">": "&gt;",
-            '"': "&quot;",
-            "'": "&#039;",
-            "/": "&#x2F;"
-        };
-        return charMap[char] || char;
-    });
-}
+
 /**
  * Affiche un message d'erreur à l'écran.
  * - Ajoute dynamiquement un conteneur si nécessaire.
@@ -363,11 +347,4 @@ export function removeDuplicates(rawData) {
     return Object.fromEntries(Object.entries(rawData).map(([type, values]) => [
         type, new Set(values.filter(value => !uniqueItems.has(value) && uniqueItems.add(value)))
     ]));
-}
-
-/**
- * Capitalise la première lettre d'une chaîne.
- */
-export function capitalize(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
 }
