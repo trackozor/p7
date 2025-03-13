@@ -380,7 +380,6 @@ export function handleResetButton() {
     logEvent("info", `handleResetButton : ${totalTags >= 2 ? "Affiché" : "Caché"}`);
 }
 
-
 /* ==================================================================================== */
 /*               GESTION  DU FOCUS (PIÉGEAGE)                                          */
 /* ==================================================================================== */
