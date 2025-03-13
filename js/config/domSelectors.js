@@ -199,7 +199,7 @@ export function getIndexSelectors() {
 
         filters: {
             container: safeQuerySelector("#filters") || waitForElement("#filters"),
-            dropdowns: safeQuerySelectorAll(".filter-dropdown"),
+            dropdowns: safeQuerySelectorAll(".filter-option"),
             searchInputs: safeQuerySelectorAll(".dropdown-search"),
             ingredients: safeQuerySelector('[data-filter-type="ingredients"]') || waitForElement('[data-filter-type="ingredients"]'),
             appliances: safeQuerySelector('[data-filter-type="appliances"]') || waitForElement('[data-filter-type="appliances"]'),
@@ -368,7 +368,7 @@ export function checkSelectors(selectors) {
  * console.log(selectors);
  */
 export function loadSelectorsForCurrentPage() {
-    logEvent("info", "🔄 Chargement des sélecteurs DOM pour la page actuelle...");
+    logEvent("info", " Chargement des sélecteurs DOM pour la page actuelle...");
 
     const currentPage = getCurrentPage();
     let selectors = {};
@@ -379,8 +379,6 @@ export function loadSelectorsForCurrentPage() {
 
     return selectors;
 }
-
-
 
 /*==============================================*/
 /*        Rafraîchissement des Sélecteurs       */

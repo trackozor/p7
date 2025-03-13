@@ -11,6 +11,8 @@ import { Search } from "../components/search/search.js";
 import { safeQuerySelector } from "../config/domSelectors.js";
 import { activeFilters } from "../components/filterManager.js";
 import {restoreRemovedOption} from "../components/dropdownManager.js";
+import { updateRecipes } from "./search/displayResults.js";
+import { getAllRecipes } from "../data/dataManager.js";
 export let totalTags = 0;
 
 /**================================================================================
@@ -71,19 +73,61 @@ export function updateTagDisplay() {
  * @param {string} filterType - Type du filtre à supprimer (ingredients, appliances, ustensils).
  * @param {string} filterValue - Valeur du filtre à supprimer.
  */
+/**
+ * Supprime un filtre actif et met à jour dynamiquement l'affichage.
+ *
+ * - Supprime le filtre sélectionné de `activeFilters`.
+ * - Met à jour l'affichage des tags et du dropdown correspondant.
+ * - Relance la recherche avec les filtres restants.
+ * - Si aucun filtre n'est actif après suppression, restaure l'affichage initial.
+ *
+ * @param {string} filterType - Type de filtre à supprimer (ingredients, appliances, ustensils).
+ * @param {string} filterValue - Valeur spécifique du filtre à supprimer.
+ */
 export function removeTag(filterType, filterValue) {
-    logEvent("info", `removeTag : Suppression du filtre '${filterValue}' (${filterType}).`);
+    try {
+        logEvent("info", `removeTag : Suppression du filtre '${filterValue}' (${filterType}).`);
 
-    // Suppression du filtre actif
-    activeFilters[filterType].delete(filterValue);
+        // Vérifie que le filtre est bien actif avant de le supprimer
+        if (!activeFilters[filterType].has(filterValue)) {
+            logEvent("warn", `removeTag : Le filtre '${filterValue}' (${filterType}) n'est pas actif.`);
+            return;
+        }
 
-    // Mise à jour de l'affichage des tags et du dropdown
-    updateTagDisplay();
-    restoreRemovedOption(filterType, filterValue);
+        // Suppression du filtre actif
+        activeFilters[filterType].delete(filterValue);
 
-    // Relance la recherche avec les nouveaux filtres actifs
-    Search("", activeFilters);
+        // Mise à jour de l'affichage des tags et réintégration de l'option dans le dropdown
+        updateTagDisplay();
+        restoreRemovedOption(filterType, filterValue);
+
+        // Conversion de l'état des filtres actifs en tableaux
+        const filtersArray = {
+            ingredients: Array.from(activeFilters["ingredients"]),
+            appliances: Array.from(activeFilters["appliances"]),
+            ustensils: Array.from(activeFilters["ustensils"])
+        };
+
+        // Vérifie s'il reste des filtres actifs
+        const hasActiveFilters = filtersArray.ingredients.length > 0 || 
+                                filtersArray.appliances.length > 0 || 
+                                filtersArray.ustensils.length > 0;
+
+        if (hasActiveFilters) {
+            // Relance la recherche avec les filtres restants
+            Search("", filtersArray);
+        } else {
+            logEvent("info", "removeTag : Tous les filtres supprimés, restauration de l'affichage initial.");
+
+            // Si aucun filtre n'est actif, affiche toutes les recettes initiales
+            updateRecipes(getAllRecipes()); 
+        }
+
+    } catch (error) {
+        logEvent("error", "removeTag : Erreur lors de la suppression du filtre.", { error: error.message });
+    }
 }
+
 
 /**====================================================================================
  * REINITIALISATION  DES TAGS
