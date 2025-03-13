@@ -14,7 +14,7 @@ import { logEvent } from "../utils/utils.js";
 import { getAllRecipes } from "../data/dataManager.js";
 import { normalizeText } from "../utils/normalize.js"; 
 
-let suggestionIndex = -1; // Index de la suggestion sélectionnée
+let currentSuggestions = new Set(); // Stocke l'état actuel des suggestions
 
 /* ==================================================================================== */
 /*                        SECTION 1 : GESTION DE LA SAISIE UTILISATEUR                  */
@@ -66,7 +66,6 @@ export function handleBarSearch() {
     }
 }
 
-
 /** ====================================================================================
  *  SECTION 2 : AUTO-COMPLÉTION ET SUGGESTIONS
  * ==================================================================================== */
@@ -97,71 +96,65 @@ export function generateAutoCompletion(query) {
         const normalizedQuery = normalizeText(query.trim().toLowerCase());
 
         if (normalizedQuery.length < 3) {
-            suggestionBox.innerHTML = "";
-            logEvent("warn", "generateAutoCompletion : Requête trop courte (<3 caractères).");
+            clearSuggestions();
             return;
         }
 
         const recipes = getAllRecipes();
         if (!Array.isArray(recipes) || recipes.length === 0) {
             logEvent("warn", "generateAutoCompletion : Aucune recette disponible.");
-            suggestionBox.innerHTML = "<li class='no-suggestion'>Aucune suggestion</li>";
+            clearSuggestions();
             return;
         }
 
-        const activeTags = getActiveTags();
-        const suggestionSet = new Set();
+        // Création d'un nouvel ensemble pour stocker les nouvelles suggestions
+        let newSuggestions = new Set();
 
         recipes.forEach(recipe => {
-            if (normalizeText(recipe.name.toLowerCase()).includes(normalizedQuery)) {
-                suggestionSet.add(recipe.name.toLowerCase());
+            if (recipe.name.toLowerCase().includes(normalizedQuery)) {
+                newSuggestions.add(recipe.name);
             }
             recipe.ingredients.forEach(ing => {
-                if (normalizeText(ing.ingredient.toLowerCase()).includes(normalizedQuery)) {
-                    suggestionSet.add(ing.ingredient.toLowerCase());
+                if (ing.ingredient.toLowerCase().includes(normalizedQuery)) {
+                    newSuggestions.add(ing.ingredient);
                 }
             });
-            if (normalizeText(recipe.appliance.toLowerCase()).includes(normalizedQuery)) {
-                suggestionSet.add(recipe.appliance.toLowerCase());
+            if (recipe.appliance.toLowerCase().includes(normalizedQuery)) {
+                newSuggestions.add(recipe.appliance);
             }
             recipe.ustensils.forEach(ust => {
-                if (normalizeText(ust.toLowerCase()).includes(normalizedQuery)) {
-                    suggestionSet.add(ust.toLowerCase());
-                }
-            });
-            Object.values(activeTags).flat().forEach(tag => {
-                if (normalizeText(tag.toLowerCase()).includes(normalizedQuery)) {
-                    suggestionSet.add(tag.toLowerCase());
+                if (ust.toLowerCase().includes(normalizedQuery)) {
+                    newSuggestions.add(ust);
                 }
             });
         });
 
-        const suggestionList = [...suggestionSet].sort().slice(0, 10);
-
-        if (suggestionList.length === 0) {
-            suggestionBox.innerHTML = "<li class='no-suggestion'>Aucune suggestion</li>";
-            logEvent("warn", `generateAutoCompletion : Aucune suggestion trouvée pour '${query}'`);
-            return;
+        // Vérifie si les suggestions ont changé
+        if (JSON.stringify([...newSuggestions]) !== JSON.stringify([...currentSuggestions])) {
+            currentSuggestions = newSuggestions;
+            updateSuggestionBox(suggestionBox, currentSuggestions);
         }
 
-        suggestionBox.innerHTML = suggestionList
-            .map((suggestion, index) => 
-                `<li class="suggestion-item ${index === suggestionIndex ? 'selected' : ''}" data-index="${index}">
-                    ${suggestion}
-                </li>`
-            )
-            .join("");
-
-        logEvent("info", `generateAutoCompletion : ${suggestionList.length} suggestion(s) générée(s) pour '${query}'.`);
-
-        document.querySelectorAll(".suggestion-item").forEach(item => {
-            item.addEventListener("click", () => selectSuggestion(item.textContent));
-        });
-
-        logEvent("test_end", "generateAutoCompletion : Auto-complétion terminée.");
+        logEvent("success", `generateAutoCompletion : ${currentSuggestions.size} suggestion(s) mise(s) à jour.`);
     } catch (error) {
         logEvent("error", "generateAutoCompletion : Erreur inattendue.", { error: error.message });
     }
+}
+
+// Mise à jour du DOM en une seule opération
+function updateSuggestionBox(suggestionBox, suggestions) {
+    suggestionBox.innerHTML = "";
+    const fragment = document.createDocumentFragment();
+
+    suggestions.forEach(suggestion => {
+        const li = document.createElement("li");
+        li.classList.add("suggestion-item");
+        li.textContent = suggestion;
+        li.addEventListener("click", () => selectSuggestion(suggestion));
+        fragment.appendChild(li);
+    });
+
+    suggestionBox.appendChild(fragment);
 }
 
 /** ====================================================================================
@@ -240,8 +233,6 @@ function clearSuggestions() {
         // Efface le contenu des suggestions
         suggestionBox.innerHTML = "";
 
-        // Réinitialise l'index de la suggestion sélectionnée
-        suggestionIndex = -1;
 
         logEvent("success", "clearSuggestions : Liste des suggestions effacée avec succès.");
         logEvent("test_end", "clearSuggestions : Suppression terminée.");
@@ -250,32 +241,4 @@ function clearSuggestions() {
     }
 }
 
-/* ==================================================================================== */
-/*              SECTION 5: RÉCUPÉRATION DES TAGS ACTIFS                                 */
-/* ==================================================================================== */
-/**
- * Récupère les tags de filtres actuellement sélectionnés dans l'interface utilisateur.
- *
- * - Sélectionne les tags affichés dans le DOM.
- * - Convertit leur texte en minuscules et supprime les espaces inutiles.
- * - Retourne un objet contenant les filtres actifs classés par type.
- *
- * @returns {Object} Un objet contenant les tags actifs classés par catégories :
- *                   - `ingredients` : Liste des ingrédients sélectionnés.
- *                   - `appliances` : Liste des appareils sélectionnés.
- *                   - `ustensils` : Liste des ustensiles sélectionnés.
- */
-function getActiveTags() {
-    return {
-        // Récupère tous les tags actifs pour chaque catégorie et normalise le texte
-        ingredients: [...document.querySelectorAll('.filter-tag[data-filter-type="ingredients"]')]
-            .map(tag => tag.textContent.trim().toLowerCase()),
-
-        appliances: [...document.querySelectorAll('.filter-tag[data-filter-type="appliances"]')]
-            .map(tag => tag.textContent.trim().toLowerCase()),
-
-        ustensils: [...document.querySelectorAll('.filter-tag[data-filter-type="ustensils"]')]
-            .map(tag => tag.textContent.trim().toLowerCase())
-    };
-}
 

@@ -197,19 +197,15 @@ export function getIndexSelectors() {
             
         },
 
-        /* Filtres Dynamiques          */
         filters: {
             container: safeQuerySelector("#filters") || waitForElement("#filters"),
-            filterButton: safeQuerySelectorAll(".filter-dropdowns"),
-            dropdownOptions: safeQuerySelectorAll(".filter-option"),
+            dropdowns: safeQuerySelectorAll(".filter-dropdown"),
             searchInputs: safeQuerySelectorAll(".dropdown-search"),
-            searchIcons: safeQuerySelectorAll(".search-icon-button"),
-
-            // Attente correcte des filtres si non disponibles immédiatement
-            ingredients: safeQuerySelector('[data-filter-type="ingredients"]') ||  waitForElement('[data-filter-type="ingredients"]'),
-            appliances: safeQuerySelector('[data-filter-type="appliances"]') ||  waitForElement('[data-filter-type="appliances"]'),
-            ustensils: safeQuerySelector('[data-filter-type="ustensils"]') ||  waitForElement('[data-filter-type="ustensils"]'),
+            ingredients: safeQuerySelector('[data-filter-type="ingredients"]') || waitForElement('[data-filter-type="ingredients"]'),
+            appliances: safeQuerySelector('[data-filter-type="appliances"]') || waitForElement('[data-filter-type="appliances"]'),
+            ustensils: safeQuerySelector('[data-filter-type="ustensils"]') || waitForElement('[data-filter-type="ustensils"]'),
         },
+
 
         /* Recettes */
         recipes: {
@@ -237,21 +233,26 @@ export function getIndexSelectors() {
  * @param {number} timeout - Délai maximum (par défaut : 5000ms).
  * @returns {Promise<Element>} Élément DOM résolu ou rejeté après expiration.
  */
+/**
+ * Attend qu'un élément spécifique apparaisse dans le DOM avant de l'utiliser.
+ * @param {string} selector - Sélecteur CSS de l'élément à attendre.
+ * @param {number} timeout - Délai maximum en millisecondes (par défaut 5000ms).
+ * @returns {Promise<Element>} - Résout avec l'élément trouvé ou rejette en cas de timeout.
+ */
 export function waitForElement(selector, timeout = 5000) {
     return new Promise((resolve, reject) => {
         const startTime = Date.now();
 
         function checkElement() {
-            const element = document.querySelector(selector) || document.querySelector(`[data-filter-type="${selector.replace(/\[data-filter="(.*?)"\]/, "$1")}"]`);
-
+            const element = document.querySelector(selector);
             if (element) {
-                console.log(`✅ Élément trouvé : ${selector}`);
+                logEvent("info", `✅ Élément trouvé : ${selector}`);
                 resolve(element);
                 return;
             }
 
             if (Date.now() - startTime >= timeout) {
-                logEvent("warn", `Timeout atteint : "${selector}" non trouvé après ${timeout}ms.`);
+                logEvent("error", `⏳ Timeout atteint : "${selector}" non trouvé.`);
                 reject(new Error(`Timeout atteint : "${selector}" non trouvé.`));
                 return;
             }
@@ -367,31 +368,19 @@ export function checkSelectors(selectors) {
  * console.log(selectors);
  */
 export function loadSelectorsForCurrentPage() {
-    logEvent("test_start_events", "Début du chargement des sélecteurs DOM pour la page actuelle.");
+    logEvent("info", "🔄 Chargement des sélecteurs DOM pour la page actuelle...");
 
-    // Détecte la page en cours
     const currentPage = getCurrentPage();
-    logEvent("info", `Page détectée : ${currentPage}`);
-
-    // Sélection des sélecteurs en fonction de la page
     let selectors = {};
-    if (currentPage === "index") {
-        logEvent("info", "Chargement des sélecteurs pour la page d'accueil.");
-        selectors = getIndexSelectors();
-    } else {
-        logEvent("warn", "Aucun sélecteur spécifique défini pour cette page.");
-    }
 
-    // Vérification des sélecteurs manquants
-    const missingSelectors = checkSelectors(selectors);
-    if (missingSelectors.length > 0) {
-        logEvent("error", "Sélecteurs manquants détectés.", { missingSelectors });
-    } else {
-        logEvent("test_end_events", "Tous les sélecteurs DOM sont présents.");
+    if (currentPage === "index") {
+        selectors = getIndexSelectors();
     }
 
     return selectors;
 }
+
+
 
 /*==============================================*/
 /*        Rafraîchissement des Sélecteurs       */

@@ -10,6 +10,9 @@ import { fetchFilterOptions } from "../data/dataManager.js";
 import { logEvent, waitForElement } from "../utils/utils.js";
 import { removeTag , handleFilterSelection, handleResetButton } from "../events/eventHandler.js"
 import { Search } from "./search/search.js";
+import { safeQuerySelector } from "../config/domSelectors.js"; 
+import { displayFilteredRecipes } from "./search/displayResults.js";
+
 /* ==================================================================================== */
 /*  VARIABLES GLOBALES ET ÉTAT DES FILTRES                                             */
 /* ==================================================================================== */
@@ -18,7 +21,7 @@ export let activeFilters = {
     appliances: new Set(),
     ustensils: new Set()
 };
-
+let displayedTags = new Map();
 const filterContainers = {}; // Stocke les éléments DOM des dropdowns
 
 /* ==================================================================================== */
@@ -39,64 +42,65 @@ const filterContainers = {}; // Stocke les éléments DOM des dropdowns
  */
 export async function initFilters() {
     try {
-        // Début du processus d'initialisation des filtres
         logEvent("test_start_filter", "initFilters : Initialisation des filtres...");
 
-        // Attente de la disponibilité du conteneur des filtres avec un délai de 3 secondes
         const filtersContainer = await waitForElement("#filters .filter-dropdowns", 3000);
         if (!filtersContainer) {
             logEvent("error", "initFilters : Conteneur des filtres introuvable.");
             return;
         }
 
-        // Récupération des données des filtres (ingrédients, appareils, ustensiles)
-        const filterData = fetchFilterOptions();
-        if (!filterData || Object.values(filterData).every(arr => arr.length === 0)) {
+        //  Récupération des filtres sans doublons
+        const rawFilterData = fetchFilterOptions();
+        if (!rawFilterData || Object.values(rawFilterData).every(arr => arr.length === 0)) {
             logEvent("warn", "initFilters : Aucun filtre disponible.");
             return;
         }
 
-        // Nettoyage du conteneur des filtres avant insertion des nouvelles données
+        //  Set global pour s'assurer qu'un élément n'existe qu'une seule fois
+        const uniqueItems = new Set();
+
+        //  Nouvelle structure des filtres (sans doublons entre catégories)
+        const filterData = {
+            ingredients: new Set(),
+            appliances: new Set(),
+            ustensils: new Set()
+        };
+
+        //  Parcours des filtres et suppression des doublons entre catégories
+        Object.entries(rawFilterData).forEach(([filterType, values]) => {
+            values.forEach(value => {
+                if (!uniqueItems.has(value)) {
+                    uniqueItems.add(value); // Marque l'élément comme utilisé
+                    filterData[filterType].add(value); // Ajoute l'élément à la bonne catégorie
+                }
+            });
+        });
+
+        //  Nettoyage et génération dynamique des filtres sans doublons
         filtersContainer.innerHTML = "";
         const fragment = document.createDocumentFragment();
 
-        // Boucle sur chaque type de filtre et création dynamique des sections correspondantes
         Object.entries(filterData).forEach(([filterType, values]) => {
-            if (values.length > 0) {
-                // Création et ajout de la section du filtre au fragment
+            if (values.size > 0) {
                 fragment.appendChild(createFilterSection(
-                    filterType.charAt(0).toUpperCase() + filterType.slice(1), // Mise en forme du titre
-                    filterType, // Identifiant du filtre
-                    new Set(values) // Transformation en `Set` pour éviter les doublons
+                    filterType.charAt(0).toUpperCase() + filterType.slice(1), 
+                    filterType, 
+                    values
                 ));
             }
         });
 
-        // Ajout des sections de filtres au conteneur principal
+        //  Ajout des filtres sans doublons dans le DOM
         filtersContainer.appendChild(fragment);
 
-        // Fin de l'initialisation avec un message de succès
-        logEvent("success", "initFilters : Filtres chargés avec succès.");
+        logEvent("success", "initFilters : Filtres chargés sans doublons.");
     } catch (error) {
-        // Gestion des erreurs lors de l'initialisation des filtres
         logEvent("error", "initFilters : Erreur", { error: error.message });
     }
 }
 
-/** ====================================================================================
- *  SUPPRESSION D'UNE OPTION DU DROPDOWN APRÈS SÉLECTION
- * ==================================================================================== */
-/**
- * Supprime une option du dropdown une fois qu'elle a été sélectionnée.
- *
- * - Recherche le dropdown correspondant au `filterType`.
- * - Vérifie si le dropdown existe avant de continuer.
- * - Parcourt les éléments du dropdown pour trouver l'option correspondante.
- * - Supprime l'option si elle est trouvée pour éviter les doublons dans la liste.
- *
- * @param {string} filterType - Type de filtre (ingredients, appliances, ustensils).
- * @param {string} filterValue - Valeur de l'option à supprimer.
- */
+
 /* ==================================================================================== */
 /*               SUPPRESSION D'UNE OPTION DANS LE DROPDOWN                             */
 /* ==================================================================================== */
@@ -120,11 +124,10 @@ export function removeSelectedOption(filterType, filterValue) {
         option.remove();
     }
 
-    // ✅ Vérification du nombre de tags après suppression d'une option
+    //  Vérification du nombre de tags après suppression d'une option
     const totalTags = Object.values(activeFilters).reduce((sum, set) => sum + set.size, 0);
     handleResetButton(totalTags);
 }
-
 
 /** ====================================================================================
  *  RÉINTRODUCTION D'UNE OPTION DANS LE DROPDOWN APRÈS SUPPRESSION D'UN TAG
@@ -162,19 +165,6 @@ export function restoreRemovedOption(filterType, filterValue) {
     dropdown.appendChild(li);
 }
 
-/** ====================================================================================
- *  MISE À JOUR DE L'AFFICHAGE DES TAGS SÉLECTIONNÉS
- * ==================================================================================== */
-/**
- * Met à jour dynamiquement l'affichage des tags sous les dropdowns.
- *
- * - Sélectionne le conteneur des tags (`#selected-filters`).
- * - Vérifie que le conteneur existe avant de modifier le DOM.
- * - Vide le contenu actuel pour éviter les doublons.
- * - Parcourt les filtres actifs et crée un élément de tag pour chaque valeur sélectionnée.
- * - Ajoute un bouton de suppression sur chaque tag pour permettre son retrait.
- * - Insère les tags mis à jour dans le DOM.
- */
 /* ==================================================================================== */
 /*               GESTION DE L'AFFICHAGE DES TAGS                                        */
 /* ==================================================================================== */
@@ -189,45 +179,62 @@ export function updateTagDisplay() {
     try {
         logEvent("info", "updateTagDisplay : Vérification et mise à jour des tags...");
 
-        const tagsContainer = document.querySelector("#selected-filters");
+        const tagsContainer = safeQuerySelector("#selected-filters");
         if (!tagsContainer) {
             logEvent("error", "updateTagDisplay : Conteneur des tags introuvable.");
             return;
         }
 
-        // Nettoyage avant de recréer les tags
-        tagsContainer.innerHTML = "";
-        const fragment = document.createDocumentFragment();
-        let totalTags = 0; // Compteur du nombre de tags affichés
+        const newTags = new Map();
+        let totalTags = 0;
 
+        //  Mise à jour du cache au lieu de tout supprimer
         Object.entries(activeFilters).forEach(([filterType, values]) => {
             values.forEach(filterValue => {
-                const tagElement = document.createElement("span");
-                tagElement.classList.add("filter-tag");
-                tagElement.textContent = filterValue;
-                tagElement.dataset.filterType = filterType;
+                const tagKey = `${filterType}-${filterValue}`;
 
-                const removeIcon = document.createElement("i");
-                removeIcon.classList.add("fas", "fa-times");
-                removeIcon.setAttribute("role", "button");
-                removeIcon.addEventListener("click", () => {
-                    removeTag(filterType, filterValue);
-                    updateTagDisplay(); // Réafficher les tags après suppression
-                    updateFilters(); // Réactualiser les dropdowns après suppression
-                });
+                // Si le tag est déjà affiché, on le garde
+                if (displayedTags.has(tagKey)) {
+                    newTags.set(tagKey, displayedTags.get(tagKey));
+                } else {
+                    //  Création d'un nouveau tag
+                    const tagElement = document.createElement("span");
+                    tagElement.classList.add("filter-tag");
+                    tagElement.textContent = filterValue;
+                    tagElement.dataset.filterType = filterType;
 
-                tagElement.appendChild(removeIcon);
-                fragment.appendChild(tagElement);
+                    //  Icône pour supprimer le tag
+                    const removeIcon = document.createElement("i");
+                    removeIcon.classList.add("fas", "fa-times");
+                    removeIcon.setAttribute("role", "button");
+                    removeIcon.addEventListener("click", () => {
+                        removeTag(filterType, filterValue);
+                        updateFilters(); // Mise à jour des dropdowns
+                        updateTagDisplay(); // Rafraîchit l'affichage des tags
+                    });
+
+                    tagElement.appendChild(removeIcon);
+                    newTags.set(tagKey, tagElement);
+                }
                 totalTags++;
             });
         });
 
-        tagsContainer.appendChild(fragment);
+        //  On vide uniquement ce qui doit être mis à jour (meilleure perf)
+        tagsContainer.innerHTML = "";
+        newTags.forEach(tag => tagsContainer.appendChild(tag));
 
-        //  Vérifie si 2 tags ou plus sont actifs et gère le bouton
-        handleResetButton(totalTags);
+        //  Gestion du bouton de réinitialisation dès 2 tags affichés
+            handleResetButton(totalTags, tagsContainer);
+
+        // Mise à jour du cache
+        displayedTags = newTags;
+
+        //  Lance la recherche avec les nouveaux filtres actifs
+        Search("", activeFilters);
 
         logEvent("success", "updateTagDisplay : Tags mis à jour avec succès.");
+
     } catch (error) {
         logEvent("error", "updateTagDisplay : Erreur lors de la mise à jour des tags.", { error: error.message });
     }
@@ -252,7 +259,6 @@ export function resetAllTags() {
 
     logEvent("success", "resetAllTags : Tous les filtres ont été supprimés.");
 }
-
 
 /** ====================================================================================
  *  MISE À JOUR DES OPTIONS DANS LES DROPDOWNS SELON LES RECETTES FILTRÉES
@@ -330,3 +336,5 @@ export function updateFilters(filteredRecipes = []) {
         logEvent("error", "updateFiltersDropdown : Erreur lors de la mise à jour des options.", { error: error.message });
     }
 }
+
+

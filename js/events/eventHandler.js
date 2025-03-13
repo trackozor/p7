@@ -6,12 +6,18 @@
 /* ==================================================================================== */
 
 import { logEvent, displayErrorMessage } from "../utils/utils.js";
-import { updateTagDisplay, activeFilters, resetAllTags } from "../components/filterManager.js";
+import { updateTagDisplay, updateFilters, activeFilters, resetAllTags, restoreRemovedOption} from "../components/filterManager.js";
 import { trapFocus } from "../utils/accessibility.js";
 import { KEY_CODES } from "../config/constants.js";
 import { Search } from "../components/search/search.js"; 
 import { handleBarSearch } from "../components/searchBarManager.js";
 
+// Déclaration globale de filtersArray pour utilisation dans tout le fichier
+export let filtersArray = {
+    ingredients: [],
+    appliances: [],
+    ustensils: []
+};
 
 /* ==================================================================================== */
 /*                            GESTION DE LA RECHERCHE                                  */
@@ -63,7 +69,6 @@ export function handleSearchWrapper(event) {
     handleBarSearch(event);
 }
 
-
 /* ==================================================================================== */
 /*                 GESTION DE L'OUVERTURE ET FERMETURE DES DROPDOWNS                   */
 /* ==================================================================================== */
@@ -112,7 +117,6 @@ export function handleDropdownClick(event) {
 
     logEvent("info", `handleDropdownClick : Dropdown "${filterType}" ${isOpening ? "ouvert" : "fermé"}.`);
 }
-
 
 /* ==================================================================================== */
 /*                   WRAPPERS POUR ÉVITER LES DOUBLONS D'ÉVÉNEMENTS                    */
@@ -185,7 +189,7 @@ export function handleFilterSelectionWrapper(event) {
  * @param {Event} event - L'événement déclenché par le clic sur le bouton de suppression du tag.
  */
 export function handleTagRemovalWrapper(event) {
-    // Récupération du tag parent à partir de l'élément cliqué (icône "X")
+    // Récupération du tag parent à partir de l'élément cliqué 
     const tagElement = event.currentTarget.closest(".filter-tag");
 
     // Vérifie que l'élément existe avant de continuer
@@ -230,48 +234,49 @@ export function handleTagRemovalWrapper(event) {
  * @param {string} filterType - Type de filtre sélectionné (ingredients, appliances, ustensils).
  * @param {string} filterValue - Valeur du filtre sélectionné.
  */
+
 export function handleFilterSelection(filterType, filterValue) {
-    try {
-        // Vérification de la validité des paramètres
-        if (!filterType || !filterValue) {
-            logEvent("warn", "handleFilterSelection : Paramètres invalides.");
-            return;
-        }
+    logEvent("info", `handleFilterSelection : Sélection de "${filterValue}" pour "${filterType}".`);
 
-        // Vérifier si le filtre est déjà actif pour éviter les doublons
-        if (activeFilters[filterType].has(filterValue)) {
-            logEvent("info", `handleFilterSelection : '${filterValue}' déjà actif, pas d'ajout.`);
-            return;
-        }
-
-        // Ajout du filtre sélectionné et mise à jour de l'affichage
-        logEvent("info", `handleFilterSelection : Ajout du tag '${filterValue}' (${filterType}).`);
-        activeFilters[filterType].add(filterValue);
-        updateTagDisplay();
-
-        // Conversion de l'état des filtres en tableaux pour traitement
-        const filtersArray = {
-            ingredients: Array.from(activeFilters["ingredients"]),
-            appliances: Array.from(activeFilters["appliances"]),
-            ustensils: Array.from(activeFilters["ustensils"])
-        };
-
-        logEvent("debug", "Filtres actifs après ajout :", filtersArray);
-
-        // Vérification avant d’appeler `Search()` pour éviter les appels inutiles
-        if (filtersArray.ingredients.length > 0 || filtersArray.appliances.length > 0 || filtersArray.ustensils.length > 0) {
-            Search("", "filters", filtersArray);
-        }
-
-    } catch (error) {
-        // Gestion et journalisation des erreurs
-        logEvent("error", "handleFilterSelection : Erreur lors de l'ajout du filtre.", { error: error.message });
+    if (!filterType || !filterValue) {
+        logEvent("error", "handleFilterSelection : Paramètres invalides.");
+        return;
     }
+
+    //  On ajoute automatiquement le tag quand un élément est sélectionné
+    handleTagAddition(filterType, filterValue);
 }
 
+/** ====================================================================================
+ *  AJOUT D'UN TAG LORS DE LA SÉLECTION D'UNE OPTION DE FILTRE
+ * ==================================================================================== */
+/**
+ * Gère l'ajout d'un tag lorsqu'une option est sélectionnée dans un dropdown.
+ * - Ajoute la valeur sélectionnée dans `activeFilters`.
+ * - Met à jour l'affichage des tags.
+ *
+ * @param {string} filterType - Type du filtre (ingredients, appliances, ustensils).
+ * @param {string} filterValue - Valeur de l'option sélectionnée.
+ */
+export function handleTagAddition(filterType, filterValue) {
+    if (!filterType || !filterValue) {
+        logEvent("error", "handleTagAddition : Paramètres invalides.");
+        return;
+    }
+
+    logEvent("info", `handleTagAddition : Ajout du tag "${filterValue}" dans "${filterType}".`);
+
+    // Ajoute le filtre dans `activeFilters` si ce n'est pas déjà présent
+    if (!activeFilters[filterType].has(filterValue)) {
+        activeFilters[filterType].add(filterValue);
+        updateTagDisplay(); // Met à jour l'affichage des tags
+        updateFilters(); // Met à jour les dropdowns
+    }
+    Search("", filtersArray);
+}
 
 /** ====================================================================================
- *  SUPPRESSION D'UN FILTRE ACTIF ET MISE À JOUR DE L'AFFICHAGE
+ *  SUPPRESSION D' UN TAG LORS DU CLIQUE SUR LE BOUTON DE FERMETURE
  * ==================================================================================== */
 /**
  * Supprime un filtre actif et met à jour dynamiquement l'affichage.
@@ -307,14 +312,14 @@ export function removeTag(filterType, filterValue) {
 
         // Mise à jour de l'affichage des tags et réintégration de l'option dans le dropdown
         updateTagDisplay();
-        restoreOptionInDropdown(filterType, filterValue);
+        restoreRemovedOption(filterType, filterValue);
 
         // Conversion de l'état des filtres actifs en tableaux pour traitement
         const filtersArray = {
             ingredients: Array.from(activeFilters["ingredients"]),
             appliances: Array.from(activeFilters["appliances"]),
             ustensils: Array.from(activeFilters["ustensils"])
-        };
+        }
 
         logEvent("debug", "Filtres actifs après suppression :", filtersArray);
 
@@ -327,42 +332,6 @@ export function removeTag(filterType, filterValue) {
     }
 }
 
-/** ====================================================================================
- *  RÉINTRODUCTION D'UNE OPTION DANS LE DROPDOWN APRÈS SUPPRESSION D'UN TAG
- * ==================================================================================== */
-/**
- * Restaure une option précédemment supprimée dans le dropdown lorsque l'utilisateur 
- * retire un tag.
- *
- * - Sélectionne le dropdown correspondant au `filterType`.
- * - Vérifie si le dropdown existe avant d'ajouter l'option.
- * - Crée un nouvel élément `<li>` représentant l'option supprimée.
- * - Ajoute un écouteur d'événement permettant de la sélectionner à nouveau.
- * - Insère l'option restaurée dans le dropdown.
- *
- * @param {string} filterType - Type de filtre concerné (ingredients, appliances, ustensils).
- * @param {string} filterValue - Valeur spécifique du filtre à réintroduire.
- */
-function restoreOptionInDropdown(filterType, filterValue) {
-    // Sélection du dropdown correspondant au type de filtre
-    const dropdown = document.querySelector(`#${filterType} ul`);
-
-    // Vérification de l'existence du dropdown avant d'y ajouter l'option
-    if (!dropdown) {
-        return;
-    }
-
-    // Création d'un nouvel élément `<li>` pour la réintégration de l'option
-    const li = document.createElement("li");
-    li.classList.add("filter-option");
-    li.textContent = filterValue;
-
-    // Ajoute un événement permettant de re-sélectionner l'option restaurée
-    li.addEventListener("click", () => handleFilterSelection(filterType, filterValue));
-
-    // Ajout de l'option restaurée dans la liste du dropdown
-    dropdown.appendChild(li);
-}
 /* ==================================================================================== */
 /*               GESTION DU BOUTON DE RÉINITIALISATION DES FILTRES                      */
 /* ==================================================================================== */
@@ -398,7 +367,6 @@ export function handleResetButton() {
         logEvent("info", "handleResetButton : Bouton de réinitialisation supprimé.");
     }
 }
-
 
 /* ==================================================================================== */
 /*               GESTION  DU FOCUS (PIÉGEAGE)                                          */
@@ -442,19 +410,30 @@ export function handleKeyboardNavigation(event) {
         logEvent("success", `handleKeyboardNavigation : Option sélectionnée "${activeElement.textContent}".`);
     }
 }
+
+/* ==================================================================================== */
+/*               GESTION DES ÉVÉNEMENTS DE CLIC EN DEHORS DES DROPDOWNS                 */
+/* ==================================================================================== */
 /**
  * Ferme tous les dropdowns ouverts si l'utilisateur clique en dehors
  */
 function closeDropdownsOnClickOutside(event) {
     const openDropdowns = document.querySelectorAll(".dropdown-container.active");
-    
+
     openDropdowns.forEach(dropdown => {
-        // Vérifie si l'élément cliqué n'est pas à l'intérieur d'un dropdown
+        // Vérifie si l'élément cliqué est en dehors du dropdown ET du bouton d'ouverture
         if (!dropdown.contains(event.target) && !event.target.closest(".dropdown-button")) {
             dropdown.classList.remove("active");
+
+            //  Sélectionne aussi la liste d'options associée et la cache
+            const optionsList = dropdown.querySelector(".dropdown-options");
+            if (optionsList) {
+                optionsList.style.display = "none";
+            }
         }
     });
 }
 
-// Ajout d'un écouteur global sur les clics
+// Ajout de l'écouteur global pour détecter les clics en dehors
 document.addEventListener("click", closeDropdownsOnClickOutside);
+

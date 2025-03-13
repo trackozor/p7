@@ -337,4 +337,3 @@ export function matchesSearchCriteria(recipe, query) {
         return false;
     }
 }
-
