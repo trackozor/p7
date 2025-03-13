@@ -13,6 +13,7 @@ import { activeFilters } from "../components/filterManager.js";
 import {restoreRemovedOption} from "../components/dropdownManager.js";
 import { updateRecipes } from "./search/displayResults.js";
 import { getAllRecipes } from "../data/dataManager.js";
+import { handleResetButton } from "../events/eventHandler.js";
 export let totalTags = 0;
 
 /**================================================================================
@@ -60,7 +61,7 @@ export function updateTagDisplay() {
 
     tagsContainer.innerHTML = "";
     tagsContainer.appendChild(fragment);
-
+    handleResetButton();
     logEvent("success", "updateTagDisplay : Tags mis à jour.");
 }
 
@@ -144,7 +145,7 @@ export function resetAllTags() {
 
     updateTagDisplay();
     updateFilters();
-    Search("", {}); // Relance la recherche sans filtre
+    updateRecipes(getAllRecipes());
 
     logEvent("success", "resetAllTags : Tous les tags ont été supprimés.");
 }

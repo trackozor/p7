@@ -287,34 +287,48 @@ export function handleTagAddition(filterType, filterValue) {
 /* ==================================================================================== */
 /**
  * Gère dynamiquement l'affichage du bouton de réinitialisation des filtres.
+ *
  * - Ajoute le bouton si au moins 2 tags sont présents.
  * - Supprime le bouton si moins de 2 tags sont affichés.
- *
- * @param {number} totalTags - Nombre total de tags actuellement affichés.
+ * - Relance la recherche après réinitialisation.
  */
-/**
- * Vérifie le nombre de tags actifs et affiche le bouton reset si nécessaire.
- */
-
 export function handleResetButton() {
     const tagsContainer = document.querySelector("#selected-filters");
-    let resetButton = document.querySelector("#reset-tags-btn");
-
-    // Vérifie si le bouton existe déjà
-    if (!resetButton) {
-        resetButton = document.createElement("button");
-        resetButton.id = "reset-tags-btn";
-        resetButton.classList.add("filter-reset");
-        resetButton.textContent = "Réinitialiser les filtres";
-        resetButton.addEventListener("click", resetAllTags);
-        tagsContainer.appendChild(resetButton);
+    if (!tagsContainer) {
+        logEvent("error", "handleResetButton : Conteneur des tags introuvable.");
+        return;
     }
 
-    // Affichage du bouton uniquement si 2 tags ou plus sont actifs
-    const totalTags = Object.values(activeFilters).reduce((sum, set) => sum + set.size, 0);
-    resetButton.style.display = totalTags >= 2 ? "block" : "none";
+    let resetButton = document.querySelector("#reset-tags-btn");
 
-    logEvent("info", `handleResetButton : ${totalTags >= 2 ? "Affiché" : "Caché"}`);
+    // Comptabilise le nombre total de tags actifs
+    const totalTags = Object.values(activeFilters).reduce((sum, set) => sum + set.size, 0);
+
+    // Si 2 tags ou plus sont affichés, on affiche/crée le bouton
+    if (totalTags >= 2) {
+            if (!resetButton) {
+                resetButton = document.createElement("button");
+                resetButton.id = "reset-tags-btn";
+                resetButton.classList.add("filter-reset");
+                resetButton.textContent = "Réinitialiser les filtres";
+    
+                // Ajoute un événement pour réinitialiser les tags au clic
+                resetButton.addEventListener("click", () => {
+                    logEvent("info", "handleResetButton : Tous les filtres ont été réinitialisés.");
+                    resetAllTags();
+                });
+    
+                tagsContainer.appendChild(resetButton);
+                logEvent("info", "handleResetButton : Bouton de réinitialisation ajouté.");
+            }
+    
+            // S'assurer qu'il est bien affiché
+            resetButton.style.display = "block";
+        }
+    else if (resetButton) {
+                resetButton.remove();
+                logEvent("info", "handleResetButton : Bouton de réinitialisation supprimé.");
+            }
 }
 
 /* ==================================================================================== */
