@@ -266,13 +266,24 @@ export function handleTagAddition(filterType, filterValue) {
 
     logEvent("info", `handleTagAddition : Ajout du tag "${filterValue}" dans "${filterType}".`);
 
-    // Ajoute le filtre dans `activeFilters` si ce n'est pas déjà présent
     if (!activeFilters[filterType].has(filterValue)) {
         activeFilters[filterType].add(filterValue);
-        updateTagDisplay(); // Met à jour l'affichage des tags
-        updateFilters(); // Met à jour les dropdowns
+        updateTagDisplay();
+        updateFilters();
     }
-    Search("", filtersArray);
+
+    // ✅ Vérifie si des filtres sont actifs avant d'exécuter `Search()`
+    const filtersArray = {
+        ingredients: Array.from(activeFilters["ingredients"]),
+        appliances: Array.from(activeFilters["appliances"]),
+        ustensils: Array.from(activeFilters["ustensils"])
+    };
+
+    if (filtersArray.ingredients.length || filtersArray.appliances.length || filtersArray.ustensils.length) {
+        Search("", filtersArray);
+    } else {
+        logEvent("info", "handleTagAddition : Aucun filtre actif, pas de recherche lancée.");
+    }
 }
 
 /** ====================================================================================
