@@ -7,11 +7,11 @@
 
 import { createFilterSection } from "./factory/dropdownFactory.js";
 import { fetchFilterOptions } from "../data/dataManager.js";
-import { logEvent, waitForElement } from "../utils/utils.js";
+import { logEvent, waitForElement, removeDuplicates, capitalize } from "../utils/utils.js";
 import { removeTag , handleFilterSelection, handleResetButton } from "../events/eventHandler.js"
 import { Search } from "./search/search.js";
 import { safeQuerySelector } from "../config/domSelectors.js"; 
-import { displayFilteredRecipes } from "./search/displayResults.js";
+
 
 /* ==================================================================================== */
 /*  VARIABLES GLOBALES ET ÉTAT DES FILTRES                                             */
@@ -41,63 +41,128 @@ const filterContainers = {}; // Stocke les éléments DOM des dropdowns
  * @returns {Promise<void>} Ne retourne rien, mais met à jour le DOM avec les filtres.
  */
 export async function initFilters() {
+    logEvent("test_start_filter", "Init des filtres...");
+
+    const filtersContainer = await waitForElement("#filters .filter-dropdowns", 3000);
+    if (!filtersContainer) {
+        return logEvent("error", "Aucun conteneur de filtres trouvé.");
+    }
+
+    const rawData = fetchFilterOptions();
+    if (!rawData || Object.values(rawData).every(arr => arr.length === 0)) {
+        return logEvent("warn", "Aucun filtre disponible.");
+    }
+
+    const filterData = removeDuplicates(rawData);
+    
+    filtersContainer.innerHTML = "";
+    const fragment = document.createDocumentFragment();
+    Object.entries(filterData).forEach(([type, values]) => {
+        if (values.size) {
+          fragment.appendChild(createFilterSection(capitalize(type), type, values));
+        }
+    });
+
+    filtersContainer.appendChild(fragment);
+    logEvent("success", "Filtres chargés.");
+}
+
+
+/** ====================================================================================
+ *  MISE À JOUR DES FILTRES
+ * ==================================================================================== */
+/**
+ * Met à jour dynamiquement les options des dropdowns en fonction des recettes filtrées.
+ *
+ * - Récupère les nouvelles options disponibles après filtrage des recettes.
+ * - Supprime les options qui ne sont plus pertinentes.
+ * - Met à jour dynamiquement les dropdowns dans le DOM.
+ * - Appelle `removeSelectedOption` pour exclure les options déjà sélectionnées.
+ * - Appelle `restoreRemovedOption` pour réintégrer les options supprimées si nécessaire.
+ *
+ * @param {Array} filteredRecipes - Liste des recettes filtrées.
+ */
+export function updateFilters(filteredRecipes = []) {
     try {
-        logEvent("test_start_filter", "initFilters : Initialisation des filtres...");
-
-        const filtersContainer = await waitForElement("#filters .filter-dropdowns", 3000);
-        if (!filtersContainer) {
-            logEvent("error", "initFilters : Conteneur des filtres introuvable.");
-            return;
-        }
-
-        //  Récupération des filtres sans doublons
-        const rawFilterData = fetchFilterOptions();
-        if (!rawFilterData || Object.values(rawFilterData).every(arr => arr.length === 0)) {
-            logEvent("warn", "initFilters : Aucun filtre disponible.");
-            return;
-        }
-
-        //  Set global pour s'assurer qu'un élément n'existe qu'une seule fois
-        const uniqueItems = new Set();
-
-        //  Nouvelle structure des filtres (sans doublons entre catégories)
-        const filterData = {
+        // Création d'un objet contenant des ensembles pour stocker les nouvelles options
+        const newFilterData = {
             ingredients: new Set(),
             appliances: new Set(),
             ustensils: new Set()
         };
 
-        //  Parcours des filtres et suppression des doublons entre catégories
-        Object.entries(rawFilterData).forEach(([filterType, values]) => {
-            values.forEach(value => {
-                if (!uniqueItems.has(value)) {
-                    uniqueItems.add(value); // Marque l'élément comme utilisé
-                    filterData[filterType].add(value); // Ajoute l'élément à la bonne catégorie
-                }
+        // Parcourt les recettes filtrées pour extraire les options valides
+        filteredRecipes.forEach(recipe => {
+            recipe.ingredients.forEach(ing => newFilterData.ingredients.add(ing.ingredient));
+            newFilterData.appliances.add(recipe.appliance);
+            recipe.ustensils.forEach(ust => newFilterData.ustensils.add(ust));
+        });
+
+        // Mise à jour des dropdowns dans le DOM
+        Object.entries(filterContainers).forEach(([filterType, container]) => {
+            const dropdownList = container?.querySelector("ul");
+
+            // Vérifie si la liste du dropdown est disponible
+            if (!dropdownList) {
+                return;
+            }
+
+            // Nettoie la liste actuelle du dropdown
+            dropdownList.innerHTML = "";
+            const fragment = document.createDocumentFragment();
+
+            // Trie et ajoute les nouvelles options dans le dropdown
+            [...newFilterData[filterType]]
+                .sort((a, b) => a.localeCompare(b))
+                .forEach(option => {
+                    const li = document.createElement("li");
+                    li.classList.add("filter-option");
+                    li.textContent = option;
+
+                    // Ajoute un événement de sélection pour chaque option
+                    li.addEventListener("click", () => {
+                        handleFilterSelection(filterType, option);
+                        removeSelectedOption(filterType, option); // Supprime l'option une fois sélectionnée
+                    });
+
+                    fragment.appendChild(li);
+                });
+
+            // Insère les nouvelles options dans le dropdown
+            dropdownList.appendChild(fragment);
+        });
+
+        // Réintégrer les options supprimées si elles ne sont plus sélectionnées
+        Object.entries(activeFilters).forEach(([filterType, values]) => {
+            values.forEach(filterValue => {
+                restoreRemovedOption(filterType, filterValue);
             });
         });
 
-        //  Nettoyage et génération dynamique des filtres sans doublons
-        filtersContainer.innerHTML = "";
-        const fragment = document.createDocumentFragment();
-
-        Object.entries(filterData).forEach(([filterType, values]) => {
-            if (values.size > 0) {
-                fragment.appendChild(createFilterSection(
-                    filterType.charAt(0).toUpperCase() + filterType.slice(1), 
-                    filterType, 
-                    values
-                ));
-            }
-        });
-
-        //  Ajout des filtres sans doublons dans le DOM
-        filtersContainer.appendChild(fragment);
-
-        logEvent("success", "initFilters : Filtres chargés sans doublons.");
+        logEvent("success", "updateFiltersDropdown : Mise à jour des dropdowns terminée.");
     } catch (error) {
-        logEvent("error", "initFilters : Erreur", { error: error.message });
+        logEvent("error", "updateFiltersDropdown : Erreur lors de la mise à jour des options.", { error: error.message });
     }
+}
+
+/* ==================================================================================== */
+/*               GESTION DE LA RÉINITIALISATION DES FILTRES                            */
+/* ==================================================================================== */
+/**
+ * Supprime tous les tags sélectionnés et met à jour l'affichage.
+ */
+export function resetAllTags() {
+    logEvent("info", "resetAllTags : Suppression de tous les filtres actifs.");
+
+    Object.keys(activeFilters).forEach(filterType => {
+        activeFilters[filterType].clear();
+    });
+
+    updateTagDisplay();
+    updateFilters();
+    Search("", {}); // Relance la recherche sans filtre
+
+    logEvent("success", "resetAllTags : Tous les filtres ont été supprimés.");
 }
 
 /* ==================================================================================== */
@@ -239,101 +304,6 @@ export function updateTagDisplay() {
     }
 }
 
-/* ==================================================================================== */
-/*               GESTION DE LA RÉINITIALISATION DES FILTRES                            */
-/* ==================================================================================== */
-/**
- * Supprime tous les tags sélectionnés et met à jour l'affichage.
- */
-export function resetAllTags() {
-    logEvent("info", "resetAllTags : Suppression de tous les filtres actifs.");
 
-    Object.keys(activeFilters).forEach(filterType => {
-        activeFilters[filterType].clear();
-    });
-
-    updateTagDisplay();
-    updateFilters();
-    Search("", {}); // Relance la recherche sans filtre
-
-    logEvent("success", "resetAllTags : Tous les filtres ont été supprimés.");
-}
-
-/** ====================================================================================
- *  MISE À JOUR DES OPTIONS DANS LES DROPDOWNS SELON LES RECETTES FILTRÉES
- * ==================================================================================== */
-/**
- * Met à jour dynamiquement les options des dropdowns en fonction des recettes filtrées.
- *
- * - Récupère les nouvelles options disponibles après filtrage des recettes.
- * - Supprime les options qui ne sont plus pertinentes.
- * - Met à jour dynamiquement les dropdowns dans le DOM.
- * - Appelle `removeSelectedOption` pour exclure les options déjà sélectionnées.
- * - Appelle `restoreRemovedOption` pour réintégrer les options supprimées si nécessaire.
- *
- * @param {Array} filteredRecipes - Liste des recettes filtrées.
- */
-export function updateFilters(filteredRecipes = []) {
-    try {
-        // Création d'un objet contenant des ensembles pour stocker les nouvelles options
-        const newFilterData = {
-            ingredients: new Set(),
-            appliances: new Set(),
-            ustensils: new Set()
-        };
-
-        // Parcourt les recettes filtrées pour extraire les options valides
-        filteredRecipes.forEach(recipe => {
-            recipe.ingredients.forEach(ing => newFilterData.ingredients.add(ing.ingredient));
-            newFilterData.appliances.add(recipe.appliance);
-            recipe.ustensils.forEach(ust => newFilterData.ustensils.add(ust));
-        });
-
-        // Mise à jour des dropdowns dans le DOM
-        Object.entries(filterContainers).forEach(([filterType, container]) => {
-            const dropdownList = container?.querySelector("ul");
-
-            // Vérifie si la liste du dropdown est disponible
-            if (!dropdownList) {
-                return;
-            }
-
-            // Nettoie la liste actuelle du dropdown
-            dropdownList.innerHTML = "";
-            const fragment = document.createDocumentFragment();
-
-            // Trie et ajoute les nouvelles options dans le dropdown
-            [...newFilterData[filterType]]
-                .sort((a, b) => a.localeCompare(b))
-                .forEach(option => {
-                    const li = document.createElement("li");
-                    li.classList.add("filter-option");
-                    li.textContent = option;
-
-                    // Ajoute un événement de sélection pour chaque option
-                    li.addEventListener("click", () => {
-                        handleFilterSelection(filterType, option);
-                        removeSelectedOption(filterType, option); // Supprime l'option une fois sélectionnée
-                    });
-
-                    fragment.appendChild(li);
-                });
-
-            // Insère les nouvelles options dans le dropdown
-            dropdownList.appendChild(fragment);
-        });
-
-        // Réintégrer les options supprimées si elles ne sont plus sélectionnées
-        Object.entries(activeFilters).forEach(([filterType, values]) => {
-            values.forEach(filterValue => {
-                restoreRemovedOption(filterType, filterValue);
-            });
-        });
-
-        logEvent("success", "updateFiltersDropdown : Mise à jour des dropdowns terminée.");
-    } catch (error) {
-        logEvent("error", "updateFiltersDropdown : Erreur lors de la mise à jour des options.", { error: error.message });
-    }
-}
 
 

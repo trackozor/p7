@@ -355,3 +355,19 @@ export function displayErrorMessage(message) {
     }, 3000);
 }
 
+/**
+ * Supprime les doublons entre les catégories de filtres.
+ */
+export function removeDuplicates(rawData) {
+    const uniqueItems = new Set();
+    return Object.fromEntries(Object.entries(rawData).map(([type, values]) => [
+        type, new Set(values.filter(value => !uniqueItems.has(value) && uniqueItems.add(value)))
+    ]));
+}
+
+/**
+ * Capitalise la première lettre d'une chaîne.
+ */
+export function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}

@@ -272,7 +272,7 @@ export function handleTagAddition(filterType, filterValue) {
         updateFilters();
     }
 
-    // ✅ Vérifie si des filtres sont actifs avant d'exécuter `Search()`
+    //  Vérifie si des filtres sont actifs avant d'exécuter `Search()`
     const filtersArray = {
         ingredients: Array.from(activeFilters["ingredients"]),
         appliances: Array.from(activeFilters["appliances"]),
