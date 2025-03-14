@@ -77,10 +77,7 @@ export function attachFilterEvents() {
     const dropdownOptions = safeQuerySelectorAll(".filter-option");
 
     // Sélectionne toutes les barres de recherche des dropdowns
-    const searchInputs = safeQuerySelectorAll(".dropdown-search");
-
-    // Sélectionne tous les boutons loupe dans les dropdowns
-    const searchIcons = safeQuerySelectorAll("search-icon-button");
+    const searchInputs = safeQuerySelectorAll(".dropdown-search");   
 
     // Vérifie qu'il y a bien des boutons dropdown avant d'attacher les événements
     if (!dropdownButtons.length) {
@@ -104,12 +101,6 @@ export function attachFilterEvents() {
     searchInputs.forEach(input => {
         input.removeEventListener("input", handleDropdownSearch);
         input.addEventListener("input", handleDropdownSearch);
-    });
-
-    // Attache un événement au clic sur le bouton loupe pour déclencher la recherche dans le dropdown
-    searchIcons.forEach(icon => {
-        icon.removeEventListener("click", triggerDropdownSearch);
-        icon.addEventListener("click", triggerDropdownSearch);
     });
 
     logEvent("success", "attachFilterEvents : Événements attachés avec succès aux dropdowns.");
@@ -162,41 +153,6 @@ function handleDropdownSearch(event) {
     }
 }
 
-/* ====================================================================================
-/*                   DÉCLENCHEMENT DE LA RECHERCHE DANS LE DROPDOWN
-/* ==================================================================================== */
-/**
- * Déclenche la recherche dans le dropdown lorsqu'on clique sur l'icône de la loupe.
- * - Sélectionne dynamiquement le champ de recherche associé.
- * - Simule un événement `input` pour filtrer les options en fonction du texte saisi.
- *
- * @param {Event} event - L'événement du clic sur l'icône de recherche.
- * @returns {void} Ne retourne rien, applique un filtrage dynamique des options.
- */
-function triggerDropdownSearch(event) {
-    try {
-        logEvent("info", "triggerDropdownSearch : Activation de la recherche via l'icône de loupe...");
-
-        // Sélectionne l'élément cliqué (icône loupe)
-        const icon = event.target;
-
-        // Récupère le champ de recherche associé (élément précédent dans le DOM)
-        const searchInput = icon.previousElementSibling;
-
-        // Vérifie si le champ de recherche est bien présent dans le DOM
-        if (!searchInput) {
-            logEvent("error", "triggerDropdownSearch : Champ de recherche introuvable.");
-            return;
-        }
-
-        // Simule un événement `input` pour activer le filtrage dynamique des options
-        searchInput.dispatchEvent(new Event("input"));
-
-        logEvent("success", "triggerDropdownSearch : Recherche déclenchée avec succès via l'icône de loupe.");
-    } catch (error) {
-        logEvent("error", "triggerDropdownSearch : Erreur lors de la recherche.", { error: error.message });
-    }
-}
 
 /* ====================================================================================
 /*                     ATTACHEMENT DES ÉVÉNEMENTS AUX TAGS DE FILTRES

@@ -5,7 +5,7 @@
 /*  DESCRIPTION      : Gère les événements de recherche et de filtres sur les recettes.
 /* ==================================================================================== */
 
-import { logEvent, displayErrorMessage } from "../utils/utils.js";
+import { logEvent } from "../utils/utils.js";
 import {  updateFilters, activeFilters} from "../components/filterManager.js";
 import { trapFocus } from "../utils/accessibility.js";
 import { KEY_CODES } from "../config/constants.js";
@@ -40,32 +40,6 @@ export function handleSearchWrapper(event) {
     } else {
         console.warn("handleSearchWrapper a été appelé sans événement.");
     }
-
-    // Sélection du champ de recherche
-    const searchInput = document.querySelector("#search");
-
-    // Vérifie si l'élément du champ de recherche est présent dans le DOM
-    if (!searchInput) {
-        console.error("handleSearchWrapper : Élément de recherche introuvable.");
-        return;
-    }
-
-    // Récupération et nettoyage de la requête utilisateur
-    const query = searchInput.value.trim();
-
-    // Vérification si l’input est vide → Afficher toutes les recettes
-    if (query === "") {
-        logEvent("info", "handleSearchWrapper : Champ vide, affichage de toutes les recettes.");
-        handleBarSearch(event)
-        return;
-    }
-
-    // Vérification si la recherche est suffisamment longue (3 caractères minimum)
-    if (query.length < 3) {
-        displayErrorMessage("Veuillez entrer au moins 3 caractères pour rechercher.");
-        return;
-    }
-
     // Exécute la recherche avec la requête validée
     handleBarSearch(event);
 }
